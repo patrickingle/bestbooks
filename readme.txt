@@ -1,6 +1,4 @@
-# Bestbooks 
-The official development branch for the wordpress plugin located at https://wordpress.org/plugins/bestbooks/
-
+=== Bestbooks ===
 Contributors: phkcorp2005
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9674139
 Tags: shari phk corporation bestbooks accounting application framework sourceforge
@@ -10,7 +8,7 @@ Stable tag: 1.0
 
 Provides an accounting application framework for wordpress.
 
-# Description
+== Description ==
 
 BestBooks For Wordpress originally was developed in Java, the original framework.
 The goal behind Bestbooks is to provide an accounting application framework modelled
@@ -27,7 +25,7 @@ implement many of the accounting problems on the accounting
 learning website, http://www.simplestudies.com
 
 
-# Installation 
+== Installation ==
 
 To instal this plugin, follow these steps:
 
@@ -37,7 +35,7 @@ To instal this plugin, follow these steps:
 4. Activate the plugin through the 'Plugins' menu in WordPress, identified by 'Bestbooks'
 
 
-# Arbitrary section
+== Arbitrary section ==
 
 
 Tables creation from SQL:
@@ -103,14 +101,14 @@ then check your database tables for the validation.
 
 If you get an error, please report it!
 
-# Frequently Asked Questions 
+== Frequently Asked Questions ==
 
 Please do not be afraid of asking questions?<br>
 
 (There are no stupid or dumb questions!)
 
 
-# Changelog 
+== Changelog ==
 = 1.1 =
 * Change table reference to include wpdb->prefix to support WPMU as well as custom table names, removed php5-ext
 
