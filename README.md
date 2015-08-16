@@ -125,6 +125,6 @@ We make honorable mention to anyone who helps make Bestbooks for Wordpress a bet
 
 == Contact ==
 
-Support is provided at http://support.phkcorp.com. Please request membership in the "Bestbooks" forum.
+Support is provided at https://github.com/patrickingle/bestbooks/issues. You will require a free account on github.com
 
-Please contact phkcorp2005@gmail.com or visit www.phkcorp.com?do=wordpress with questions, comments, or requests.
+Please contact phkcorp2005@gmail.com or visit the above forum with questions, comments, or requests.
