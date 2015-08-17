@@ -4,7 +4,7 @@
 Plugin Name: Bestbooks
 Plugin URI: http://wordpress.org/plugins/bestbooks/
 Description: The popular accounting framework
-Version: 1.1
+Version: 1.1.2
 Author: PHK Corporation
 Author URI: http://www.phkcorp.com
 */

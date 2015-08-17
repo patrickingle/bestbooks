@@ -3,8 +3,8 @@ Contributors: phkcorp2005
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9674139
 Tags: shari phk corporation bestbooks accounting application framework sourceforge
 Requires at least: 2.9
-Tested up to: 3.9.1
-Stable tag: 1.0
+Tested up to: 4.3
+Stable tag: 1.1.2
 
 Provides an accounting application framework for wordpress.
 
@@ -27,7 +27,7 @@ learning website, http://www.simplestudies.com
 
 == Installation ==
 
-To instal this plugin, follow these steps:
+To install this plugin, follow these steps:
 
 1. Download the plugin
 2. Extract the single file
@@ -109,6 +109,12 @@ Please do not be afraid of asking questions?<br>
 
 
 == Changelog ==
+= 1.1.2 =
+* Version number change only
+
+= 1.1.1 =
+* Compatible to WP Version 4.3
+
 = 1.1 =
 * Change table reference to include wpdb->prefix to support WPMU as well as custom table names, removed php5-ext
 
