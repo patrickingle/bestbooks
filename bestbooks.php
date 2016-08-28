@@ -4,7 +4,7 @@
 Plugin Name: Bestbooks
 Plugin URI: http://wordpress.org/plugins/bestbooks/
 Description: The popular accounting framework
-Version: 1.1.2
+Version: 2.0
 Author: PHK Corporation
 Author URI: http://www.phkcorp.com
 */
@@ -65,57 +65,21 @@ $gas->adddebit($mdb,"2007-03-31","Gas for Taxi Transportation Daily",37.00);
 
 */
 
-require_once('chartofaccounts.inc.php');
-require_once('ledger.inc.php');
-require_once('revenue.inc.php');
-require_once('asset.inc.php');
-require_once('expense.inc.php');
+require_once dirname(__FILE__).'/vendor/autoload.php';
+require_once dirname(__FILE__).'/api.php';
 
 function addBestBooksTables ()
 {
 	global $wpdb;
 
 	if (is_admin()) {
-
-		$query = "CREATE TABLE IF NOT EXISTS `".$wpdb->prefix."Accounts` (
-  				`id` tinyint(4) NOT NULL auto_increment,
-  				`date` date NOT NULL default '0000-00-00',
-  				`name` varchar(50) NOT NULL default '',
-  				`type` varchar(20) NOT NULL default '',
-  				`data` varchar(25) NOT NULL default '',
-  				`class` varchar(255) NOT NULL default '',
-  				PRIMARY KEY  (`id`)
-				) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1";
-
-		$wpdb->query($query);
-
-		$query = "CREATE TABLE IF NOT EXISTS `".$wpdb->prefix."Journal` (
-  				`date` date NOT NULL default '0000-00-00',
-  				`ref` tinyint(4) NOT NULL default '0',
-  				`account` varchar(50) NOT NULL default '',
-  				`debit` decimal(10,2) NOT NULL default '0.00',
-  				`credit` decimal(10,2) NOT NULL default '0.00'
-				) ENGINE=MyISAM DEFAULT CHARSET=latin1;";
-
-		$wpdb->query($query);
-
-		$query = "CREATE TABLE IF NOT EXISTS `".$wpdb->prefix."Ledger` (
-  			`id` tinyint(4) NOT NULL auto_increment,
-  			`name` varchar(255) NOT NULL default '',
-  			`date` date NOT NULL default '0000-00-00',
-  			`note` varchar(255) NOT NULL default '',
-  			`ref` double NOT NULL default '0',
-  			`data` decimal(10,2) NOT NULL default '0.00',
-  			`credit` decimal(10,2) NOT NULL default '0.00',
-  			`balance` decimal(10,2) NOT NULL default '0.00',
-  			`type` varchar(10) NOT NULL default '',
-  			PRIMARY KEY  (`id`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
-
-		$wpdb->query($query);
-
+                ChartOfAccounts::createTable();
+                Journal::createTable();
+                Ledger::createTable();
 	} // endif of is_admin()
 }
+
+register_activation_hook(__FILE__,'addBestBooksTables');
 
 //// Add page to options menu.
 function addBestBooksToManagementPage()
@@ -174,6 +138,17 @@ of existing plugins, migration of HTML/PSD/Smarty themes to wordpress-compliant 
 <p>You may see our samples at <a href="http://www.phkcorp.com?do=wordpress" target="_blank">www.phkcorp.com?do=wordpress</a></p>
 <p>Please email at <a href="mailto:phkcorp2005@gmail.com">phkcorp2005@gmail.com</a> or <a href="http://www.phkcorp.com?do=contact" target="_blank">www.phkcorp.com?do=contact</a> with your programming requirements.</p>
 				</fieldset>
+                        
+                        <fieldset class="options">
+                            <legend><h2><u>BestBooks API</u></h2></legend>
+                            <p>To access the BestBooks, use the url <a href="<?php echo home_url('wp-json/bestbooks/v2'); ?>" target="_blank"><?php echo home_url('wp-json/bestbooks/v2'); ?></a></p>
+                            <p><u>Current Endpoints</u></p>
+                            <p>
+                            <ul>
+                                <li>ChartOfAccounts</li>
+                            </ul>
+                            </p>
+                        </fieldset>
 
 		</div>
 <?php
@@ -182,50 +157,40 @@ of existing plugins, migration of HTML/PSD/Smarty themes to wordpress-compliant 
 
 function get_coa_instance()
 {
-	global $wpdb;
-
-	return new ChartOfAccounts($wpdb);
+    return new ChartOfAccounts();
 }
 
 function get_asset_instance($name)
 {
-	global $wpdb;
-
-	return new Asset($wpdb,$name);
+    return new Asset($name);
 }
 
 function get_revenue_instance($name)
 {
-	global $wpdb;
-
-	return new Revenue($wpdb,$name);
+    return new Revenue($name);
 }
 
 function get_expense_instance($name)
 {
-	global $wpdb;
-
-	return new Expense($wpdb,$name);
+    return new Expense($name);
 }
 
 function bestbooks_sample_1($atts, $content=null, $code="")
 {
-	global $wpdb;
-
 	$coa = get_coa_instance();
 
-	$coa->add($wpdb,"Cash","Asset");
-	$coa->add($wpdb,"Livery","Revenue");
-	$coa->add($wpdb,"Gas","Expense");
+	$coa->add("Cash","Asset");
+	$coa->add("Livery","Revenue");
+	$coa->add("Gas","Expense");
 
 	$cash = get_asset_instance("Cash");
 	$livery = get_revenue_instance("Livery");
 	$gas = get_expense_instance("Gas");
 
-	$livery->addcredit($wpdb,"2007-03-31","Taxi Transportation Daily Bookout",137.00);
-	$cash->adddebit($wpdb,"2007-03-31","Tax Transportation Daily Bookout",137.00);
-	$cash->addcredit($wpdb,"2007-03-31","Gas for Taxi Transportation Daily",37.00);
-	$gas->adddebit($wpdb,"2007-03-31","Gas for Taxi Transportation Daily",37.00);
+	$livery->addcredit("2007-03-31","Taxi Transportation Daily Bookout",137.00);
+	$cash->adddebit("2007-03-31","Tax Transportation Daily Bookout",137.00);
+	$cash->addcredit("2007-03-31","Gas for Taxi Transportation Daily",37.00);
+	$gas->adddebit("2007-03-31","Gas for Taxi Transportation Daily",37.00);
 }
 
 function bestbooks_sample_2($atts, $content=null, $code="")
@@ -241,8 +206,6 @@ function bestbooks_sample_2($atts, $content=null, $code="")
 
 function bestbooks_add_coa_account($atts, $content=null, $code="")
 {
-	global $wpdb;
-
 	 extract(shortcode_atts(array(
 	   'name' => '#',
 	   'type' => '0',
@@ -252,7 +215,7 @@ function bestbooks_add_coa_account($atts, $content=null, $code="")
 
 	$coa = get_coa_instance();
 
-	$coa->add($wpdb,$name,$type);
+	$coa->add($name,$type);
 }
 
 add_action('admin_menu', 'addBestBooksToManagementPage');
