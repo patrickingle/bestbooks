@@ -67,6 +67,7 @@ $gas->adddebit($mdb,"2007-03-31","Gas for Taxi Transportation Daily",37.00);
 
 require_once dirname(__FILE__).'/vendor/autoload.php';
 require_once dirname(__FILE__).'/api.php';
+require_once dirname(__FILE__).'/admin.php';
 
 function addBestBooksTables ()
 {
@@ -84,6 +85,7 @@ register_activation_hook(__FILE__,'addBestBooksTables');
 //// Add page to options menu.
 function addBestBooksToManagementPage()
 {
+	bestbooks_dashboard();
     // Add a new submenu under Options:
     add_options_page('BestBooks', 'BestBooks', 8, 'bestbooks', 'displayBestBooksManagementPage');
 }
