@@ -230,6 +230,7 @@ function bestbooks_dashboard_accounting_transactions() {
 }
 
 function bestbooks_dashboard_accounting_chartofaccounts() {
+	//require_once dirname(__FILE__).'/vendor/autoload.php';
 	?>
 	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -240,17 +241,37 @@ function bestbooks_dashboard_accounting_chartofaccounts() {
 		</h2>
 		<?php
 		$coa = get_coa_instance();
-		echo '<pre>'; print_r($coa); echo '</pre>';
+		//echo '<pre>'; print_r($coa); echo '</pre>';
+		$results = array();
+    	$results = AccountTypes::getConstList();
+    	//echo '<pre>'; print_r($results); echo '</pre>';
 		?>
-		<table>
-			<tr class="w3-lightgrey">
+		<table class="w3-table w3-block">
+			<tr class="w3-grey">
 				<th>Name</th>
 				<th>Action</th>
 			</tr>
+			<?php foreach($coa->account as $name => $type) : ?>
+				<tr>
+					<td><?php echo $name; ?></td>
+					<td>
+						<a href="#" data-id="<?php echo $name; ?>" class="delete-button fa fa-trash">Delete</a>
+					</td>
+				</tr>
+			<?php endforeach; ?>
 		</table>
 	</div>
 	<div id="add-account-dialog" title="Add New Account" style="display:none;">
-			<p>appear now</p>
+		<label for="account_name">Name</label>
+		<input type="text" id="account_name" name="account_name" value="" />
+		<label for="account_type">Type</label>
+		<select id="account_type" name="account_type">
+			<option value="">Select</option>
+			<?php foreach ($results as $type => $name) : ?>
+				<option value="<?php echo $type; ?>"><?php echo $name; ?></option>
+			<?php endforeach; ?>
+		</select>
+		<input type="button" id="add_account_action" name="add_account_action" value="Add" />
 	</div>		
 	<script>
 		jQuery(document).ready(function($){
@@ -258,8 +279,50 @@ function bestbooks_dashboard_accounting_chartofaccounts() {
     			autoOpen : false, modal : true, show : "blind", hide : "blind"
   			});
 			$('#add_account').bind('click', function(){
+				$('#account_type').val("");
+				$('#account_name').val("");
 				$("#add-account-dialog").dialog("open");
 				return false;
+			});
+			$('#add_account_action').bind('click', function(){
+				if ($('#account_type').val() == "") {
+					alert("Missing Account Type!");
+					return false;
+				}
+				if ($('#account_name').val() == "") {
+					alert("Missing Account name");
+					return false;
+				}
+				$.ajax({
+					url: "<?php echo admin_url('admin-ajax.php'); ?>",
+					type: "post",
+					data: {
+						action: "bestbooks_add_chartofaccount",
+						aname: $('#account_name').val(),
+						atype: $('#account_type').val()
+					},
+					success: function(results) {
+						alert(results);
+						$("#add-account-dialog").dialog("close");
+						location.reload();
+					}
+				});
+			});
+			$('.delete-button').bind('click', function(){
+				if (confirm("Delete account " + $(this).data('id'))) {
+					$.ajax({
+						url: "<?php echo admin_url('admin-ajax.php'); ?>",
+						type: "post",
+						data: {
+							action: "bestbooks_delete_chartofaccount",
+							aname: $(this).data('id')
+						},
+						success: function(results) {
+							alert(results);
+							location.reload();
+						}
+					});					
+				}
 			});
 		});
 	</script>
