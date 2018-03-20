@@ -32,6 +32,14 @@ class Journal {
     $row = $result->fetchRow();
     return $row[0];
   }
+  
+  public function getBalance() {
+      return $this->inBalance();
+  }
+
+  public function setBalance() {
+      throw new BestBooksException('request not supported');
+  }
    
   public static function createTable() {
    	global $wpdb;

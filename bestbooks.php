@@ -4,26 +4,28 @@
 Plugin Name: Bestbooks
 Plugin URI: http://wordpress.org/plugins/bestbooks/
 Description: The popular accounting framework
-Version: 2.0
+Version: 2.1.1
 Author: PHK Corporation
 Author URI: http://www.phkcorp.com
 */
 
-/*  Copyright 2009  PHK Corporation  (email : phkcorp2005@gmail.com)
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+/*  
+ * Copyright 2009-2017  PHK Corporation  (email : phkcorp2005@gmail.com)
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
 */
 
 
@@ -36,21 +38,15 @@ A.	Receives $137.00 from a daily bookout while driving for Taxi Transportation
 B.	Spent $37.00 for gas for the day while diving for Taxi Transportation
 
 
-require_once('config.inc.php');
-require_once('dataconn.inc.php');
-require_once('chartofaccounts.inc.php');
-require_once('ledger.inc.php');
-require_once('revenue.inc.php');
-require_once('asset.inc.php');
-require_once('expense.inc.php');
-
+require_once('vendor/autoload.php');
+ * 
 // 1. Create a chart of accounts or open an existing chart of accounts
 $coa = new ChartOfAccounts($mdb);
 
 // 2. Create or open the account classes and add to the Chart of Accounts
-$coa->add($mdb,"Cash","Asset");
-$coa->add($mdb,"Livery","Revenue");
-$coa->add($mdb,"Gas","Expense");
+$coa->add("Cash","Asset");
+$coa->add("Livery","Revenue");
+$coa->add("Gas","Expense");
 
 // 3. Assign Ledger entries for each Account - The name must match the name given above
 $cash = new Asset($mdb,"Cash");
@@ -76,9 +72,10 @@ function addBestBooksTables ()
 	global $wpdb;
 
 	if (is_admin()) {
-                ChartOfAccounts::createTable();
-                Journal::createTable();
-                Ledger::createTable();
+        ChartOfAccounts::createTable();
+        Journal::createTable();
+        Ledger::createTable();
+        Journal::alterTable();
 	} // endif of is_admin()
 }
 
@@ -100,61 +97,107 @@ function displayBestBooksManagementPage()
 	// Create the tables, if they do not exist?
 	addBestBooksTables();
 
+    if (isset($_POST['addacct'])) {
+        try {
+            $coa = get_coa_instance();
+            //echo '<pre>'; print_r($_POST); echo '</pre>';
+            $coa->add($_POST['acctname'],$_POST['acctype']);
+            wp_insert_term( $_POST['acctname'], 'bestbooks_coa', array('slug'=>strtolower($_POST['acctname'])));
+        } catch (Exception $ex) {
+        }
+    }
 
 ?>
-		<div class="wrap">
-			<h2>BestBooks Accounting Application Framework</h2>
-			<p>You have made a sale and now you need to add that sale to your accounting books?</p>
-			<p>Before Bestbooks, the process was manual and tedious!</p>
-			<p>Bestbooks allows you to update your accounting books and ledger/journal automatically by
-			using the straightforward API's.</p>
+    <div class="wrap">
+        <h2>BestBooks Accounting Application Framework</h2>
+        <p>You have made a sale and now you need to add that sale to your accounting books?</p>
+        <p>Before Bestbooks, the process was manual and tedious!</p>
+        <p>
+            Bestbooks allows you to update your accounting books and ledger/journal automatically by
+    using the straightforward API's.
+        </p>
 
-				<fieldset class='options'>
-					<legend><h2><u>Tips &amp; Techniques</u></h2></legend>
-<code>
-1. Get an instance of the Chart of Accounts<br/>
-$coa = get_coa_instance();<br/>
-<br/>
-2. Create or open the account classes and add to the Chart of Accounts<br/>
-global $wpdb<br/>
-$coa-&gt;add($wpdb,"Cash","Asset");<br/>
-$coa-&gt;add($wpdb,"Livery","Revenue");<br/>
-$coa-&gt;add($wpdb,"Gas","Expense");<br/>
-<br/>
-3. Assign Ledger entries for each Account - The name must match the name given above<br/>
-$cash = get_asset_instance("Cash");<br/>
-$livery = get_revenue_instance("Livery");<br/>
-$gas = get_expense_instance("Gas");<br/>
-<br/>
-4. Add ledger entries<br/>
-global $wpdb;<br/>
-$livery-&gt;addcredit($wpdb,"2007-03-31","Taxi Transportation Daily Bookout",137.00);<br/>
-$cash-&gt;adddebit($wpdb,"2007-03-31","Tax Transportation Daily Bookout",137.00);<br/>
-$cash-&gt;addcredit($wpdb,"2007-03-31","Gas for Taxi Transportation Daily",37.00);<br/>
-$gas-&gt;adddebit($wpdb,"2007-03-31","Gas for Taxi Transportation Daily",37.00);<br/>
-</code>
-				</fieldset>
-
-				<fieldset class='options'>
-					<legend><h2><u>Wordpress Development</u></h2></legend>
-<p><a href="http://www.phkcorp.com" target="_blank">PHK Corporation</a> is available for custom Wordpress development which includes development of new plugins, modification
-of existing plugins, migration of HTML/PSD/Smarty themes to wordpress-compliant <b>seamless</b> themes.</p>
-<p>You may see our samples at <a href="http://www.phkcorp.com?do=wordpress" target="_blank">www.phkcorp.com?do=wordpress</a></p>
-<p>Please email at <a href="mailto:phkcorp2005@gmail.com">phkcorp2005@gmail.com</a> or <a href="http://www.phkcorp.com?do=contact" target="_blank">www.phkcorp.com?do=contact</a> with your programming requirements.</p>
-				</fieldset>
+        <fieldset class='options'>
+            <legend><h2><u>Tips &amp; Techniques</u></h2></legend>
+            <code>
+            1. Get an instance of the Chart of Accounts<br/>
+            $coa = get_coa_instance();<br/>
+            <br/>
+            2. Create or open the account classes and add to the Chart of Accounts<br/>
+            global $wpdb<br/>
+            $coa-&gt;add("Cash","Asset");<br/>
+            $coa-&gt;add("Livery","Revenue");<br/>
+            $coa-&gt;add("Gas","Expense");<br/>
+            <br/>
+            3. Assign Ledger entries for each Account - The name must match the name given above<br/>
+            $cash = get_asset_instance("Cash");<br/>
+            $livery = get_revenue_instance("Livery");<br/>
+            $gas = get_expense_instance("Gas");<br/>
+            <br/>
+            4. Add ledger entries<br/>
+            global $wpdb;<br/>
+            $livery-&gt;addcredit("2007-03-31","Taxi Transportation Daily Bookout",137.00);<br/>
+            $cash-&gt;adddebit("2007-03-31","Tax Transportation Daily Bookout",137.00);<br/>
+            $cash-&gt;addcredit("2007-03-31","Gas for Taxi Transportation Daily",37.00);<br/>
+            $gas-&gt;adddebit("2007-03-31","Gas for Taxi Transportation Daily",37.00);<br/>
+            </code>
+        </fieldset>
+	<fieldset class='options'>
+            <legend><h2><u>Wordpress Development</u></h2></legend>
+            <p>
+                <a href="http://www.phkcorp.com" target="_blank">PHK Corporation</a> 
+                is available for custom Wordpress development which includes development of new plugins, modification of existing plugins, migration of HTML/PSD/Smarty themes to wordpress-compliant <b>seamless</b> themes.
+            </p>
+            <p>You may see our samples at <a href="http://www.phkcorp.com?do=wordpress" target="_blank">www.phkcorp.com?do=wordpress</a></p>
+            <p>Please email at <a href="mailto:phkcorp2005@gmail.com">phkcorp2005@gmail.com</a> or <a href="http://www.phkcorp.com?do=contact" target="_blank">www.phkcorp.com?do=contact</a> with your programming requirements.</p>
+	</fieldset>
                         
-                        <fieldset class="options">
-                            <legend><h2><u>BestBooks API</u></h2></legend>
-                            <p>To access the BestBooks, use the url <a href="<?php echo home_url('wp-json/bestbooks/v2'); ?>" target="_blank"><?php echo home_url('wp-json/bestbooks/v2'); ?></a></p>
-                            <p><u>Current Endpoints</u></p>
-                            <p>
-                            <ul>
-                                <li>ChartOfAccounts</li>
-                            </ul>
-                            </p>
-                        </fieldset>
+        <fieldset class="options">
+            <legend><h2><u>BestBooks API</u></h2></legend>
+            <p>To access the BestBooks, use the url <a href="<?php echo rest_url('bestbooks/v2/'); ?>" target="_blank"><?php echo rest_url('bestbooks/v2/'); ?></a></p>
+            <p><u>Current Endpoints</u></p>
+            <p>
+                <ul>
+                    <li><a href="<?php echo rest_url('bestbooks/v2/chartofaccounts'); ?>" target="_blank">Chart Of Accounts</a></li>
+                    <li><a href="<?php echo rest_url('bestbooks/v2/account_types'); ?>" target="_blank">Account Types</a></li>
+                    <li><a href="<?php echo rest_url('bestbooks/v2/debit'); ?>" target="_blank">Debit</a></li>
+                    <li><a href="<?php echo rest_url('bestbooks/v2/credit'); ?>" target="_blank">Credit</a></li>
+                    <li><a href="<?php echo rest_url('bestbooks/v2/balance'); ?>" target="_blank">Balance</a></li>
+                    <li><a href="<?php echo rest_url('bestbooks/v2/add'); ?>" target="_blank">Add</a></li>
+                    <li><a href="<?php echo rest_url('bestbooks/v2/subtract'); ?>" target="_blank">Subtract</a></li>
+                </ul>
+            </p>
+        </fieldset>
 
-		</div>
+        <fieldset class='options'>
+            <legend><h2><u>Chart of Accounts</u></h2></legend>
+            <form method="post">
+                Chart of Accounts: 
+                <select name="coa" id="coa">
+                    <option value="">Select</option>
+                    <?php 
+                    $coa = get_coa_instance();
+                    $coa_list = $coa->getList();
+                    foreach ($coa_list as $acctname => $acctype) {
+                        echo '<option value="'.strtolower($acctname).'">'.$acctname.'</option>';
+                    }
+                    ?>
+                </select><br/>
+                New Chart of Account: <input type="text" name="acctname" value="" />
+                Account Type: 
+                <select name="acctype">
+                    <option value="">Select</option>
+                    <option value="Asset">Asset</option>
+                    <option value="Liability">Liability</option>
+                    <option value="OwnersEquity">Owner's Equity</option>
+                    <option value="Expense">Expense</option>
+                    <option value="Revenue">Revenue</option>
+                </select>
+                <br/>
+                <input type="submit" name="addacct" value="Add New Account" />
+            </form>
+        </fieldset>
+    </div>
 <?php
 }
 
@@ -226,6 +269,11 @@ add_action('admin_menu', 'addBestBooksToManagementPage');
 add_shortcode('bestbooks-sample-1', 'bestbooks_sample_1');
 add_shortcode('bestbooks-sample-2', 'bestbooks_sample_2');
 
+add_action('init','bestbooks_init');
+
+function bestbooks_init() {
+    register_taxonomy('bestbooks_coa','invoice',array());
+}
 
 
 ?>

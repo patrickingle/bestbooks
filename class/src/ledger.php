@@ -31,9 +31,11 @@ abstract class Ledger extends TAccount {
 		$this->type = $row[0];
 
     	if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
-			$sql = "SELECT Balance FROM ".$wpdb->base_prefix."bestbooks_ledger WHERE name='$name' ORDER BY id DESC";    		
+			//$sql = "SELECT Balance FROM ".$wpdb->base_prefix."bestbooks_ledger WHERE name='$name' ORDER BY id DESC";    		
+			$sql = "SELECT SUM(debit)-SUM(credit) AS Balance FROM ".$wpdb->base_prefix."bestbooks_ledger WHERE name='$name'";
     	} else {
-			$sql = "SELECT Balance FROM ".$wpdb->prefix."bestbooks_ledger WHERE name='$name' ORDER BY id DESC";    		
+			//$sql = "SELECT Balance FROM ".$wpdb->prefix."bestbooks_ledger WHERE name='$name' ORDER BY id DESC";    		
+			$sql = "SELECT SUM(debit)-SUM(credit) AS Balance FROM ".$wpdb->prefix."bestbooks_ledger WHERE name='$name'";
     	}
 		$result = $wpdb->query($sql);
 		if ($wpdb->num_rows >= 0) {

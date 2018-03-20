@@ -1,8 +1,8 @@
 <?php
 
-class OwnersEquity extends Ledger {
+class OwnersEquity extends Equity {
     public function __construct($name) {
-        parent::__construct($name,"OwnersEquity");
+        parent::__construct($name);
     }
 }
 

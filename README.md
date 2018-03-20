@@ -5,8 +5,8 @@ Contributors: phkcorp2005
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9674139
 Tags: shari phk corporation bestbooks accounting application framework sourceforge
 Requires at least: 2.9
-Tested up to: 4.6
-Stable tag: 1.0
+Tested up to: 4.7.2
+Stable tag: 2.1
 
 Provides an accounting application framework for wordpress.
 
@@ -111,6 +111,19 @@ Please do not be afraid of asking questions?<br>
 
 
 # Changelog 
+= 2.1.1 =
+* Added Dashboard settings form to add new Chart of Accounts 
+* Exposed the Bestbooks chart of accounts as a WordPress taxonomy of bestbooks_coa
+
+= 2.1 =
+* Fixed Journal entries, Liability accounts enter increases in the credit, and decreases in the debit columns
+* Add additional implementation to the REST API, to include add and subtract and updates appropriately
+* Added additional WP-JSON REST API's: account_types, debit, credit, balance, add, subtract, headers
+* Implemented composer for autoload using vendor/autoload.php
+* Implemented backward compatibility when SplEnum is not available
+* added getAccountBaseType to TAccount
+* added new account classes: Cash, Bank, Credit, Investment, Withdrawal
+
 = 2.0 =
 * Architect framework to use PSR-4 autoloading
 * change table name to preceed with bestbooks_ as not to interfere with existing tables

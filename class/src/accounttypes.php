@@ -1,55 +1,51 @@
 <?php
-if (class_exists('BasicEnum') === false) {
-    abstract class BasicEnum {
-        private static $constCacheArray = NULL;
 
-        private static function getConstants() {
-            if (self::$constCacheArray == NULL) {
-                self::$constCacheArray = [];
+if (class_exists('SplEnum')) {
+    class AccountTypes extends SplEnum {
+        const __default = self::Unknown;
+
+        const Unknown = "Unknown";
+        const Asset = "Asset";
+        const Liability = "Liability";
+        const OwnersEquity = "OwnersEquity";
+        const Revenue = "Revenue";
+        const Expense = "Expense";
+        const Withdrawals = "Withdrawals";
+        const Journal = "Journal";
+        const Bank = "Bank";
+        const Cash = "Cash";
+        const Credit = "Credit";
+        const Investment = "Investment";
+
+    }
+} else {
+    class AccountTypes {
+        const __default = self::Unknown;
+
+        const Unknown = "Unknown";
+        const Asset = "Asset";
+        const Liability = "Liability";
+        const OwnersEquity = "OwnersEquity";
+        const Revenue = "Revenue";
+        const Expense = "Expense";
+        const Withdrawals = "Withdrawals";
+        const Journal = "Journal";
+        const Bank = "Bank";
+        const Cash = "Cash";
+        const Credit = "Credit";
+        const Investment = "Investment";
+
+        static function getConstList($include_default = false) {
+            $oClass = new ReflectionClass(__CLASS__);
+            if ($include_default) {
+                return $oClass->getConstants();
+            } else {
+                $constants = $oClass->getConstants();
+                unset($constants['__default']);
+                return $constants;
             }
-            $calledClass = get_called_class();
-            if (!array_key_exists($calledClass, self::$constCacheArray)) {
-                $reflect = new ReflectionClass($calledClass);
-                self::$constCacheArray[$calledClass] = $reflect->getConstants();
-            }
-            return self::$constCacheArray[$calledClass];
         }
-
-        public static function isValidName($name, $strict = false) {
-            $constants = self::getConstants();
-
-            if ($strict) {
-                return array_key_exists($name, $constants);
-            }
-
-            $keys = array_map('strtolower', array_keys($constants));
-            return in_array(strtolower($name), $keys);
-        }
-
-        public static function isValidValue($value, $strict = true) {
-            $values = array_values(self::getConstants());
-            return in_array($value, $values, $strict);
-        }
-
-        public static function getConstList() {
-            return self::getConstants();
-        }
-    }    
-}
-
-class AccountTypes extends BasicEnum {
-    const Unknown = "Unknown";
-    const Asset = "Asset";
-    const Liability = "Liability";
-    const OwnersEquity = "OwnersEquity";
-    const Revenue = "Revenue";
-    const Expense = "Expense";
-    const Withdrawals = "Withdrawals";
-    const Journal = "Journal";
-    const Bank = "Bank";
-    const Cash = "Cash";
-    const Credit = "Credit";
-    const Investment = "Investment";
+    }
 }
 
 ?>
