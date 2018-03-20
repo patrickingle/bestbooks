@@ -15,6 +15,7 @@ return array(
     'Credit' => $baseDir . '/class/src/credit.php',
     'Equity' => $baseDir . '/class/src/equity.php',
     'Expense' => $baseDir . '/class/src/expense.php',
+    'Income' => $baseDir . '/class/src/income.php',
     'Investment' => $baseDir . '/class/src/investment.php',
     'Journal' => $baseDir . '/class/src/journal.php',
     'Ledger' => $baseDir . '/class/src/ledger.php',

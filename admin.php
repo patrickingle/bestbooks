@@ -57,8 +57,65 @@ function bestbooks_dashboard() {
 
 function bestbooks_dashboard_page() {
 	?>
-	<div class="wrap">
-		<h2>BestBooks</h2>
+    <div class="wrap">
+        <h2>BestBooks Accounting Application Framework</h2>
+        <p>You have made a sale and now you need to add that sale to your accounting books?</p>
+        <p>Before Bestbooks, the process was manual and tedious!</p>
+        <p>
+            Bestbooks allows you to update your accounting books and ledger/journal automatically by
+    using the straightforward API's.
+        </p>
+
+        <fieldset class='options'>
+            <legend><h2><u>Tips &amp; Techniques</u></h2></legend>
+            <code>
+            1. Get an instance of the Chart of Accounts<br/>
+            $coa = get_coa_instance();<br/>
+            <br/>
+            2. Create or open the account classes and add to the Chart of Accounts<br/>
+            global $wpdb<br/>
+            $coa-&gt;add("Cash","Asset");<br/>
+            $coa-&gt;add("Livery","Revenue");<br/>
+            $coa-&gt;add("Gas","Expense");<br/>
+            <br/>
+            3. Assign Ledger entries for each Account - The name must match the name given above<br/>
+            $cash = get_asset_instance("Cash");<br/>
+            $livery = get_revenue_instance("Livery");<br/>
+            $gas = get_expense_instance("Gas");<br/>
+            <br/>
+            4. Add ledger entries<br/>
+            global $wpdb;<br/>
+            $livery-&gt;addcredit("2007-03-31","Taxi Transportation Daily Bookout",137.00);<br/>
+            $cash-&gt;adddebit("2007-03-31","Tax Transportation Daily Bookout",137.00);<br/>
+            $cash-&gt;addcredit("2007-03-31","Gas for Taxi Transportation Daily",37.00);<br/>
+            $gas-&gt;adddebit("2007-03-31","Gas for Taxi Transportation Daily",37.00);<br/>
+            </code>
+        </fieldset>
+	<fieldset class='options'>
+            <legend><h2><u>Wordpress Development</u></h2></legend>
+            <p>
+                <a href="https://phkcorp.com" target="_blank">PHK Corporation</a> 
+                is available for custom Wordpress development which includes development of new plugins, modification of existing plugins, migration of HTML/PSD/Smarty themes to wordpress-compliant <b>seamless</b> themes.
+            </p>
+            <p>Please email at <a href="mailto:phkcorp2005@gmail.com">phkcorp2005@gmail.com</a> or <a href="tel:12128790758" target="_blank">Call us</a> with your programming requirements.</p>
+	</fieldset>
+                        
+    <fieldset class="options">
+        <legend><h2><u>BestBooks API</u></h2></legend>
+        <p>To access the BestBooks, use the url <a href="<?php echo rest_url('bestbooks/v2/'); ?>" target="_blank"><?php echo rest_url('bestbooks/v2/'); ?></a></p>
+        <p><u>Current Endpoints</u></p>
+        <p>
+            <ul>
+                <li><a href="<?php echo rest_url('bestbooks/v2/chartofaccounts'); ?>" target="_blank">Chart Of Accounts</a></li>
+                <li><a href="<?php echo rest_url('bestbooks/v2/account_types'); ?>" target="_blank">Account Types</a></li>
+                <li><a href="<?php echo rest_url('bestbooks/v2/debit'); ?>" target="_blank">Debit</a></li>
+                <li><a href="<?php echo rest_url('bestbooks/v2/credit'); ?>" target="_blank">Credit</a></li>
+                <li><a href="<?php echo rest_url('bestbooks/v2/balance'); ?>" target="_blank">Balance</a></li>
+                <li><a href="<?php echo rest_url('bestbooks/v2/add'); ?>" target="_blank">Add</a></li>
+                <li><a href="<?php echo rest_url('bestbooks/v2/subtract'); ?>" target="_blank">Subtract</a></li>
+            </ul>
+        </p>
+    </fieldset>
 	</div>
 	<?php
 }
@@ -223,8 +280,38 @@ function bestbooks_dashboard_accounting() {
 
 function bestbooks_dashboard_accounting_transactions() {
 	?>
+	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
-		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_accounting'); ?>">Accounting</a> - Transactions</h2>
+		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_accounting'); ?>">Accounting</a> - Transactions&nbsp;
+			<input type="button" id="add_income" value="Add Income" />
+			<input type="button" id="add_expense" value="Add Expense"  />
+		</h2>
+		<select id="status">
+			<option value="all">All status</option>
+			<option value="verified">Verified</option>
+			<option value="unverified" selected>Unverified</option>
+		</select>
+		<select id="type">
+		</select>
+		<select id="category">
+		</select>
+		<select id="account">
+		</select>
+		From:<input type="date" id="from_date" placeholder="From:" />
+		To:<input type="date" id="to_date" placeholder="To:" />
+		<br/>
+		<table class="w3-table w3-block">
+			<tr class="w3-grey">
+				<th><input type="checkbox"></th>
+				<th>Date</th>
+				<th>Description</th>
+				<th>Amount</th>
+				<th>Category</th>
+				<th>Account</th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+			</tr>
+		</table>
 	</div>
 	<?php	
 }
@@ -331,16 +418,43 @@ function bestbooks_dashboard_accounting_chartofaccounts() {
 
 function bestbooks_dashboard_accounting_journaltransactions() {
 	?>
+	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
-		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_accounting'); ?>">Accounting</a> - Journal Transactions</h2>
+		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_accounting'); ?>">Accounting</a> - Journal Transactions&nbsp;
+			<input type="button" id="add_transaction" value="Add transaction" class="w3-button w3-blue" />
+		</h2>
 	</div>
 	<?php	
 }
 
 function bestbooks_dashboard_accounting_startingbalances() {
 	?>
+	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_accounting'); ?>">Accounting</a> - Starting Balances</h2>
+		Description: <input type="text" size="80" id="description" value="" /><br/>
+		Date: <input type="date" id="transdate" value="<?php echo date('Y-m-d'); ?>" />
+		<br/>
+		<table class="w3-table w3-block">
+			<tr class="w3-grey">
+				<th>Account</th>
+				<th>Debit</th>
+				<th>Credit</th>
+			</tr>
+			<?php $coa = get_coa_instance(); ?>
+			<?php foreach($coa->account as $name => $type) : ?>
+				<tr>
+					<td><?php echo $name; ?></td>
+					<td><input type="number" id="debit_<?php echo $name;?>" value="0.00" /></td>
+					<td><input type="number" id="credit_<?php echo $name;?>" value="0.00" /></td>
+				</tr>
+			<?php endforeach; ?>
+			<tr>
+				<td>&nbsp;</td>
+				<td align="center"><input type="button" class="w3-button w3-blue" id="save_balances" value="Save" /></td>
+				<td>&nbsp;</td>
+			</tr>
+		</table>
 	</div>
 	<?php	
 }

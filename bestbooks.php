@@ -4,7 +4,7 @@
 Plugin Name: Bestbooks
 Plugin URI: http://wordpress.org/plugins/bestbooks/
 Description: The popular accounting framework
-Version: 2.1.1
+Version: 2.2
 Author: PHK Corporation
 Author URI: http://www.phkcorp.com
 */
@@ -86,7 +86,7 @@ function addBestBooksToManagementPage()
 {
 	bestbooks_dashboard();
     // Add a new submenu under Options:
-    add_options_page('BestBooks', 'BestBooks', 8, 'bestbooks', 'displayBestBooksManagementPage');
+    //add_options_page('BestBooks', 'BestBooks', 8, 'bestbooks', 'displayBestBooksManagementPage');
 }
 
 // Display the admin page.

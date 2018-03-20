@@ -5,8 +5,8 @@ Contributors: phkcorp2005
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9674139
 Tags: shari phk corporation bestbooks accounting application framework sourceforge
 Requires at least: 2.9
-Tested up to: 4.7.2
-Stable tag: 2.1
+Tested up to: 4.9.4
+Stable tag: 2.2
 
 Provides an accounting application framework for wordpress.
 
@@ -111,6 +111,10 @@ Please do not be afraid of asking questions?<br>
 
 
 # Changelog 
+= 2.2 =
+* Made tables network aware
+* Added UI panels for easier management with report generation
+
 = 2.1.1 =
 * Added Dashboard settings form to add new Chart of Accounts 
 * Exposed the Bestbooks chart of accounts as a WordPress taxonomy of bestbooks_coa
