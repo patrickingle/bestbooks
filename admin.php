@@ -204,6 +204,9 @@ function bestbooks_dashboard_sales_customers() {
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Customers&nbsp;
 			<input type="button" class="w3-button w3-blue" id="add-customer" value="Add a Customer" />
+			<center>
+				<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+			</center>
 		</h2>
 	</div>
 	<?php	
@@ -286,30 +289,13 @@ function bestbooks_dashboard_accounting_transactions() {
 			<input type="button" id="add_income" value="Add Income" />
 			<input type="button" id="add_expense" value="Add Expense"  />
 		</h2>
-		<select id="status">
-			<option value="all">All status</option>
-			<option value="verified">Verified</option>
-			<option value="unverified" selected>Unverified</option>
-		</select>
-		<select id="type">
-		</select>
-		<select id="category">
-		</select>
-		<select id="account">
-		</select>
-		From:<input type="date" id="from_date" placeholder="From:" />
-		To:<input type="date" id="to_date" placeholder="To:" />
-		<br/>
 		<table class="w3-table w3-block">
 			<tr class="w3-grey">
-				<th><input type="checkbox"></th>
 				<th>Date</th>
 				<th>Description</th>
 				<th>Amount</th>
-				<th>Category</th>
 				<th>Account</th>
-				<th>&nbsp;</th>
-				<th>&nbsp;</th>
+				<th>Account Type</th>
 			</tr>
 		</table>
 	</div>
@@ -464,6 +450,9 @@ function bestbooks_dashboard_banking() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - Banking</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php	
 }
@@ -472,6 +461,9 @@ function bestbooks_dashboard_payroll() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - Payroll</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php	
 }
@@ -516,6 +508,9 @@ function bestbooks_dashboard_reports_balancesheet() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Balance Sheet</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php
 }
@@ -524,6 +519,9 @@ function bestbooks_dashboard_reports_incomestatement() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Income Statement</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php
 }
@@ -532,6 +530,9 @@ function bestbooks_dashboard_reports_salestaxreport() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Sales Tax Report</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php
 }
@@ -540,6 +541,9 @@ function bestbooks_dashboard_reports_payrollwagetaxreport() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Payroll Wage &amp; Tax Report</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php
 }
@@ -548,6 +552,9 @@ function bestbooks_dashboard_reports_incomebycustomer() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Income by Customer</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php
 }
@@ -556,6 +563,9 @@ function bestbooks_dashboard_reports_agedreceivables() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Aged Receivables</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php
 }
@@ -564,6 +574,9 @@ function bestbooks_dashboard_reports_expensebyvendor() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Expense by Vendor</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php
 }
@@ -572,6 +585,9 @@ function bestbooks_dashboard_reports_agedpayables() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Aged Payables</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php
 }
@@ -580,6 +596,9 @@ function bestbooks_dashboard_reports_general_ledger() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - General Ledger</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php
 }
@@ -588,6 +607,9 @@ function bestbooks_dashboard_reports_account_transactions() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Account Transactions</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php
 }
@@ -596,6 +618,9 @@ function bestbooks_dashboard_reports_trialbalance() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Trial Balance</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php
 }
@@ -604,6 +629,9 @@ function bestbooks_dashboard_reports_gainlossonforeigncurrencyexchange() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Gain/Loss on Foreign Currency Exchange</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php
 }

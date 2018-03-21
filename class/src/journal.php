@@ -23,7 +23,11 @@ class Journal {
   public function inBalance() {
     global $wpdb;
        
-   	$sql = "SELECT SUM(debit)=SUM(credit) FROM Journal";
+    if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
+   	  $sql = "SELECT SUM(debit)=SUM(credit) FROM ".$wpdb->base_prefix."bestbooks_journal";
+    } else {
+      $sql = "SELECT SUM(debit)=SUM(credit) FROM ".$wpdb->prefix."bestbooks_journal";
+    }
    	$result = $wpdb->query($sql);
    	
     if ($result===false) {
