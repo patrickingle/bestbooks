@@ -25,16 +25,16 @@ class Liability extends Ledger {
    function increase($date,$desc,$amount) {
       $balance = parent::getBalance() - $amount;
       parent::setBalance($balance);
-        $journal = new Journal();
-        $journal->add($date,0,$this->name,0.00,$amount);
+        //$journal = new Journal();
+        //$journal->add($date,0,$this->name,0.00,$amount);
       return parent::addCredit($date,$desc,$amount);
    }
    
    function decrease($date,$desc,$amount) {
       $balance = parent::getBalance() + $amount;
       parent::setBalance($balance);
-        $journal = new Journal();
-        $journal->add($date,0,$this->name,$amount,0.00);
+        //$journal = new Journal();
+        //$journal->add($date,0,$this->name,$amount,0.00);
       return parent::addDebit($date,$desc,$amount);
    }
    

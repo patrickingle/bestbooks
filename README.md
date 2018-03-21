@@ -112,8 +112,9 @@ Please do not be afraid of asking questions?<br>
 
 # Changelog 
 = 2.2 =
-* Made tables network aware
+* Made tables network aware and general code fixes
 * Added UI panels for easier management with report generation
+* Added hooks to ease with the integration with the framework from other themes and plugins.
 
 = 2.1.1 =
 * Added Dashboard settings form to add new Chart of Accounts 

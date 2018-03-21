@@ -1,6 +1,6 @@
 <?php
 
-abstract class Ledger extends TAccount {
+class Ledger extends TAccount {
 	var $balance = 0;
 	var $name = null;
 	var $type = null;
@@ -19,7 +19,7 @@ abstract class Ledger extends TAccount {
     	} else {
 			$sql = "SELECT type FROM ".$wpdb->prefix."bestbooks_accounts WHERE name='$this->name'";
 		}
-		$result = $wpdb->query($sql);
+		$result = $wpdb->get_results($sql);
 
 		if (!$result) {
 			throw new BestBooksException("Error: " . $sql);
@@ -27,8 +27,8 @@ abstract class Ledger extends TAccount {
 		if ($wpdb->num_rows == 0) {
 			throw new BestBooksException("Account:" . $this->name . " not found/does not exist");
 		}
-		$wpdb->get_row($sql,$row,0);
-		$this->type = $row[0];
+		//$wpdb->get_row($sql,$row,0);
+		$this->type = $result[0]->type;
 
     	if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
 			//$sql = "SELECT Balance FROM ".$wpdb->base_prefix."bestbooks_ledger WHERE name='$name' ORDER BY id DESC";    		
@@ -37,11 +37,13 @@ abstract class Ledger extends TAccount {
 			//$sql = "SELECT Balance FROM ".$wpdb->prefix."bestbooks_ledger WHERE name='$name' ORDER BY id DESC";    		
 			$sql = "SELECT SUM(debit)-SUM(credit) AS Balance FROM ".$wpdb->prefix."bestbooks_ledger WHERE name='$name'";
     	}
-		$result = $wpdb->query($sql);
-		if ($wpdb->num_rows >= 0) {
-			$wpdb->get_row($sql,$row,0);
-			$this->balance = $row[0];
-		}
+		$result = $wpdb->get_results($sql);
+		//echo '<pre>'; print_r($result); echo '</pre>';
+		$this->balance = number_format($result[0]->Balance, 2);
+		//if ($wpdb->num_rows >= 0) {
+		//	$wpdb->get_row($sql,$row,0);
+		//	$this->balance += $row[0];
+		//}
 	}
 
 	public function getName() {

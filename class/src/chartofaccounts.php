@@ -101,6 +101,23 @@ class ChartOfAccounts {
       return "Account:".$name." already exists";
    }
 
+  function in_use($account) {
+    global $wpdb;
+
+    if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
+      $sql = "SELECT * FROM ".$wpdb->base_prefix."bestbooks_journal WHERE account='$account'";
+    } else {
+      $sql = "SELECT * FROM ".$wpdb->prefix."bestbooks_journal WHERE account='$account'";
+    }
+    $result = $wpdb->query($sql);
+
+    if ($result > 0) {
+      return true;
+    }
+
+    return false;
+  }
+
   function remove($name) {
     global $wpdb;
 

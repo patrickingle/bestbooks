@@ -63,33 +63,42 @@ function bestbooks_dashboard_page() {
         <p>Before Bestbooks, the process was manual and tedious!</p>
         <p>
             Bestbooks allows you to update your accounting books and ledger/journal automatically by
-    using the straightforward API's.
+    using the straightforward API's and hooks.
         </p>
 
         <fieldset class='options'>
             <legend><h2><u>Tips &amp; Techniques</u></h2></legend>
+            <p>Available hooks:</p>
+            <ul>
+            	<li>bestbooks_create_account</li>
+            	<li>bestbooks_add_credit</li>
+            	<li>bestbooks_add_debit</li>
+            	<li>bestbooks_asset</li>
+            	<li>bestbooks_expense</li>
+            	<li>bestbooks_liability</li>
+            	<li>bestbooks_equity</li>
+            	<li>bestbooks_revenue</li>
+            	<li>bestbooks_journal_add</li>
+            	<li>bestbooks_investment</li>
+            	<li>bestbooks_encumber</li>
+            	<li>bestbooks_bankfee</li>
+            	<li>bestbooks_loanpayment</li>
+            	<li>bestbooks_payassetbycheck</li>
+            	<li>bestbooks_payexpensebycheck</li>
+            	<li>bestbooks_payexpensebycard</li>
+            	<li>bestbooks_cardpayment</li>
+            	<li>bestbooks_payment_cash</li>
+            	<li>bestbooks_sales_cash</li>
+            	<li>bestbooks_sales_card</li>
+            	<li>bestbooks_accountreceivable_payment</li>
+            	<li>bestbooks_distribution</li>
+            </ul>
+            <p>Example using the hook:</p>
+            <p>To update the BestBooks ledger when your ecommerce platform has made a successful, just invoke the do_action within your eccommerce platform code as shown below. The ledger will be pdated automatically, hence eliminating the need to double post.</p>
             <code>
-            1. Get an instance of the Chart of Accounts<br/>
-            $coa = get_coa_instance();<br/>
-            <br/>
-            2. Create or open the account classes and add to the Chart of Accounts<br/>
-            global $wpdb<br/>
-            $coa-&gt;add("Cash","Asset");<br/>
-            $coa-&gt;add("Livery","Revenue");<br/>
-            $coa-&gt;add("Gas","Expense");<br/>
-            <br/>
-            3. Assign Ledger entries for each Account - The name must match the name given above<br/>
-            $cash = get_asset_instance("Cash");<br/>
-            $livery = get_revenue_instance("Livery");<br/>
-            $gas = get_expense_instance("Gas");<br/>
-            <br/>
-            4. Add ledger entries<br/>
-            global $wpdb;<br/>
-            $livery-&gt;addcredit("2007-03-31","Taxi Transportation Daily Bookout",137.00);<br/>
-            $cash-&gt;adddebit("2007-03-31","Tax Transportation Daily Bookout",137.00);<br/>
-            $cash-&gt;addcredit("2007-03-31","Gas for Taxi Transportation Daily",37.00);<br/>
-            $gas-&gt;adddebit("2007-03-31","Gas for Taxi Transportation Daily",37.00);<br/>
+            	do_action("bestbooks_sales_card", "2018-03-19", "Credit Card Sale", 10.00);
             </code>
+            <p>Two ledger accounts will be created, if don't already exist for this action. These two new accounts will be <i>Sales</i> and <i>Account Receivable</i>, respectively.</p>
         </fieldset>
 	<fieldset class='options'>
             <legend><h2><u>Wordpress Development</u></h2></legend>
@@ -144,6 +153,10 @@ function bestbooks_dashboard_sales_estimates() {
 			BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Estimates&nbsp;
 			<input type="button" class="w3-button w3-blue" name="add-estimate" id="add-estimate" value="Create an Estimate" />
 		</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
+		<!--
 		<table>
 			<th>Status</th>
 			<th>Date</th>
@@ -154,6 +167,7 @@ function bestbooks_dashboard_sales_estimates() {
 				<td></td><td></td><td></td><td></td><td></td>
 			</tr>
 		</table>
+		-->
 	</div>
 	<?php	
 }
@@ -165,6 +179,9 @@ function bestbooks_dashboard_sales_invoices() {
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Invoices&nbsp;
 			<input type="button" class="w3-button w3-blue" id="add-invoice" value="Create an Invoice" />
 		</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php	
 }
@@ -176,6 +193,9 @@ function bestbooks_dashboard_sales_recurringinvoices() {
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Recurring Invoices&nbsp;
 			<input type="button" class="w3-button w3-blue" id="add-recurring-invoice" value="Create an Recurring Invoice" />
 		</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php	
 }
@@ -185,6 +205,9 @@ function bestbooks_dashboard_sales_payments() {
 	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Payments</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php	
 }
@@ -194,6 +217,9 @@ function bestbooks_dashboard_sales_customerstatements() {
 	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Customer Statements</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php	
 }
@@ -204,10 +230,10 @@ function bestbooks_dashboard_sales_customers() {
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Customers&nbsp;
 			<input type="button" class="w3-button w3-blue" id="add-customer" value="Add a Customer" />
-			<center>
-				<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
-			</center>
 		</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php	
 }
@@ -219,6 +245,9 @@ function bestbooks_dashboard_sales_productsnservices() {
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Products &amp; Services&nbsp;
 			<input type="button" class="w3-button w3-blue" id="add-product-service" value="Add a product or service" />
 		</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php	
 }
@@ -240,6 +269,9 @@ function bestbooks_dashboard_purchases_bills() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_purchases'); ?>">Purchases</a> - Bills</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php	
 }
@@ -248,6 +280,9 @@ function bestbooks_dashboard_purchases_receipts() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_purchases'); ?>">Purchases</a> - Receipts</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php	
 }
@@ -256,6 +291,9 @@ function bestbooks_dashboard_purchases_vendors() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_purchases'); ?>">Purchases</a> - Vendors</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php	
 }
@@ -264,6 +302,9 @@ function bestbooks_dashboard_purchases_productsnservices() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_purchases'); ?>">Purchases</a> - Products &amp; Services</h2>
+		<center>
+			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
+		</center>
 	</div>
 	<?php	
 }
@@ -282,21 +323,38 @@ function bestbooks_dashboard_accounting() {
 }
 
 function bestbooks_dashboard_accounting_transactions() {
+	global $wpdb;
+
+	if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
+		$sql = "SELECT * FROM ".$wpdb->base_prefix."bestbooks_ledger ORDER BY txdate DESC";
+	} else {
+		$sql = "SELECT * FROM ".$wpdb->prefix."bestbooks_ledger ORDER BY txdate DESC";
+	}
+	$transactions = $wpdb->get_results($sql);
 	?>
 	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_accounting'); ?>">Accounting</a> - Transactions&nbsp;
-			<input type="button" id="add_income" value="Add Income" />
-			<input type="button" id="add_expense" value="Add Expense"  />
+			<!--input type="button" id="add_income" value="Add Income" />
+			<input type="button" id="add_expense" value="Add Expense"  /-->
 		</h2>
 		<table class="w3-table w3-block">
 			<tr class="w3-grey">
 				<th>Date</th>
 				<th>Description</th>
-				<th>Amount</th>
 				<th>Account</th>
-				<th>Account Type</th>
+				<th>Debit</th>
+				<th>Credit</th>
 			</tr>
+			<?php foreach($transactions as $transaction) : ?>
+				<tr>
+					<td><?php echo $transaction->txdate; ?></td>
+					<td><?php echo $transaction->note; ?></td>
+					<td><?php echo $transaction->name; ?></td>
+					<td><?php echo $transaction->debit; ?></td>
+					<td><?php echo $transaction->credit; ?></td>
+				</tr>
+			<?php endforeach; ?>
 		</table>
 	</div>
 	<?php	
@@ -322,13 +380,19 @@ function bestbooks_dashboard_accounting_chartofaccounts() {
 		<table class="w3-table w3-block">
 			<tr class="w3-grey">
 				<th>Name</th>
-				<th>Action</th>
+				<th>Type</th>
+				<th>&nbsp;</th>
 			</tr>
 			<?php foreach($coa->account as $name => $type) : ?>
 				<tr>
 					<td><?php echo $name; ?></td>
 					<td>
+						<?php echo $type; ?>
+					</td>
+					<td>
+						<?php if ($coa->in_use($name) === false) : ?>
 						<a href="#" data-id="<?php echo $name; ?>" class="delete-button fa fa-trash">Delete</a>
+						<?php endif; ?>
 					</td>
 				</tr>
 			<?php endforeach; ?>
@@ -403,12 +467,36 @@ function bestbooks_dashboard_accounting_chartofaccounts() {
 }
 
 function bestbooks_dashboard_accounting_journaltransactions() {
+	global $wpdb;
+
+	if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
+		$sql = "SELECT * FROM ".$wpdb->base_prefix."bestbooks_journal ORDER BY txdate DESC";
+	} else {
+		$sql = "SELECT * FROM ".$wpdb->prefix."bestbooks_journal ORDER BY txdate DESC";
+	}
+	$transactions = $wpdb->get_results($sql);
 	?>
 	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_accounting'); ?>">Accounting</a> - Journal Transactions&nbsp;
-			<input type="button" id="add_transaction" value="Add transaction" class="w3-button w3-blue" />
+			<!--input type="button" id="add_transaction" value="Add transaction" class="w3-button w3-blue" /-->
 		</h2>
+		<table class="w3-table w3-block">
+			<tr class="w3-grey">
+				<th>Date</th>
+				<th>Account</th>
+				<th>Debit</th>
+				<th>Credit</th>
+			</tr>
+			<?php foreach($transactions as $transaction) : ?>
+				<tr>
+					<td><?php echo $transaction->txdate; ?></td>
+					<td><?php echo $transaction->account; ?></td>
+					<td><?php echo $transaction->debit; ?></td>
+					<td><?php echo $transaction->credit; ?></td>
+				</tr>
+			<?php endforeach; ?>
+		</table>		
 	</div>
 	<?php	
 }
@@ -429,17 +517,29 @@ function bestbooks_dashboard_accounting_startingbalances() {
 			</tr>
 			<?php $coa = get_coa_instance(); ?>
 			<?php foreach($coa->account as $name => $type) : ?>
+				<?php 
+				$ledger = new Ledger($name, $type);
+				$debit_balance = number_format(0.00, 2);
+				$credit_balance = number_format(0.00, 2);
+				if ($type === "Liability" || $type === "Revenue" || $type === "Expense") {
+					$credit_balance = $ledger->balance;
+				} elseif ($type === "Asset" || $type === "Cash") {
+					$debit_balance = $ledger->balance;
+				}
+				?>
 				<tr>
 					<td><?php echo $name; ?></td>
-					<td><input type="number" id="debit_<?php echo $name;?>" value="0.00" /></td>
-					<td><input type="number" id="credit_<?php echo $name;?>" value="0.00" /></td>
+					<td><input type="number" id="debit_<?php echo $name;?>" value="<?php echo $debit_balance; ?>" /></td>
+					<td><input type="number" id="credit_<?php echo $name;?>" value="<?php echo $credit_balance; ?>" /></td>
 				</tr>
 			<?php endforeach; ?>
+			<!--
 			<tr>
 				<td>&nbsp;</td>
 				<td align="center"><input type="button" class="w3-button w3-blue" id="save_balances" value="Save" /></td>
 				<td>&nbsp;</td>
 			</tr>
+			-->
 		</table>
 	</div>
 	<?php	
