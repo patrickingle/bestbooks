@@ -66,6 +66,7 @@ require_once dirname(__FILE__).'/ajax.php';
 require_once dirname(__FILE__).'/api.php';
 require_once dirname(__FILE__).'/admin.php';
 require_once dirname(__FILE__).'/hooks.php';
+require_once dirname(__FILE__).'/imports.php';
 
 function addBestBooksTables ()
 {
@@ -77,6 +78,10 @@ function addBestBooksTables ()
         Ledger::createTable();
         Journal::alterTable();
 	} // endif of is_admin()
+
+    // Create two custom user role
+    add_role('bestbooks_customer', 'BestBooks Customer', array('read'=>true));
+    add_role('bestbooks_vendor', 'BestBooks Vendor', array('read'=>true));
 }
 
 register_activation_hook(__FILE__,'addBestBooksTables');

@@ -6,6 +6,8 @@ class Journal {
    
   public function add($date,$ref,$account,$debit,$credit) {
    	global $wpdb;
+
+    $date = date('Y-m-d', strtotime($date));
    	
     if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
       $sql = "INSERT INTO ".$wpdb->base_prefix."bestbooks_journal (txdate,ref,account,debit,credit) VALUES ('$date','$ref','$account','$debit','$credit')";

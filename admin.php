@@ -53,6 +53,8 @@ function bestbooks_dashboard() {
 	add_submenu_page( 'bestbooks_reports', 'Trial Balance', 'Trial Balance', 'manage_options', 'bestbooks_reports_trialbalance', 'bestbooks_dashboard_reports_trialbalance');
 	add_submenu_page( 'bestbooks_reports', 'Gain/Loss on foreign Currency Exchange', 'Gain/Loss on foreign Currency Exchange', 'manage_options', 'bestbooks_reports_gainlossonforeigncurrencyexchange', 'bestbooks_dashboard_reports_gainlossonforeigncurrencyexchange');
 
+	/* Settings */
+	add_submenu_page( 'bestbooks', 'Settings', 'Settings', 'manage_options', 'bestbooks_settings', 'bestbooks_dashboard_settings');
 }
 
 function bestbooks_dashboard_page() {
@@ -325,11 +327,29 @@ function bestbooks_dashboard_accounting() {
 function bestbooks_dashboard_accounting_transactions() {
 	global $wpdb;
 
+	$paged = (isset($_GET['paged']) ? $_GET['paged'] : 1);
+
+
 	if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
 		$sql = "SELECT * FROM ".$wpdb->base_prefix."bestbooks_ledger ORDER BY txdate DESC";
+		$totals = "SELECT COUNT(*) as total FROM ".$wpdb->base_prefix."bestbooks_ledger ORDER BY txdate DESC";
 	} else {
 		$sql = "SELECT * FROM ".$wpdb->prefix."bestbooks_ledger ORDER BY txdate DESC";
+		$totals = "SELECT COUNT(*) as total FROM ".$wpdb->prefix."bestbooks_ledger ORDER BY txdate DESC";
 	}
+	$results = $wpdb->get_results($totals);
+	$total = $results[0]->total;
+	$limit = 10;
+	$pages = intval($total / $limit);
+	$next = $pages + $paged;
+	$start = $next;
+	$prev = $paged - $limit;
+	if ($paged == 1) {
+		$start = 0;
+		$prev = 1;
+	} else {
+	}
+	$sql .= " LIMIT $paged,$limit";
 	$transactions = $wpdb->get_results($sql);
 	?>
 	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
@@ -355,6 +375,21 @@ function bestbooks_dashboard_accounting_transactions() {
 					<td><?php echo $transaction->credit; ?></td>
 				</tr>
 			<?php endforeach; ?>
+			<tr>
+				<td><small>Total: <?php echo $total; ?></small></td>
+				<td></td>
+				<td>
+					<small>
+					<a class="w3-button" href="<?php echo admin_url('admin.php?page=bestbooks_accounting_transactions&paged='.$prev); ?>" style="text-decoration: none;">&laquo;</a>
+					<?php for($i=0; $i<$pages; $i++) : ?>
+					<!--<a class="w3-button" href="<?php echo admin_url('admin.php?page=bestbooks_accounting_transactions&paged='.($i+$next+$limit)); ?>" style="text-decoration: none;"><?php echo $i+1; ?></a>-->
+					<?php endfor; ?>
+					<a class="w3-button" href="<?php echo admin_url('admin.php?page=bestbooks_accounting_transactions&paged='.$next); ?>" style="text-decoration: none;">&raquo;</a>
+					</small>
+				</td>
+				<td></td>
+				<td></td>
+			</tr>
 		</table>
 	</div>
 	<?php	
@@ -396,6 +431,13 @@ function bestbooks_dashboard_accounting_chartofaccounts() {
 					</td>
 				</tr>
 			<?php endforeach; ?>
+			<tr>
+				<td colspan="3">
+					<small>
+						<i>Delete is available when the account is NOT in use.</i>
+					</small>
+				</td>
+			</tr>
 		</table>
 	</div>
 	<div id="add-account-dialog" title="Add New Account" style="display:none;">
@@ -469,11 +511,27 @@ function bestbooks_dashboard_accounting_chartofaccounts() {
 function bestbooks_dashboard_accounting_journaltransactions() {
 	global $wpdb;
 
+	$paged = (isset($_GET['paged']) ? $_GET['paged'] : 1);
+
 	if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
 		$sql = "SELECT * FROM ".$wpdb->base_prefix."bestbooks_journal ORDER BY txdate DESC";
+		$totals = "SELECT COUNT(*) AS total FROM ".$wpdb->base_prefix."bestbooks_journal ORDER BY txdate DESC";
 	} else {
 		$sql = "SELECT * FROM ".$wpdb->prefix."bestbooks_journal ORDER BY txdate DESC";
+		$totals = "SELECT COUNT(*) AS total FROM ".$wpdb->prefix."bestbooks_journal ORDER BY txdate DESC";
 	}
+	$results = $wpdb->get_results($totals);
+	$total = $results[0]->total;
+	$limit = 10;
+	$pages = intval($total / $limit);
+	$next = $pages + $paged;
+	$start = $next;
+	$prev = $paged - $limit;
+	if ($paged == 1) {
+		$start = 0;
+		$prev = 1;
+	}
+	$sql .= " LIMIT $paged,$limit";
 	$transactions = $wpdb->get_results($sql);
 	?>
 	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
@@ -496,6 +554,21 @@ function bestbooks_dashboard_accounting_journaltransactions() {
 					<td><?php echo $transaction->credit; ?></td>
 				</tr>
 			<?php endforeach; ?>
+			<tr>
+				<td><small>Total: <?php echo $total; ?></small></td>
+				<td></td>
+				<td>
+					<small>
+					<a class="w3-button" href="<?php echo admin_url('admin.php?page=bestbooks_accounting_journaltransactions&paged='.$prev); ?>" style="text-decoration: none;">&laquo;</a>
+					<?php for($i=0; $i<$pages; $i++) : ?>
+					<!--<a class="w3-button" href="<?php echo admin_url('admin.php?page=bestbooks_accounting_journaltransactions&paged='.($i+$next+$limit)); ?>" style="text-decoration: none;"><?php echo $i+1; ?></a>-->
+					<?php endfor; ?>
+					<a class="w3-button" href="<?php echo admin_url('admin.php?page=bestbooks_accounting_journaltransactions&paged='.$next); ?>" style="text-decoration: none;">&raquo;</a>
+					</small>
+				</td>
+				<td></td>
+				<td></td>
+			</tr>
 		</table>		
 	</div>
 	<?php	
@@ -736,4 +809,24 @@ function bestbooks_dashboard_reports_gainlossonforeigncurrencyexchange() {
 	<?php
 }
 
+function bestbooks_dashboard_settings() {
+	?>
+	<div class="wrap">
+		<h2>BestBooks - Settings</h2>
+		<label for="customer-role">Customer Role</label>
+		<select name="customer-role" id="customer-role">
+			<option value="">Select</option>
+			<?php wp_dropdown_roles('bestbooks_customer'); ?>
+		</select>
+		<br/>
+		<label for="vendor-role">Vendor Role</label>
+		<select name="vendor-role" id="vendor-role">
+			<option value="">Select</option>
+			<?php wp_dropdown_roles('bestbooks_vendor'); ?>
+		</select>
+		<br/>
+		<?php submit_button(); ?>
+	</div>
+	<?php
+}
 ?>
