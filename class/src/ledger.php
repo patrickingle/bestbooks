@@ -56,6 +56,8 @@ class Ledger extends TAccount {
 
 	public function addDebit($date, $desc, $amount) {
 		global $wpdb;
+        
+        $date = date('Y-m-d', strtotime($date));
 		
     	if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
 			$sql = "INSERT INTO ".$wpdb->base_prefix."bestbooks_ledger (name,txdate,note,debit,balance,type) VALUES ('$this->name','$date','$desc','$amount','$this->balance','$this->type')";    		
@@ -78,6 +80,8 @@ class Ledger extends TAccount {
 
 	public function addCredit($date, $desc, $amount) {
 		global $wpdb;
+        
+        $date = date('Y-m-d', strtotime($date));
 		
     	if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
 			$sql = "INSERT INTO ".$wpdb->base_prefix."bestbooks_ledger (name,txdate,note,credit,balance,type) VALUES ('$this->name','$date','$desc','$amount','$this->balance','$this->type')";    		
