@@ -44,54 +44,96 @@ Tables creation from SQL:
 
 These tables are created automatically within the wordpress database
 
-
 -- 
 -- Table structure for table `Accounts`
 -- 
 
-CREATE TABLE `Accounts` (
-  `id` tinyint(4) NOT NULL auto_increment,
-  `date` date NOT NULL default '0000-00-00',
-  `name` varchar(50) NOT NULL default '',
-  `type` varchar(20) NOT NULL default '',
-  `data` varchar(25) NOT NULL default '',
-  `class` varchar(255) NOT NULL default '',
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+For Network-aware configurations, aka WPMU
 
+CREATE TABLE IF NOT EXISTS {$wpdb->base_prefix}bestbooks_accounts (
+    `id` tinyint(4) NOT NULL auto_increment,
+    `txdate` date NOT NULL default '0000-00-00',
+    `name` varchar(50) NOT NULL default '',
+    `type` varchar(20) NOT NULL default '',
+    `data` varchar(25) NOT NULL default '',
+    `class` varchar(255) NOT NULL default '',
+    PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1
+
+For non-Network-aware configurations,
+
+CREATE TABLE IF NOT EXISTS {$wpdb->prefix}bestbooks_accounts (
+    `id` tinyint(4) NOT NULL auto_increment,
+    `txdate` date NOT NULL default '0000-00-00',
+    `name` varchar(50) NOT NULL default '',
+    `type` varchar(20) NOT NULL default '',
+    `data` varchar(25) NOT NULL default '',
+    `class` varchar(255) NOT NULL default '',
+    PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1
+                          
 -- --------------------------------------------------------
 
 -- 
 -- Table structure for table `Journal`
 -- 
 
-CREATE TABLE IF NOT EXISTS `Journal` (
-  `date` date NOT NULL default '0000-00-00',
-  `ref` tinyint(4) NOT NULL default '0',
-  `account` varchar(50) NOT NULL default '',
-  `debit` decimal(10,2) NOT NULL default '0.00',
-  `credit` decimal(10,2) NOT NULL default '0.00'
+For Network-aware configurations, aka WPMU
+
+CREATE TABLE IF NOT EXISTS {$wpdb->base_prefix}bestbooks_journal (
+    `txdate` date NOT NULL default '0000-00-00',
+    `ref` tinyint(4) NOT NULL default '0',
+    `account` varchar(50) NOT NULL default '',
+    `debit` decimal(10,2) NOT NULL default '0.00',
+    `credit` decimal(10,2) NOT NULL default '0.00'
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+For non-Network-aware configurations,
+
+CREATE TABLE IF NOT EXISTS {$wpdb->prefix}bestbooks_journal (
+    `txdate` date NOT NULL default '0000-00-00',
+    `ref` tinyint(4) NOT NULL default '0',
+    `account` varchar(50) NOT NULL default '',
+    `debit` decimal(10,2) NOT NULL default '0.00',
+    `credit` decimal(10,2) NOT NULL default '0.00'
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+                      
 -- --------------------------------------------------------
 
 -- 
 -- Table structure for table `Ledger`
 -- 
+ 
+For Network-aware configurations, aka WPMU
 
-CREATE TABLE IF NOT EXISTS `Ledger` (
-  `id` tinyint(4) NOT NULL auto_increment,
-  `name` varchar(255) NOT NULL default '',
-  `date` date NOT NULL default '0000-00-00',
-  `note` varchar(255) NOT NULL default '',
-  `ref` double NOT NULL default '0',
-  `data` decimal(10,2) NOT NULL default '0.00',
-  `credit` decimal(10,2) NOT NULL default '0.00',
-  `balance` decimal(10,2) NOT NULL default '0.00',
-  `type` varchar(10) NOT NULL default '',
-  PRIMARY KEY  (`id`)
+CREATE TABLE IF NOT EXISTS {$wpdb->base_prefix}bestbooks_ledger (
+    `id` tinyint(4) NOT NULL auto_increment,
+    `name` varchar(255) NOT NULL default '',
+    `txdate` date NOT NULL default '0000-00-00',
+    `note` varchar(255) NOT NULL default '',
+    `ref` double NOT NULL default '0',
+    `debit` decimal(10,2) NOT NULL default '0.00',
+    `credit` decimal(10,2) NOT NULL default '0.00',
+    `balance` decimal(10,2) NOT NULL default '0.00',
+    `type` varchar(10) NOT NULL default '',
+    PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
+For non-Network-aware configurations,
+
+CREATE TABLE IF NOT EXISTS {$wpdb->prefix}bestbooks_ledger (
+    `id` tinyint(4) NOT NULL auto_increment,
+    `name` varchar(255) NOT NULL default '',
+    `txdate` date NOT NULL default '0000-00-00',
+    `note` varchar(255) NOT NULL default '',
+    `ref` double NOT NULL default '0',
+    `debit` decimal(10,2) NOT NULL default '0.00',
+    `credit` decimal(10,2) NOT NULL default '0.00',
+    `balance` decimal(10,2) NOT NULL default '0.00',
+    `type` varchar(10) NOT NULL default '',
+    PRIMARY KEY  (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+                    
 
 Testing:
 -------

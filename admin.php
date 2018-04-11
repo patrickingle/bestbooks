@@ -347,7 +347,6 @@ function bestbooks_dashboard_accounting_transactions() {
 	if ($paged == 1) {
 		$start = 0;
 		$prev = 1;
-	} else {
 	}
 	$sql .= " LIMIT $paged,$limit";
 	$transactions = $wpdb->get_results($sql);
@@ -367,13 +366,13 @@ function bestbooks_dashboard_accounting_transactions() {
 				<th>Credit</th>
 			</tr>
 			<?php foreach($transactions as $transaction) : ?>
-				<tr>
-					<td><?php echo $transaction->txdate; ?></td>
-					<td><?php echo $transaction->note; ?></td>
-					<td><?php echo $transaction->name; ?></td>
-					<td><?php echo $transaction->debit; ?></td>
-					<td><?php echo $transaction->credit; ?></td>
-				</tr>
+            <tr>
+                <td><?php echo $transaction->txdate; ?></td>
+                <td><?php echo $transaction->note; ?></td>
+                <td><?php echo $transaction->name; ?></td>
+                <td><?php echo $transaction->debit; ?></td>
+                <td><?php echo $transaction->credit; ?></td>
+            </tr>
 			<?php endforeach; ?>
 			<tr>
 				<td><small>Total: <?php echo $total; ?></small></td>
@@ -389,7 +388,7 @@ function bestbooks_dashboard_accounting_transactions() {
 				</td>
 				<td></td>
 				<td></td>
-			</tr>
+			</tr>            
 		</table>
 	</div>
 	<?php	
@@ -419,17 +418,17 @@ function bestbooks_dashboard_accounting_chartofaccounts() {
 				<th>&nbsp;</th>
 			</tr>
 			<?php foreach($coa->account as $name => $type) : ?>
-				<tr>
-					<td><?php echo $name; ?></td>
-					<td>
-						<?php echo $type; ?>
-					</td>
-					<td>
-						<?php if ($coa->in_use($name) === false) : ?>
-						<a href="#" data-id="<?php echo $name; ?>" class="delete-button fa fa-trash">Delete</a>
-						<?php endif; ?>
-					</td>
-				</tr>
+            <tr>
+                <td><?php echo $name; ?></td>
+                <td>
+                    <?php echo $type; ?>
+                </td>
+                <td>
+                    <?php if ($coa->in_use($name) === false) : ?>
+                    <a href="#" data-id="<?php echo $name; ?>" class="delete-button fa fa-trash">Delete</a>
+                    <?php endif; ?>
+                </td>
+            </tr>
 			<?php endforeach; ?>
 			<tr>
 				<td colspan="3">
@@ -437,7 +436,7 @@ function bestbooks_dashboard_accounting_chartofaccounts() {
 						<i>Delete is available when the account is NOT in use.</i>
 					</small>
 				</td>
-			</tr>
+			</tr>            
 		</table>
 	</div>
 	<div id="add-account-dialog" title="Add New Account" style="display:none;">
@@ -547,12 +546,12 @@ function bestbooks_dashboard_accounting_journaltransactions() {
 				<th>Credit</th>
 			</tr>
 			<?php foreach($transactions as $transaction) : ?>
-				<tr>
-					<td><?php echo $transaction->txdate; ?></td>
-					<td><?php echo $transaction->account; ?></td>
-					<td><?php echo $transaction->debit; ?></td>
-					<td><?php echo $transaction->credit; ?></td>
-				</tr>
+            <tr>
+                <td><?php echo $transaction->txdate; ?></td>
+                <td><?php echo $transaction->account; ?></td>
+                <td><?php echo $transaction->debit; ?></td>
+                <td><?php echo $transaction->credit; ?></td>
+            </tr>
 			<?php endforeach; ?>
 			<tr>
 				<td><small>Total: <?php echo $total; ?></small></td>
@@ -568,7 +567,7 @@ function bestbooks_dashboard_accounting_journaltransactions() {
 				</td>
 				<td></td>
 				<td></td>
-			</tr>
+			</tr>            
 		</table>		
 	</div>
 	<?php	

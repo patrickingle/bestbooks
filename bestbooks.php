@@ -81,7 +81,7 @@ function addBestBooksTables ()
 
     // Create two custom user role
     add_role('bestbooks_customer', 'BestBooks Customer', array('read'=>true));
-    add_role('bestbooks_vendor', 'BestBooks Vendor', array('read'=>true));
+    add_role('bestbooks_vendor', 'BestBooks Vendor', array('read'=>true));    
 }
 
 register_activation_hook(__FILE__,'addBestBooksTables');
