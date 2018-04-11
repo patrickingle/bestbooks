@@ -347,6 +347,7 @@ function bestbooks_dashboard_accounting_transactions() {
 	if ($paged == 1) {
 		$start = 0;
 		$prev = 1;
+	} else {
 	}
 	$sql .= " LIMIT $paged,$limit";
 	$transactions = $wpdb->get_results($sql);

@@ -155,6 +155,11 @@ Please do not be afraid of asking questions?<br>
 
 
 # Changelog 
+= 2.2.x =
+* Added import of Stripe Transactions CSV
+* Added pagination for Accounting|Transactions
+* Added pagination for Accounting|Journal Transaction
+
 = 2.2 =
 * Made tables network aware and general code fixes
 * Added UI panels for easier management with report generation
