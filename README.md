@@ -19,12 +19,15 @@ Accounting Principles) while providing open database connectivity. At the time,
 accounting frameworks had a proprietary, closed database structure. The original Bestbooks
 for Java has connectivity for multiple databases including MSSQL, DB2, Oracle and MySQL.
 
-BestBooks for Wordpress is a minimal accounting framework.
+BestBooks for Wordpress started as a minimal accounting framework but with inspiration (not copy)
+from waveaccounting.com, BestBooks is becoming a full fledge accounting application.
 
 BestBooks for Wordpress has enough functionality that you can create
 workable scripts that solve accounting problems. You will be able to
 implement many of the accounting problems on the accounting
 learning website, http://www.simplestudies.com
+
+Additional help from the excellent tutorials at https://www.keynotesupport.com/menu-accounting.shtml
 
 
 # Installation 
@@ -39,6 +42,7 @@ To instal this plugin, follow these steps:
 
 # Arbitrary section
 
+More information of the GAAP at http://www.accounting.com/resources/gaap/
 
 Tables creation from SQL:
 ------------------------
@@ -155,10 +159,19 @@ Please do not be afraid of asking questions?<br>
 
 
 # Changelog 
-= 2.2.x =
+= 2.3 =
 * Added import of Stripe Transactions CSV
 * Added pagination for Accounting|Transactions
 * Added pagination for Accounting|Journal Transaction
+* Implemented a simple Income Statement report
+
+= 2.2.2 =
+* Added WooCommerce action filter woocommerce_payment_successful_result
+* Added function checking for hooks
+* Fixed typo's
+
+= 2.2.1 =
+* Fixed execption on plugin activation for undefined function Journal::alterTable()
 
 = 2.2 =
 * Made tables network aware and general code fixes

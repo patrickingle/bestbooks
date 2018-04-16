@@ -96,7 +96,7 @@ function bestbooks_dashboard_page() {
             	<li>bestbooks_distribution</li>
             </ul>
             <p>Example using the hook:</p>
-            <p>To update the BestBooks ledger when your ecommerce platform has made a successful, just invoke the do_action within your eccommerce platform code as shown below. The ledger will be pdated automatically, hence eliminating the need to double post.</p>
+            <p>To update the BestBooks ledger when your ecommerce platform has made a successful payment, just invoke the do_action within your eccommerce platform code as shown below. The ledger will be pdated automatically, hence eliminating the need to double post.</p>
             <code>
             	do_action("bestbooks_sales_card", "2018-03-19", "Credit Card Sale", 10.00);
             </code>
@@ -691,10 +691,65 @@ function bestbooks_dashboard_reports_balancesheet() {
 function bestbooks_dashboard_reports_incomestatement() {
     $coa = new ChartOfAccounts();
     $accounts = $coa->getList();
+    $income_accounts = array();
+    $expense_accounts = array();
+    $total_income = 0.0;
+    $total_expense = 0.0;
+    foreach ($accounts as $name => $type) {
+        if ($type === "Revenue") {
+            $income = new Ledger($name, $type);
+            $balance = $income->getBalance();
+            $income_accounts[$type][] = array(
+                'name' => $name,
+                'type' => $type,
+                'balance' => abs($balance)
+            );
+            $total_income += abs($balance);
+        } elseif ($type === "Expense") {
+            $expense = new Ledger($name, $type);
+            $balance = $expense->getBalance();
+            $expense_accounts[$type][] = array(
+                'name' => $name,
+                'type' => $type,
+                'balance' => abs($balance)
+            );
+            $total_expense += abs($balance);
+        }
+    }
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Income Statement</h2>
-        <pre><?php print_r($accounts); ?></pre>
+        <table>
+            <th colspan="2">Account</th><th>Debit</th><th>Credit</th>
+            <?php foreach ($income_accounts as $type => $accounts) : ?>
+                <tr><td colspan="4"><b><?php echo $type; ?></b></td></tr>
+                <?php foreach ($accounts as $account) : ?>
+                    <tr>
+                        <td></td>
+                        <td><?php echo $account['name']; ?></td>
+                        <td></td>
+                        <td><?php echo $account['balance']; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
+            <?php foreach ($expense_accounts as $type => $accounts) : ?>
+                <tr><td colspan="4"><b><?php echo $type; ?></b></td></tr>
+                <?php foreach ($accounts as $account) : ?>
+                    <tr>
+                        <td></td>
+                        <td><?php echo $account['name']; ?></td>
+                        <td><?php echo $account['balance']; ?></td>
+                        <td></td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
+            <tr>
+                <td></td>
+                <td align="right">Total:</td>
+                <td><?php echo $total_expense; ?></td>
+                <td><?php echo $total_income; ?></td>
+            </tr>
+        </table>
 	</div>
 	<?php
 }
@@ -788,12 +843,47 @@ function bestbooks_dashboard_reports_account_transactions() {
 }
 
 function bestbooks_dashboard_reports_trialbalance() {
+    $coa = new ChartOfAccounts();
+    $accounts = $coa->getList();
+    $total_debit = 0.0;
+    $total_credit = 0.0;
+    $tb_account = array();
+    foreach ($accounts as $name => $type) {
+        if ($type === "Revenue" || $type === "Cash") {
+            $income = new Ledger($name, $type);
+            $balance = $income->getBalance();
+            $tb_accounts[$type][] = array(
+                'name' => $name,
+                'type' => $type,
+                'debit' => abs($balance),
+                'credit' => 0
+            );
+            $total_debit += abs($balance);
+        } elseif ($type === "Expense" || $type === "Liability" || $type === "Asset") {
+            $expense = new Ledger($name, $type);
+            $balance = $expense->getBalance();
+            $tb_accounts[$type][] = array(
+                'name' => $name,
+                'type' => $type,
+                'debit' => 0,
+                'credit' => abs($balance)
+            );
+            $total_credit += abs($balance);
+        }
+    }
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Trial Balance</h2>
-		<center>
-			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
-		</center>
+        <table>
+            <th>Account</th><th>Debit</th><th>Credit</th>
+            
+            <tr>
+                <td align="right">Total</td>
+                <td align="right"><?php echo $total_debit; ?></td>
+                <td align="right"><?php echo $total_credit; ?></td>
+            </tr>
+        </table>
+        <pre><?php print_r($tb_accounts); ?></pre>
 	</div>
 	<?php
 }
@@ -810,23 +900,58 @@ function bestbooks_dashboard_reports_gainlossonforeigncurrencyexchange() {
 }
 
 function bestbooks_dashboard_settings() {
+    if (isset($_POST['submit'])) {
+        update_option("bestbooks_customer", $_POST['customer-role']);
+        update_option("bestbooks_vendor", $_POST['vendor-role']);
+        update_option("bestbooks_timezone", $_POST['timezone']);
+    }
+    $bestbooks_customer = get_option("bestbooks_customer");
+    if (isset($bestbooks_customer) === false) {
+        $bestbooks_customer = "bestbooks_customer";
+    }
+    $bestbooks_vendor = get_option("bestbooks_vendor");
+    if (isset($bestbooks_vendor) === false) {
+        $bestbooks_vendor = "bestbooks_vendor";
+    }
+    $bestbooks_timezone = get_option("bestbooks_timezone");
+    if (isset($bestbooks_timezone) === false) {
+        $bestbooks_timezone = date_default_timezone_get();
+    }
 	?>
-	<div class="wrap">
-		<h2>BestBooks - Settings</h2>
-		<label for="customer-role">Customer Role</label>
-		<select name="customer-role" id="customer-role">
-			<option value="">Select</option>
-			<?php wp_dropdown_roles('bestbooks_customer'); ?>
-		</select>
-		<br/>
-		<label for="vendor-role">Vendor Role</label>
-		<select name="vendor-role" id="vendor-role">
-			<option value="">Select</option>
-			<?php wp_dropdown_roles('bestbooks_vendor'); ?>
-		</select>
-		<br/>
-		<?php submit_button(); ?>
-	</div>
+    <form method="post">
+        <div class="wrap">
+            <h2>BestBooks - Settings</h2>
+            <label for="customer-role">Customer Role</label>
+            <select name="customer-role" id="customer-role">
+                <option value="">Select</option>
+                <?php wp_dropdown_roles($bestbooks_customer); ?>
+            </select>
+            <br/>
+            <label for="vendor-role">Vendor Role</label>
+            <select name="vendor-role" id="vendor-role">
+                <option value="">Select</option>
+                <?php wp_dropdown_roles($bestbooks_vendor); ?>
+            </select>
+            <br/>
+            <label for="timezones">Time Zones</label>
+            <select name="timezone" id="timezone">
+                <option value="">Select</option>
+                <?php
+                $zones = timezone_identifiers_list();
+                $default_tz = $bestbooks_timezone;
+                foreach ($zones as $zone) {
+                    if ($zone === $default_tz) {
+                        echo '<option value="'.$zone.' selected">'.$zone.'</option>';
+                    } else {
+                        echo '<option value="'.$zone.'">'.$zone.'</option>';                    
+                    }
+                }
+                ?>
+            </select>
+            <br/>
+            <?php submit_button(); ?>
+        </div>
+    </form>
 	<?php
 }
 ?>

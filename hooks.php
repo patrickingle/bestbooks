@@ -1,23 +1,29 @@
 <?php
 // hooks.php
 
-add_action('bestbooks_create_account','bestbooks_create_account', 10, 2);
+if (!function_exists('bestbooks_create_account')) {
+	add_action('bestbooks_create_account','bestbooks_create_account', 10, 2);
 
-function bestbooks_create_account($name, $type) {
-    $coa = new ChartOfAccounts();
-    $coa->add($name, $type);
+	function bestbooks_create_account($name, $type) {
+	    $coa = new ChartOfAccounts();
+	    $coa->add($name, $type);
+	}
 }
 
-add_action('bestbooks_add_credit', 'bestbooks_add_credit', 10, 4);
+if (!function_exists('bestbooks_add_credit')) {
+	add_action('bestbooks_add_credit', 'bestbooks_add_credit', 10, 4);
 
-function bestbooks_add_credit($account, $date, $description, $amount) {
-	$account->addcredit($wpdb, $date, $description, $amount);
+	function bestbooks_add_credit($account, $date, $description, $amount) {
+		$account->addcredit($wpdb, $date, $description, $amount);
+	}
 }
 
-add_action('bestbooks_add_debit', 'bestbooks_add_debit', 10, 4);
+if (!function_exists('bestbooks_add_debit')) {
+	add_action('bestbooks_add_debit', 'bestbooks_add_debit', 10, 4);
 
-function bestbooks_add_debit($account, $date, $description, $amount) {
-	$account->adddebit($date, $description, $amount);
+	function bestbooks_add_debit($account, $date, $description, $amount) {
+		$account->adddebit($date, $description, $amount);
+	}
 }
 
 
@@ -35,33 +41,37 @@ function bestbooks_add_debit($account, $date, $description, $amount) {
  * receives debits and credits, but its goal is to maintain a positive balance!
  */
 
-add_action('bestbooks_asset', 'bestbooks_asset', 10, 4);
+if (!function_exists('bestbooks_asset')) {
+	add_action('bestbooks_asset', 'bestbooks_asset', 10, 4);
 
-function bestbooks_asset($account, $txdate, $description, $amount) {
-    $coa = new ChartOfAccounts();
-    $coa->add($account, "Asset");
+	function bestbooks_asset($account, $txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add($account, "Asset");
 
-    $asset = new Asset($account);
+		$asset = new Asset($account);
 
-    if ($amount < 0) {
-    	$asset->decrease($txdate, $description, $amount);
-    } else {
-    	$asset->increase($txdate, $description, $amount);
-    }
+		if ($amount < 0) {
+			$asset->decrease($txdate, $description, $amount);
+		} else {
+			$asset->increase($txdate, $description, $amount);
+		}
+	}
 }
 
-add_action('bestbooks_expense', 'bestbooks_expense', 10, 4);
+if (!function_exists('bestbooks_expense')) {
+	add_action('bestbooks_expense', 'bestbooks_expense', 10, 4);
 
-function bestbooks_expense($account, $txdate, $description, $amount) {
-    $coa = new ChartOfAccounts();
-    $coa->add($account, "Asset");
+	function bestbooks_expense($account, $txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add($account, "Asset");
 
-	$expense = new Expense($account);
+		$expense = new Expense($account);
 
-	if ($amount < 0) {
-		$expense->decrease($txdate, $description, $amount);
-	} else {
-		$expense->increase($txdate, $description, $amount);
+		if ($amount < 0) {
+			$expense->decrease($txdate, $description, $amount);
+		} else {
+			$expense->increase($txdate, $description, $amount);
+		}
 	}
 }
 
@@ -88,60 +98,70 @@ function bestbooks_expense($account, $txdate, $description, $amount) {
  * NEVER put a minus sign on a number you enter into the accounting software.] 
  */
 
-add_action('bestbooks_liability', 'bestbooks_liability', 10, 4);
+if (!function_exists('bestbooks_liability')) {
+	add_action('bestbooks_liability', 'bestbooks_liability', 10, 4);
 
-function bestbooks_liability($account, $txdate, $description, $amount) {
-    $coa = new ChartOfAccounts();
-    $coa->add($account, "Liability");
+	function bestbooks_liability($account, $txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add($account, "Liability");
 
-    $liability = new Liability($account);
-    if ($amount < 0) {
-    	$liability->decrease($txdate, $description, $amount);
-    } else {
-    	$liability->increase($txdate, $description, $amount);
-    }
-}
-
-add_action('bestbooks_equity', 'bestbooks_equity', 10, 4);
-
-function bestbooks_equity($account, $txdate, $description, $amount) {
-    $coa = new ChartOfAccounts();
-    $coa->add($account, "Equity");
-
-    $equity = new Equity($account);
-    if ($amount < 0) {
-    	$equity->increase($txdate, $description, $amount);
-    } else {
-    	$equity->decrease($txdate, $description, $amount);
-    }
-}
-
-add_action('bestbooks_revenue', 'bestbooks_revenue', 10, 4);
-
-function bestbooks_revenue($account, $txdate, $description, $amount) {
-    $coa = new ChartOfAccounts();
-    $coa->add($account, "Revenue");
-
-	$revenue = new Revenue($account);
-	if ($amount < 0) {
-		$revenue->decrease($txdate, $description, $amount);
-	} else {
-		$revenue->increase($txdate, $description, $amount);
+		$liability = new Liability($account);
+		if ($amount < 0) {
+			$liability->decrease($txdate, $description, $amount);
+		} else {
+			$liability->increase($txdate, $description, $amount);
+		}
 	}
 }
 
-add_action('bestbooks_journal_add', 'bestbooks_journal_add', 10, 5);
+if (!function_exists('bestbooks_equity')) {
+	add_action('bestbooks_equity', 'bestbooks_equity', 10, 4);
 
-function bestbooks_journal_add($txdate,$ref,$account,$debit,$credit) {
-	$journal = new Journal();
-	$journal->add($txdate,$ref,$account,$debit,$credit);
+	function bestbooks_equity($account, $txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add($account, "Equity");
+
+		$equity = new Equity($account);
+		if ($amount < 0) {
+			$equity->increase($txdate, $description, $amount);
+		} else {
+			$equity->decrease($txdate, $description, $amount);
+		}
+	}
 }
 
-add_action('bestbooks_journal_inbalance', 'bestbooks_journal_inbalance', 10, 0);
+if (!function_exists('bestbooks_revenue')) {
+	add_action('bestbooks_revenue', 'bestbooks_revenue', 10, 4);
 
-function bestbooks_journal_inbalance() {
-	$journal = new Journal();
-	return $journal->inBalance();
+	function bestbooks_revenue($account, $txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add($account, "Revenue");
+
+		$revenue = new Revenue($account);
+		if ($amount < 0) {
+			$revenue->decrease($txdate, $description, $amount);
+		} else {
+			$revenue->increase($txdate, $description, $amount);
+		}
+	}
+}
+
+if (!function_exists('bestbooks_journal_add')) {
+	add_action('bestbooks_journal_add', 'bestbooks_journal_add', 10, 5);
+
+	function bestbooks_journal_add($txdate,$ref,$account,$debit,$credit) {
+		$journal = new Journal();
+		$journal->add($txdate,$ref,$account,$debit,$credit);
+	}
+}
+
+if (!function_exists('bestbooks_journal_inbalance')) {
+	add_action('bestbooks_journal_inbalance', 'bestbooks_journal_inbalance', 10, 0);
+
+	function bestbooks_journal_inbalance() {
+		$journal = new Journal();
+		return $journal->inBalance();
+	}
 }
 
 /**
@@ -157,18 +177,20 @@ function bestbooks_journal_inbalance() {
  * 
  * Credit Owner’s Equity (increases its balance)
  */
-add_action('bestbooks_investment', 'bestbooks_investment', 10, 3);
+if (!function_exists('bestbooks_investment')) {
+	add_action('bestbooks_investment', 'bestbooks_investment', 10, 3);
 
-function bestbooks_investment($txdate, $description, $amount) {
-	$coa = new ChartOfAccounts();
-	$coa->add('Cash', 'Cash');
-	$coa->add('Owners Equity', 'Equity');
+	function bestbooks_investment($txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add('Cash', 'Cash');
+		$coa->add('Owners Equity', 'Equity');
 
-	$cash = new Cash('Cash');
-	$cash->increase($txdate, $description, $amount);
+		$cash = new Cash('Cash');
+		$cash->increase($txdate, $description, $amount);
 
-	$equity = new Equity('Owners Equity');
-	$equity->increase($txdate, $description, $amount);
+		$equity = new Equity('Owners Equity');
+		$equity->increase($txdate, $description, $amount);
+	}
 }
 
 /**
@@ -186,18 +208,20 @@ function bestbooks_investment($txdate, $description, $amount) {
  * 
  * Credit Loans Payable (increases its balance)
  */
-add_action('bestbooks_encumber', 'bestbooks_encumber', 10, 3);
+if (!function_exists('bestbooks_encumber')) {
+	add_action('bestbooks_encumber', 'bestbooks_encumber', 10, 3);
 
-function bestbooks_encumber($txdate, $description, $amount) {
-	$coa = new ChartOfAccounts();
-	$coa->add('Cash', 'Cash');
-	$coa->add('Loans Payable', 'Liability');
+	function bestbooks_encumber($txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add('Cash', 'Cash');
+		$coa->add('Loans Payable', 'Liability');
 
-	$cash = new Cash('Cash');
-	$cash->increase($txdate, $description, $amount);
+		$cash = new Cash('Cash');
+		$cash->increase($txdate, $description, $amount);
 
-	$liability = new Liability('Loans Payable');
-	$liability->increase($txdate, $description, $amount);	
+		$liability = new Liability('Loans Payable');
+		$liability->increase($txdate, $description, $amount);
+	}
 }
 
 /**
@@ -213,18 +237,20 @@ function bestbooks_encumber($txdate, $description, $amount) {
  *
  * Credit Cash (decreases its balance)
  */
-add_action('bestbooks_bankfee', 'bestbooks_bankfee', 10, 3);
+if (!function_exists('bestbooks_bankfee')) {
+	add_action('bestbooks_bankfee', 'bestbooks_bankfee', 10, 3);
 
-function bestbooks_bankfee($txdate, $description, $amount) {
-	$coa = new ChartOfAccounts();
-	$coa->add('Cash', 'Cash');
-	$coa->add('Bank Service Charges', 'Expense');
+	function bestbooks_bankfee($txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add('Cash', 'Cash');
+		$coa->add('Bank Service Charges', 'Expense');
 
-	$cash = new Cash('Cash');
-	$cash->decrease($txdate, $description, $amount);
+		$cash = new Cash('Cash');
+		$cash->decrease($txdate, $description, $amount);
 
-	$expense = new Expense('Bank Service Charges');
-	$expense->increase($txdate, $description, $amount);
+		$expense = new Expense('Bank Service Charges');
+		$expense->increase($txdate, $description, $amount);
+	}
 }
 
 
@@ -246,22 +272,24 @@ function bestbooks_bankfee($txdate, $description, $amount) {
  *
  * Credit Cash $540 (decreases its balance)
  */
-add_action('bestbooks_loanpayment', 'bestbooks_loanpayment', 10, 4);
+if (!function_exists('bestbooks_loanpayment')) {
+	add_action('bestbooks_loanpayment', 'bestbooks_loanpayment', 10, 4);
 
-function bestbooks_loanpayment($txdate, $description, $amount, $interest) {
-	$coa = new ChartOfAccounts();
-	$coa->add('Cash', 'Cash');
-	$coa->add('Loans Payable', 'Liability');
-	$coa->add('Interest Expense', 'Expense');
+	function bestbooks_loanpayment($txdate, $description, $amount, $interest) {
+		$coa = new ChartOfAccounts();
+		$coa->add('Cash', 'Cash');
+		$coa->add('Loans Payable', 'Liability');
+		$coa->add('Interest Expense', 'Expense');
 
-	$cash = new Cash('Cash');
-	$cash->decrease($txdate, $description, ($amount + $interest));
+		$cash = new Cash('Cash');
+		$cash->decrease($txdate, $description, ($amount + $interest));
 
-	$liability = new Liability('Loans Payable');
-	$liability->decrease($txdate, $description, $amount);
+		$liability = new Liability('Loans Payable');
+		$liability->decrease($txdate, $description, $amount);
 
-	$expense = new Expense('Interest Expense');
-	$expense->increase($txdate, $description, $interest);
+		$expense = new Expense('Interest Expense');
+		$expense->increase($txdate, $description, $interest);
+	}
 }
 
 /**
@@ -282,18 +310,20 @@ function bestbooks_loanpayment($txdate, $description, $amount, $interest) {
  * [Remember: A debit adds a positive number and a credit adds a negative number. But you NEVER put a 
  * minus sign on a number you enter into the accounting software.] 
  */
-add_action('bestbooks_payassetbycheck', 'bestbooks_payassetbycheck', 10, 4);
+if (!function_exists('bestbooks_payassetbycheck')) {
+	add_action('bestbooks_payassetbycheck', 'bestbooks_payassetbycheck', 10, 4);
 
-function bestbooks_payassetbycheck($txdate, $description, $amount, $account) {
-	$coa = new ChartOfAccounts();
-	$coa->add('Cash', 'Cash');
-	$coa->add($account, 'Asset');
+	function bestbooks_payassetbycheck($txdate, $description, $amount, $account) {
+		$coa = new ChartOfAccounts();
+		$coa->add('Cash', 'Cash');
+		$coa->add($account, 'Asset');
 
-	$cash = new Cash('Cash');
-	$cash->decrease($txdate, $description, $amount);
+		$cash = new Cash('Cash');
+		$cash->decrease($txdate, $description, $amount);
 
-	$asset = new Asset($account);
-	$asset->increase($txdate, $description, $amount);
+		$asset = new Asset($account);
+		$asset->increase($txdate, $description, $amount);
+	}
 }
 
 /**
@@ -307,18 +337,20 @@ function bestbooks_payassetbycheck($txdate, $description, $amount, $account) {
  *
  * Credit Cash (decreases its balance)
  */
-add_action('bestbooks_payexpensebycheck', 'bestbooks_payexpensebycheck', 10, 4);
+if (!function_exists('bestbooks_payexpensebycheck')) {
+	add_action('bestbooks_payexpensebycheck', 'bestbooks_payexpensebycheck', 10, 4);
 
-function bestbooks_payexpensebycheck($txdate, $description, $amount, $account) {
-	$coa = new ChartOfAccounts();
-	$coa->add('Cash', 'Cash');
-	$coa->add($account, 'Expense');
+	function bestbooks_payexpensebycheck($txdate, $description, $amount, $account) {
+		$coa = new ChartOfAccounts();
+		$coa->add('Cash', 'Cash');
+		$coa->add($account, 'Expense');
 
-	$cash = new Cash('Cash');
-	$cash->decrease($txdate, $description, $amount);
+		$cash = new Cash('Cash');
+		$cash->decrease($txdate, $description, $amount);
 
-	$expense = new Expense($account);
-	$expense->increase($txdate, $description, $amount);
+		$expense = new Expense($account);
+		$expense->increase($txdate, $description, $amount);
+	}
 }
 
 /**
@@ -334,18 +366,20 @@ function bestbooks_payexpensebycheck($txdate, $description, $amount, $account) {
  *
  * Credit Accounts Payable (increases its balance)
  */
-add_action('bestbooks_payexpensebycard', 'bestbooks_payexpensebycard', 10, 4);
+if (!function_exists('bestbooks_payexpensebycard')) {
+	add_action('bestbooks_payexpensebycard', 'bestbooks_payexpensebycard', 10, 4);
 
-function bestbooks_($txdate, $description, $amount, $account) {
-	$coa = new ChartOfAccounts();
-	$coa->add($account, 'Expense');
-	$coa->add('Accounts Payable', 'Liability');
+	function bestbooks_($txdate, $description, $amount, $account) {
+		$coa = new ChartOfAccounts();
+		$coa->add($account, 'Expense');
+		$coa->add('Accounts Payable', 'Liability');
 
-	$liability = new Liability('Accounts Payable');
-	$liability->increase($txdate, $description, $amount);
+		$liability = new Liability('Accounts Payable');
+		$liability->increase($txdate, $description, $amount);
 
-	$expense = new Expense($account);
-	$expense->increase($txdate, $description, $amount);
+		$expense = new Expense($account);
+		$expense->increase($txdate, $description, $amount);
+	}
 }
 
 
@@ -362,18 +396,20 @@ function bestbooks_($txdate, $description, $amount, $account) {
  *
  * Credit Cash (decrease its balance)
  */
-add_action('bestbooks_cardpayment', 'bestbooks_cardpayment', 10, 3);
+if (!function_exists('bestbooks_cardpayment')) {
+	add_action('bestbooks_cardpayment', 'bestbooks_cardpayment', 10, 3);
 
-function bestbooks_cardpayment($txdate, $description, $amount) {
-	$coa = new ChartOfAccounts();
-	$coa->add('Cash', 'Cash');
-	$coa->add('Accounts Payable', 'Liability');
+	function bestbooks_cardpayment($txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add('Cash', 'Cash');
+		$coa->add('Accounts Payable', 'Liability');
 
-	$cash = new Cash('Cash');
-	$cash->decrease($txdate, $description, $amount);
+		$cash = new Cash('Cash');
+		$cash->decrease($txdate, $description, $amount);
 
-	$liability = new Liability('Accounts Payable');
-	$liability->decrease($txdate, $description, $amount);
+		$liability = new Liability('Accounts Payable');
+		$liability->decrease($txdate, $description, $amount);
+	}
 }
 
 /**
@@ -389,18 +425,20 @@ function bestbooks_cardpayment($txdate, $description, $amount) {
  *
  * Credit Cash (decrease its balance)
  */
-add_action('bestbooks_payment_cash', 'bestbooks_payment_cash', 10, 3);
+if (!function_exists('bestbooks_payment_cash')) {
+	add_action('bestbooks_payment_cash', 'bestbooks_payment_cash', 10, 3);
 
-function bestbooks_payment_cash($txdate, $description, $amount) {
-	$coa = new ChartOfAccounts();
-	$coa->add('Cash', 'Cash');
-	$coa->add('Cost of Goods Sold', 'Expense');
+	function bestbooks_payment_cash($txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add('Cash', 'Cash');
+		$coa->add('Cost of Goods Sold', 'Expense');
 
-	$cash = new Cash('Cash');
-	$cash->decrease($txdate, $description, $amount);
+		$cash = new Cash('Cash');
+		$cash->decrease($txdate, $description, $amount);
 
-	$cogs = new Expense('Cost of Goods Sold');
-	$cogs->increase($txdate, $description, $amount);
+		$cogs = new Expense('Cost of Goods Sold');
+		$cogs->increase($txdate, $description, $amount);
+	}
 }
 
 /**
@@ -416,20 +454,21 @@ function bestbooks_payment_cash($txdate, $description, $amount) {
  * 
  * Credit Sales (increases its balance)
  */
+if (!function_exists('bestbooks_sales_cash')) {
+	add_action('bestbooks_sales_cash', 'bestbooks_sales_cash', 10, 3);
 
-add_action('bestbooks_sales_cash', 'bestbooks_sales_cash', 10, 3);
+	function bestbooks_sales_cash($txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add("Sales", "Revenue");
+		$coa->add("Cash", "Cash");
 
-function bestbooks_sales_cash($txdate, $description, $amount) {
-    $coa = new ChartOfAccounts();
-    $coa->add("Sales", "Revenue");
-    $coa->add("Cash", "Cash");
+		$sales = new Revenue("Sales");
+		$sales->increase($txdate, $description, $amount);
 
-	$sales = new Revenue("Sales");
-	$sales->increase($txdate, $description, $amount);
-
-	$cash = new Cash("Cash");
-	$cash->increase($txdate, $description, $amount);
-} 
+		$cash = new Cash("Cash");
+		$cash->increase($txdate, $description, $amount);
+	}
+}
 
 /**
  * Example 11: Company Makes a Credit Card Sale
@@ -444,19 +483,21 @@ function bestbooks_sales_cash($txdate, $description, $amount) {
  *
  * Credit Sales (increases the balance)
  */
-add_action('bestbooks_sales_card', 'bestbooks_sales_card', 10, 3);
+if (!function_exists('bestbooks_sales_card')) {
+	add_action('bestbooks_sales_card', 'bestbooks_sales_card', 10, 3);
 
-function bestbooks_sales_card($txdate, $description, $amount) {
-    $coa = new ChartOfAccounts();
-    $coa->add("Sales", "Revenue");
-    $coa->add("Account Receivable", "Asset");
+	function bestbooks_sales_card($txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add("Sales", "Revenue");
+		$coa->add("Account Receivable", "Asset");
 
-	$sales = new Revenue("Sales");
-	$sales->increase($txdate, $description, $amount);
+		$sales = new Revenue("Sales");
+		$sales->increase($txdate, $description, $amount);
 
-	$ar = new Asset("Account Receivable");
-	$ar->increase($txdate, $description, $amount);
-} 
+		$ar = new Asset("Account Receivable");
+		$ar->increase($txdate, $description, $amount);
+	}
+}
 
 /**
  * Example 12: Company Receives Payment on an Invoice
@@ -471,19 +512,21 @@ function bestbooks_sales_card($txdate, $description, $amount) {
  * 
  * Credit A/R (decreases the balance)
  */
-add_action('bestbooks_accountreceivable_payment', 'bestbooks_accountreceivable_payment', 10, 3);
+if (!function_exists('bestbooks_accountreceivable_payment')) {
+	add_action('bestbooks_accountreceivable_payment', 'bestbooks_accountreceivable_payment', 10, 3);
 
-function bestbooks_accountreceivable_payment($txdate, $description, $amount) {
-    $coa = new ChartOfAccounts();
-	$coa->add('Cash', 'Cash');
-    $coa->add("Account Receivable", "Asset");
+	function bestbooks_accountreceivable_payment($txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add('Cash', 'Cash');
+		$coa->add("Account Receivable", "Asset");
 
-	$cash = new Cash('Cash');
-	$cash->increase($txdate, $description, $amount);
+		$cash = new Cash('Cash');
+		$cash->increase($txdate, $description, $amount);
 
-	$ar = new Asset("Account Receivable");
-	$ar->decrease($txdate, $description, $amount);
+		$ar = new Asset("Account Receivable");
+		$ar->decrease($txdate, $description, $amount);
 
+	}
 }
 
 /**
@@ -499,19 +542,45 @@ function bestbooks_accountreceivable_payment($txdate, $description, $amount) {
  *
  * Credit Cash (decrease its balance)
  */
-add_action('bestbooks_distribution', 'bestbooks_distribution', 10, 3);
+if (!function_exists('bestbooks_distribution')) {
+	add_action('bestbooks_distribution', 'bestbooks_distribution', 10, 3);
 
-function bestbooks_distribution($txdate, $description, $amount) {
-    $coa = new ChartOfAccounts();
-	$coa->add('Cash', 'Cash');
-	$coa->add('Distribution', 'Equity');
+	function bestbooks_distribution($txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add('Cash', 'Cash');
+		$coa->add('Distribution', 'Equity');
 
-	$cash = new Cash('Cash');
-	$cash->decrease($txdate, $description, $amount);
+		$cash = new Cash('Cash');
+		$cash->decrease($txdate, $description, $amount);
 
-	$equity = new Equity('Distrbution');
-	$equity->increase($txdate, $description, $amount);
+		$equity = new Equity('Distrbution');
+		$equity->increase($txdate, $description, $amount);
 
+	}
+}
+
+/**
+ * woocommerce_payment_successful_result filter
+ *
+ * update BestBooks after a successful payment through WooCommerce
+ *
+ * See: https://docs.woocommerce.com/wc-apidocs/source-class-WC_Checkout.html#808
+ *      https://docs.woocommerce.com/wc-apidocs/class-WC_Order.html
+ */
+if (!function_exists('bestbooks_woocommerce_payment_successful_result')) {
+	add_filter('woocommerce_payment_successful_result', 'bestbooks_woocommerce_payment_successful_result', 10, 2 );
+
+	function bestbooks_woocommerce_payment_successful_result($result, $order_id) {
+		// https://docs.woocommerce.com/wc-apidocs/class-WC_Order.html
+		$order = new WC_Order( $order_id );
+		$txdate = $order->get_date_completed()->__toString();
+		$description = "WooCommerce Order #$order_id at ".$order->get_view_order_url();
+		$amount = $order->get_formatted_order_total();
+
+		bestbooks_sales_card($txdate, $description, $amount);
+
+		return $result;
+	}
 }
 
 ?>

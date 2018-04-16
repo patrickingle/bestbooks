@@ -4,14 +4,14 @@
 Plugin Name: Bestbooks
 Plugin URI: http://wordpress.org/plugins/bestbooks/
 Description: The popular accounting framework
-Version: 2.2
+Version: 2.2.2
 Author: PHK Corporation
 Author URI: http://www.phkcorp.com
 */
 
-/*  
- * Copyright 2009-2017  PHK Corporation  (email : phkcorp2005@gmail.com)
- * 
+/*
+ * Copyright 2009-2018  PHK Corporation  (email : phkcorp2005@gmail.com)
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -62,7 +62,7 @@ $gas->adddebit($mdb,"2007-03-31","Gas for Taxi Transportation Daily",37.00);
 */
 
 require_once dirname(__FILE__).'/vendor/autoload.php';
-require_once dirname(__FILE__).'/lib/phpreport/phpreport.php';
+require_once dirname(__FILE__).'/lib/phpreport/vendor/autoload.php';
 require_once dirname(__FILE__).'/ajax.php';
 require_once dirname(__FILE__).'/api.php';
 require_once dirname(__FILE__).'/admin.php';
@@ -96,6 +96,7 @@ function addBestBooksToManagementPage()
 }
 
 // Display the admin page.
+// DEPRECATED - Original Dashboard Admin Page
 function displayBestBooksManagementPage()
 {
 	global $wpdb;

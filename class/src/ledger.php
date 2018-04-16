@@ -112,13 +112,22 @@ class Ledger extends TAccount {
 	}
 
 	public function getBalance() {
+        global $wpdb;
+        
+    	if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
+			$sql = "SELECT SUM(debit) - SUM(credit) AS Balance FROM ".$wpdb->base_prefix."bestbooks_ledger WHERE name='$this->name'";
+    	} else {
+			$sql = "SELECT SUM(debit) - SUM(credit) AS Balance FROM ".$wpdb->prefix."bestbooks_ledger WHERE name='$this->name'";
+    	}
+		$result = $wpdb->get_results($sql);
+        $this->balance = $result[0]->Balance;
 		return $this->balance;
 	}
 
 	public function setBalance($balance) {
 		$this->balance = $balance;
 	}
-
+    
 	public static function createTable() {
         global $wpdb;
 
