@@ -44,6 +44,7 @@ Tables creation from SQL:
 
 These tables are created automatically within the wordpress database
 
+
 -- 
 -- Table structure for table `Accounts`
 -- 

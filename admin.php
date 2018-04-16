@@ -347,6 +347,7 @@ function bestbooks_dashboard_accounting_transactions() {
 	if ($paged == 1) {
 		$start = 0;
 		$prev = 1;
+	} else {
 	}
 	$sql .= " LIMIT $paged,$limit";
 	$transactions = $wpdb->get_results($sql);
@@ -688,12 +689,12 @@ function bestbooks_dashboard_reports_balancesheet() {
 }
 
 function bestbooks_dashboard_reports_incomestatement() {
+    $coa = new ChartOfAccounts();
+    $accounts = $coa->getList();
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Income Statement</h2>
-		<center>
-			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
-		</center>
+        <pre><?php print_r($accounts); ?></pre>
 	</div>
 	<?php
 }
