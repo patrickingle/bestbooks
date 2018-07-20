@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // hooks.php
 
 if (!function_exists('bestbooks_create_account')) {
@@ -175,20 +175,20 @@ if (!function_exists('bestbooks_journal_inbalance')) {
  *
  * Debit Cash (increase its balance)
  * 
- * Credit Owner’s Equity (increases its balance)
+ * Credit Owner’s Equity|Capital (increases its balance)
  */
 if (!function_exists('bestbooks_investment')) {
-	add_action('bestbooks_investment', 'bestbooks_investment', 10, 3);
+	add_action('bestbooks_investment', 'bestbooks_investment', 10, 4);
 
-	function bestbooks_investment($txdate, $description, $amount) {
+	function bestbooks_investment($txdate, $description, $amount, $equity='Owners Equity') {
 		$coa = new ChartOfAccounts();
 		$coa->add('Cash', 'Cash');
-		$coa->add('Owners Equity', 'Equity');
+		$coa->add($equity, 'Equity');
 
 		$cash = new Cash('Cash');
 		$cash->increase($txdate, $description, $amount);
 
-		$equity = new Equity('Owners Equity');
+		$equity = new Equity($equity);
 		$equity->increase($txdate, $description, $amount);
 	}
 }
