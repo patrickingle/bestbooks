@@ -155,6 +155,9 @@ Please do not be afraid of asking questions?<br>
 
 
 == Changelog ==
+= 2.4 =
+* Replaced phpreports with koolphp for report generation
+
 = 2.3 =
 * Added import of Stripe Transactions CSV
 * Added import of Google Adsense Transactions CSV
