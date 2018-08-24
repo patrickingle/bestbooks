@@ -1,0 +1,63 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "aa9551b09539f868248fb3f5f7e59e5e",
+    "content-hash": "e407b030279d13bff88e6fbb1091e33a",
+    "packages": [
+        {
+            "name": "koolphp/koolreport",
+            "version": "2.78.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/koolphp/koolreport.git",
+                "reference": "f134fe3ad30df88c962c8bf5b9f587784b78d417"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/koolphp/koolreport/zipball/f134fe3ad30df88c962c8bf5b9f587784b78d417",
+                "reference": "f134fe3ad30df88c962c8bf5b9f587784b78d417",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "koolreport/autoload.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "KoolPHP Inc",
+                    "homepage": "https://www.koolphp.net"
+                }
+            ],
+            "description": "An Open Source PHP Reporting Framework for easier and faster report delivery.",
+            "homepage": "https://www.koolreport.com",
+            "keywords": [
+                "PHP Reporting Framework",
+                "PHP Reporting Tools",
+                "charts and graphs",
+                "data processing",
+                "data visualization"
+            ],
+            "time": "2018-07-16 04:47:28"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
