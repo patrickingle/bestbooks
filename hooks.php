@@ -583,4 +583,39 @@ if (!function_exists('bestbooks_woocommerce_payment_successful_result')) {
 	}
 }
 
+/**
+ * Bad Debt Write Off
+ * See explanation at https://www.accountingtools.com/articles/how-to-write-off-a-bad-debt.html
+ * 
+ * A Contra-asset account is an Asset account that will either have a credit (positive) or zero balance.
+ * If a contra-asset account has a debit balance, then it violated the cost principle.
+ * 
+ * $method = provision (aka allowance)|direct
+ */
+if (!function_exists('bestbooks_baddebt_writeoff')) {
+	add_action('bestbooks_baddebtwriteoff', 'bestbooks_baddebt_writeoff', 10, 3);
+
+	function bestbooks_baddebt_writeoff($txdate, $description, $amount, $salestax_amount=0, $method='provision') {
+		$coa = new ChartOfAccounts();
+		$coa->add("Account Receivable", "Asset");
+		$coa->add('Allowance for Doubtful Accounts','Asset'); // by definition is a contra-asset
+		$coa->add('Sales Tax Payable', 'Expense');
+		$coa->add('Bad Debt', 'Expense');
+
+		$ar = new Asset("Account Receivable");
+		$ar->decrease($txdate, $description, $amount);
+
+		if ($salestax_amount > 0) {
+			$salestaxpayable = new Expense("Sales Tax Payable");
+			$salestaxpayable->decrease($txdate, $description, $salestax_amount);
+		}
+
+		if ($method === 'provision') {
+			$baddebt = new Asset("Allowance for Doubtful Accounts");
+		} else {
+			$baddebt = new Expense("Bad Debt");
+		}
+		$expense->increase($txdate, $description, $amount);
+	}
+}
 ?>
