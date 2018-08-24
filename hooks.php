@@ -457,16 +457,22 @@ if (!function_exists('bestbooks_payment_cash')) {
 if (!function_exists('bestbooks_sales_cash')) {
 	add_action('bestbooks_sales_cash', 'bestbooks_sales_cash', 10, 3);
 
-	function bestbooks_sales_cash($txdate, $description, $amount) {
+	function bestbooks_sales_cash($txdate, $description, $amount, $salestax_amount=0.0) {
 		$coa = new ChartOfAccounts();
 		$coa->add("Sales", "Revenue");
 		$coa->add("Cash", "Cash");
+		$coa->add("Sales Tax Payable", "Expense");
 
 		$sales = new Revenue("Sales");
 		$sales->increase($txdate, $description, $amount);
 
 		$cash = new Cash("Cash");
 		$cash->increase($txdate, $description, $amount);
+
+		if ($salestax_amount > 0) {
+			$salestax = new Expense("Sales Tax Payable");
+			$salestax->increase($txdate, $description, $salestax_amount);
+		}
 	}
 }
 
@@ -486,16 +492,22 @@ if (!function_exists('bestbooks_sales_cash')) {
 if (!function_exists('bestbooks_sales_card')) {
 	add_action('bestbooks_sales_card', 'bestbooks_sales_card', 10, 3);
 
-	function bestbooks_sales_card($txdate, $description, $amount) {
+	function bestbooks_sales_card($txdate, $description, $amount, $salestax_amount=0.0) {
 		$coa = new ChartOfAccounts();
 		$coa->add("Sales", "Revenue");
 		$coa->add("Account Receivable", "Asset");
+		$coa->add("Sales Tax Payable", "Expense");
 
 		$sales = new Revenue("Sales");
 		$sales->increase($txdate, $description, $amount);
 
 		$ar = new Asset("Account Receivable");
 		$ar->increase($txdate, $description, $amount);
+
+		if ($salestax_amount > 0) {
+			$salestax = new Expense("Sales Tax Payable");
+			$salestax->increase($txdate, $description, $salestax_amount);
+		}
 	}
 }
 
@@ -525,7 +537,6 @@ if (!function_exists('bestbooks_accountreceivable_payment')) {
 
 		$ar = new Asset("Account Receivable");
 		$ar->decrease($txdate, $description, $amount);
-
 	}
 }
 
