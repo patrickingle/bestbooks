@@ -77,7 +77,7 @@ class Journal {
   }
   
   public static function alterTable() {
-      
+  	// Function to perform any necessary table modifications
   }
    
   public static function dropTable() {

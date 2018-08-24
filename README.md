@@ -6,7 +6,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: shari phk corporation bestbooks accounting application framework sourceforge
 Requires at least: 2.9
 Tested up to: 4.9.4
-Stable tag: 2.2
+Stable tag: 2.3
 
 Provides an accounting application framework for wordpress.
 

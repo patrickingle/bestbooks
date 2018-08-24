@@ -157,6 +157,7 @@ Please do not be afraid of asking questions?<br>
 == Changelog ==
 = 2.3 =
 * Added import of Stripe Transactions CSV
+* Added import of Google Adsense Transactions CSV
 * Added pagination for Accounting|Transactions
 * Added pagination for Accounting|Journal Transaction
 * Implemented a simple Income Statement report

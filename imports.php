@@ -40,7 +40,8 @@ function bestbooks_import_dispatch() {
 		echo '<label for="bbimportfile">File Type</label>';
 		echo '<select name="bbimportfile" id="bbimportfile">';
 		echo '<option value="">Select</option>';
-		echo '<option value="transactions">Stripe Transactions</option>';
+        	echo '<option value="stripe">Stripe Transactions</option>';
+        	echo '<option value="adsense">Google Adsense</option>';
 		echo '</select><br/>';
 
 		wp_import_upload_form( 'admin.php?import=bestbooksimport&amp;step=1' );
@@ -70,7 +71,7 @@ function bestbooks_import_dispatch() {
                 	if (isset($_GET['type'])) {
                 		$filetype = $_GET['type'];
                 		switch ($filetype) {
-                			case 'transactions':
+                			case 'stripe':
                 				{
 				                	$date = $import_data[8];
 				                	$description = $import_data[10];
@@ -94,7 +95,13 @@ function bestbooks_import_dispatch() {
 				                		echo $ex->getMessage().'<br/>';
 				                	}
 				                	echo $date.','.$description.','.$type.','.$amount.','.$fee.'<br/>';
-                				}
+                                }
+                                break;
+                            case 'adsense':
+                                {
+                                    
+                                }
+                                break;
                 		}
                 	}
                 }
