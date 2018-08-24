@@ -62,7 +62,6 @@ $gas->adddebit($mdb,"2007-03-31","Gas for Taxi Transportation Daily",37.00);
 */
 
 require_once dirname(__FILE__).'/vendor/autoload.php';
-require_once dirname(__FILE__).'/lib/phpreport/vendor/autoload.php';
 require_once dirname(__FILE__).'/ajax.php';
 require_once dirname(__FILE__).'/api.php';
 require_once dirname(__FILE__).'/admin.php';
