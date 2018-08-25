@@ -94,6 +94,7 @@ function bestbooks_dashboard_page() {
             	<li>bestbooks_sales_card</li>
             	<li>bestbooks_accountreceivable_payment</li>
             	<li>bestbooks_distribution</li>
+		<li>bestbooks_baddebtwriteoff</li>
             </ul>
             <p>Example using the hook:</p>
             <p>To update the BestBooks ledger when your ecommerce platform has made a successful payment, just invoke the do_action within your eccommerce platform code as shown below. The ledger will be pdated automatically, hence eliminating the need to double post.</p>
@@ -158,18 +159,22 @@ function bestbooks_dashboard_sales_estimates() {
 		<center>
 			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
 		</center>
-		<!--
-		<table>
-			<th>Status</th>
-			<th>Date</th>
-			<th>Number</th>
-			<th>Customer</th>
-			<th>Amount</th>
+		<table class="w3-table">
 			<tr>
-				<td></td><td></td><td></td><td></td><td></td>
+				<th>Status</th>
+				<th>Date</th>
+				<th>Number</th>
+				<th>Customer</th>
+				<th>Amount</th>
+			</tr>
+			<tr>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
 			</tr>
 		</table>
-		-->
 	</div>
 	<?php	
 }
@@ -184,6 +189,22 @@ function bestbooks_dashboard_sales_invoices() {
 		<center>
 			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
 		</center>
+		<table class="w3-table">
+			<tr>
+				<th>Status</th>
+				<th>Date</th>
+				<th>Number</th>
+				<th>Customer</th>
+				<th>Amount</th>
+			</tr>
+			<tr>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+		</table>
 	</div>
 	<?php	
 }
@@ -198,6 +219,22 @@ function bestbooks_dashboard_sales_recurringinvoices() {
 		<center>
 			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
 		</center>
+		<table class="w3-table">
+			<tr>
+				<th>Status</th>
+				<th>Date</th>
+				<th>Number</th>
+				<th>Customer</th>
+				<th>Amount</th>
+			</tr>
+			<tr>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+		</table>
 	</div>
 	<?php	
 }
@@ -210,6 +247,22 @@ function bestbooks_dashboard_sales_payments() {
 		<center>
 			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
 		</center>
+		<table class="w3-table">
+			<tr>
+				<th>Status</th>
+				<th>Date</th>
+				<th>Number</th>
+				<th>Customer</th>
+				<th>Amount</th>
+			</tr>
+			<tr>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+		</table>
 	</div>
 	<?php	
 }
@@ -219,38 +272,260 @@ function bestbooks_dashboard_sales_customerstatements() {
 	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Customer Statements</h2>
-		<center>
-			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
-		</center>
 	</div>
 	<?php	
+    $bestbooks_customer = get_option("bestbooks_customer");
+    if (isset($bestbooks_customer) === false) {
+        $bestbooks_customer = "bestbooks_customer";
+    }
+
+	$customers = get_users(array('role__in'=>array($bestbooks_customer)));
+	?>
+	<form method="post" id="changecustomerform">
+		<input type="hidden" name="formsubmit" value="1" />
+		<label for="customer">Customer</label>
+		<select id="customer" name="customer" class="w3-input" onchange="changeCustomer(this)">
+			<option value="">Select</option>
+		<?php foreach ($customers as $customer) : ?>
+			<option value="<?php echo $customer->ID; ?>"><?php echo $customer->display_name . '[' . $customer->user_email . ']'; ?></option>
+		<?php endforeach; ?>
+		</select>
+	</form>
+	<script type="text/javascript">
+	function changeCustomer(obj) {
+		document.getElementById("changecustomerform").submit();
+	}
+	</script>
+	<?php
 }
 
 function bestbooks_dashboard_sales_customers() {
+    $bestbooks_customer = get_option("bestbooks_customer");
+    if (isset($bestbooks_customer) === false) {
+        $bestbooks_customer = "bestbooks_customer";
+	}
+	
+	$blog_id = get_current_blog_id();
+
+	if (isset($_POST['customer_email'])) {
+		$customer_name = $_POST['customer_name'];
+		$customer_email = $_POST['customer_email'];
+		$customer_billing_address = $_POST['customer_billing_address'];
+		$customer_billing_csv = $_POST['customer_billing_csv'];
+		$customer_shipping_address = $_POST['customer_shipping_address'];
+		$customer_shipping_csv = $_POST['customer_shipping_csv'];
+		$customer_phone = $_POST['customer_phone'];
+		$customer_fax = $_POST['customer_fax'];
+
+		if (($user_id = username_exists($customer_email)) || email_exists($customer_email)) {
+			$user = get_user_by('id', $user_id);
+			$user->display_name = $customer_name;
+			wp_update_user($user);
+			$user->add_role($bestbooks_customer);
+			//add_user_to_blog($blog_id, $user_id, $user->role);
+			update_user_meta($user_id, 'billing_address', $customer_billing_address);
+			update_user_meta($user_id, 'billing_csv', $customer_billing_csv);
+			update_user_meta($user_id, 'shipping_address', $customer_shipping_address);
+			update_user_meta($user_id, 'shipping_csv', $customer_shipping_csv);
+			update_user_meta($user_id, 'phone', $customer_phone);
+			update_user_meta($user_id, 'fax', $customer_fax);
+		} else {
+			$random_password = wp_generate_password(12, false);
+			$user_id = wp_create_user($customer_email, $random_password, $customer_email);
+			if (is_wp_error($user_id)) {
+				$error_string = $user_id->get_error_message();
+   				echo '<div id="message" class="error"><p>' . $error_string . '</p></div>';
+			} else {
+				$user = get_user_by('id', $user_id);
+				$user->display_name = $customer_name;
+				wp_update_user($user);
+				add_user_to_blog($blog_id, $user_id, $bestbooks_customer);
+				update_user_meta($user_id, 'billing_address', $customer_billing_address);
+				update_user_meta($user_id, 'billing_csv', $customer_billing_csv);
+				update_user_meta($user_id, 'shipping_address', $customer_shipping_address);
+				update_user_meta($user_id, 'shipping_csv', $customer_shipping_csv);
+				update_user_meta($user_id, 'phone', $customer_phone);
+				update_user_meta($user_id, 'fax', $customer_fax);
+			}
+		}
+	}
 	?>
 	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Customers&nbsp;
-			<input type="button" class="w3-button w3-blue" id="add-customer" value="Add a Customer" />
+			<input type="button" class="w3-button w3-blue" id="add_customer" value="Add a Customer" />
 		</h2>
-		<center>
-			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
-		</center>
 	</div>
 	<?php	
+
+	$customers = get_users(array('role__in'=>array($bestbooks_customer)));
+	?>
+	<table class="w3-table">
+		<tr>
+			<th>Name</th><th>EMail</th>
+		</tr>
+		<?php foreach($customers as $customer): ?>
+			<tr>
+				<td><?php echo $customer->display_name; ?></td>
+				<td><?php echo $customer->user_email; ?></td>
+				<td>
+				<a href="#" data-id="<?php echo $customer->ID; ?>" class="delete-button fa fa-trash">Delete</a>
+				</td>
+			</tr>
+		<?php endforeach; ?>
+	</table>
+	<div id="add-customer-dialog" title="Add New Customer" style="display:none;">
+		<form method="post" id="addcustomerform">
+		<label for="customer_name">Name</label>
+		<input class="w3-input" type="text" id="customer_name" name="customer_name" value="" required />
+		<label for="customer_email">EMail</label>
+		<input class="w3-input" type="email" id="customer_email" name="customer_email" value="" required />
+		<label for="customer_billing_address">Address [Billing]</label>
+		<input class="w3-input" type="text" id="customer_billing_address" name="customer_billing_address" value="" required />
+		<label for="customer_billing_csv">City, State, Zip [Billing]</label>
+		<input class="w3-input" type="text" id="customer_billing_csv" name="customer_billing_csv" value="" required />
+		<label for="customer_shipping_address">Address [Shipping]</label>
+		<input class="w3-input" type="text" id="customer_shipping_address" name="customer_shipping_address" value="" required />
+		<label for="customer_shipping_csv">City, State, Zip [Shipping]</label>
+		<input class="w3-input" type="text" id="customer_shipping_address" name="customer_shipping_address" value="" required />
+		<label for="customer_phone">Phone</label>
+		<input class="w3-input" type="text" id="customer_phone" name="customer_phone" value="" required />
+		<label for="customer_fax">FAX</label>
+		<input class="w3-input" type="text" id="customer_fax" name="customer_fax" value="" required />
+		<input class="w3-button w3-block w3-black" type="button" id="add_customer_action" name="add_customer_action" value="Add" />
+		</form>
+	</div>
+	<script>
+		jQuery(document).ready(function($){
+			$("#add-customer-dialog").dialog({
+    			autoOpen : false, modal : true, show : "blind", hide : "blind"
+  			});
+			$('#add_customer').bind('click', function(){
+				$('#customer_email').val("");
+				$('#customer_name').val("");
+				$("#add-customer-dialog").dialog("open");
+				return false;
+			});
+			$('#add_customer_action').bind('click', function(){
+				if ($('#customer_email').val() == "") {
+					alert("Missing Customer Email!");
+					return false;
+				}
+				if ($('#customer_name').val() == "") {
+					alert("Missing Customer name");
+					return false;
+				}
+				// submit form
+				document.getElementById("addcustomerform").submit();
+			});
+			$('.delete-button').bind('click', function(){
+				if (confirm("Delete account " + $(this).data('id'))) {
+					// submit form
+				}
+			});
+		});
+	</script>
+	<?php
 }
 
 function bestbooks_dashboard_sales_productsnservices() {
+	if (isset($_POST['prodserv_choice'])) {
+		$choice = $_POST['prodserv_choice'];
+		$name = $_POST['prodserv_name'];
+		$desc = $_POST['prodserv_desc'];
+
+		$taxonomy = 'bestbooks_sales_' . $choice;
+		$term_id = wp_insert_term($name, $taxonomy, array('description' => $desc));
+		if (is_wp_error($term_id)) {
+			$error_string = $term_id->get_error_message();
+			echo '<div id="message" class="error"><p>' . $error_string . '</p></div>';
+		}
+	}
+
+	$products = get_terms('bestbooks_sales_product', array('hide_empty'=>false));
+	$services = get_terms('bestbooks_sales_service', array('hide_empty'=>false));
 	?>
 	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Products &amp; Services&nbsp;
-			<input type="button" class="w3-button w3-blue" id="add-product-service" value="Add a product or service" />
+			<input type="button" class="w3-button w3-blue" id="add_product_service" value="Add a product or service" />
 		</h2>
-		<center>
-			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
-		</center>
+		<fieldset>
+			<legend>Product</legend>
+			<table class="w3-table">
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Action</th>
+				</tr>
+				<?php foreach($products as $product) : ?>
+				<tr>
+					<td><?php echo $product->name; ?></td>
+					<td><?php echo $product->description; ?></td>
+					<td></td>
+				</tr>
+				<?php endforeach; ?>
+			</table>
+		</fieldset>
+		<br/>
+		<fieldset>
+			<legend>Service</legend>
+			<table class="w3-table">
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Action</th>
+				</tr>
+				<?php foreach($services as $service) : ?>
+				<tr>
+					<td><?php echo $service->name; ?></td>
+					<td><?php echo $service->description; ?></td>
+					<td></td>
+				</tr>
+				<?php endforeach; ?>
+			</table>
+		</fieldset>
 	</div>
+	<div id="add-prodserv-dialog" title="Add New Product/Service" style="display:none;">
+		<form method="post" id="addprodservform">
+		<label for="prodserv_choice">Choose</label>
+		<select class="w3-input" name="prodserv_choice" id="prodserv_choice">
+			<option value="product">Product</option>
+			<option value="service">Service</option>
+		</select>
+		<label for="prodserv_name">Name</label>
+		<input type="text" id="prodserv_name" name="prodserv_name" class="w3-input" value="" required />
+		<label for="prodserv_desc">Description</label>
+		<input type="text" id="prodserv_desc" name="prodserv_desc" class="w3-input" value="" required />
+		<input type="button" id="add_prodserv_action" name="add_prodserv_action" value="Add" />
+		</form>
+	</div>
+	<script>
+		jQuery(document).ready(function($){
+			$("#add-prodserv-dialog").dialog({
+    			autoOpen : false, modal : true, show : "blind", hide : "blind"
+  			});
+			$('#add_product_service').bind('click', function(){
+				$('#prodserv_name').val("");
+				$('#prodserv_desc').val("");
+				$("#add-prodserv-dialog").dialog("open");
+				return false;
+			});
+			$('#add_prodserv_action').bind('click', function(){
+				// submit form
+				document.getElementById("addprodservform").submit();
+			});
+			$('.delete-button').bind('click', function(){
+				if (confirm("Delete account " + $(this).data('id'))) {
+					// submit form
+				}
+			});
+		});
+	</script>
 	<?php	
 }
 
@@ -269,8 +544,13 @@ function bestbooks_dashboard_purchases() {
 
 function bestbooks_dashboard_purchases_bills() {
 	?>
+	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
-		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_purchases'); ?>">Purchases</a> - Bills</h2>
+		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_purchases'); ?>">Purchases</a> - Bills
+			<input type="button" class="w3-button w3-blue" id="add_bill" value="Add a Bill" />
+		</h2>
 		<center>
 			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
 		</center>
@@ -278,36 +558,330 @@ function bestbooks_dashboard_purchases_bills() {
 	<?php	
 }
 
+/**
+ * Tesseract is available directly from many Linux distributions. 
+ * The package is generally called 'tesseract' or 'tesseract-ocr' - 
+ * search your distribution's repositories to find it. 
+ * Thus you can install Tesseract 4.x and it's developer tools on Ubuntu 18.x bionic by simply running:
+ * 
+ * 		sudo apt install tesseract-ocr
+ * 		sudo apt install libtesseract-dev
+ * 
+ * https://github.com/tesseract-ocr/tesseract/wiki
+ * 
+ */
 function bestbooks_dashboard_purchases_receipts() {
+	$text = '';
+	if (isset($_POST['add_receipt'])) {
+		// These files need to be included as dependencies when on the front end.
+		require_once( ABSPATH . 'wp-admin/includes/image.php' );
+		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		require_once( ABSPATH . 'wp-admin/includes/media.php' );
+
+		$post_id = wp_insert_post(
+			array(
+				'post_type' => 'bestbooks_receipt',
+				'post_title' => $_FILES['receipt']['name'],
+				'post_content' => json_encode(array($_POST,$_FILES)),
+				'post_status' => 'publish'
+			)
+		);
+
+		if (is_wp_error($post_id)) {
+			$error_string = $post_id->get_error_message();
+			echo '<div id="message" class="error"><p>' . $error_string . '</p></div>';
+		} else {
+			$attachment_id = media_handle_upload('receipt', $post_id);
+			if (is_wp_error($attachment_id)) {
+				$error_string = $post_id->get_error_message();
+				echo '<div id="message" class="error"><p>' . $error_string . '</p></div>';
+			} else {
+				// successful upload
+				$attachment = get_post($attachment_id);
+
+				//use Ddeboer\Tesseract\Tesseract;
+				//$tesseract = new Ddeboer\Tesseract\Tesseract();
+				$text = $attachment->guid;
+				update_post_meta($post_id, 'bestbooks_status', 'uploaded');
+			}
+		}
+	}
+	$receipts = get_posts(
+		array(
+			'post_type' => 'bestbooks_receipt',
+			'post_status' => 'publish',
+			'posts_per_page' => -1
+		)
+	);
 	?>
+	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
-		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_purchases'); ?>">Purchases</a> - Receipts</h2>
-		<center>
-			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
-		</center>
+		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_purchases'); ?>">Purchases</a> - Receipts
+		</h2>
+		<form method="post" enctype="multipart/form-data">
+			<label for="receipt">Receipt Filename</label>
+			<input type="file" class="w3-input w3-block" name="receipt" id="receipt" />
+			<?php wp_nonce_field('receipt_upload', 'receipt_upload_nonce'); ?>
+			<input type="submit" class="w3-button w3-block w3-blue" id="add_receipt" name="add_receipt" value="Upload Receipt" />
+		</form>
+		<table class="w3-table">
+			<tr>
+				<th>Status</th>
+				<th>Image</th>
+				<th>Receipt</th>
+				<th>Date</th>
+				<th>Action</th>
+			</tr>
+			<?php foreach($receipts as $receipt) : ?>
+				<?php
+				$args = array(
+					'post_type' => 'attachment', 
+					'posts_per_page' => 1, 
+					'post_status' =>'any', 
+					'post_parent' => $post->ID
+				); 
+				$attachment = get_posts($args);
+				$receipt->image_url = $attachment[0]->guid;
+				/**
+				 * Status: uploaded, processing, ready, done
+				 */
+				?>
+				<tr>
+					<td><?php echo isset(get_post_meta($receipt->ID,'bestbooks_status')[0]) ? get_post_meta($receipt->ID,'bestbooks_status')[0] : 'uploaded'; ?></td>
+					<td><img src="<?php echo $receipt->image_url; ?>" width="100" height="100" /></td>
+					<td><?php echo $receipt->post_title; ?></td>
+					<td><?php echo $receipt->post_date; ?></td>
+					<td>
+						<select class="w3-input" onchange="">
+							<option value="">Select</option>
+							<option value="delete">Delete</option>
+						</select>
+					</td>
+				</tr>
+			<?php endforeach; ?>
+		</table>
 	</div>
 	<?php	
 }
 
 function bestbooks_dashboard_purchases_vendors() {
+    $bestbooks_vendor = get_option("bestbooks_vendor");
+    if (isset($bestbooks_vendor) === false) {
+        $bestbooks_vendor = "bestbooks_vendor";
+	}
+	
+	$blog_id = get_current_blog_id();
+
+	if (isset($_POST['vendor_email'])) {
+		$vendor_name = $_POST['vendor_name'];
+		$vendor_email = $_POST['vendor_email'];
+		$vendor_address = $_POST['vendor_address'];
+		$vendor_csv = $_POST['vendor_csv'];
+		$vendor_phone = $_POST['vendor_phone'];
+		$vendor_fax = $_POST['vendor_fax'];
+
+		if (($user_id = username_exists($vendor_email)) || email_exists($vendor_email)) {
+			$user = get_user_by('id', $user_id);
+			$user->display_name = $vendor_name;
+			wp_update_user($user);
+			$user->add_role($bestbooks_vendor);
+			//add_user_to_blog($blog_id, $user_id, $user->role);
+			update_user_meta($user_id, 'address', $vendor_address);
+			update_user_meta($user_id, 'csv', $vendor_csv);
+			update_user_meta($user_id, 'phone', $vendor_phone);
+			update_user_meta($user_id, 'fax', $vendor_fax);
+		} else {
+			$random_password = wp_generate_password(12, false);
+			$user_id = wp_create_user($vendor_email, $random_password, $vendor_email);
+			if (is_wp_error($user_id)) {
+				$error_string = $user_id->get_error_message();
+   				echo '<div id="message" class="error"><p>' . $error_string . '</p></div>';
+			} else {
+				$user = get_user_by('id', $user_id);
+				$user->display_name = $vendor_name;
+				wp_update_user($user);
+				add_user_to_blog($blog_id, $user_id, $bestbooks_vendor);
+				update_user_meta($user_id, 'address', $vendor_address);
+				update_user_meta($user_id, 'csv', $vendor_csv);
+				update_user_meta($user_id, 'phone', $vendor_phone);
+				update_user_meta($user_id, 'fax', $vendor_fax);
+			}
+		}
+	}
 	?>
+	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
-		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_purchases'); ?>">Purchases</a> - Vendors</h2>
-		<center>
-			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
-		</center>
+		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_purchases'); ?>">Purchases</a> - Vendors
+			<input type="button" class="w3-button w3-blue" id="add_vendor" value="Add a Vendor" />
+		</h2>
 	</div>
-	<?php	
+	<?php 
+	$vendors = get_users(array('role__in'=>array($bestbooks_vendor)));
+	?>
+	<table class="w3-table">
+		<tr>
+			<th>Name</th><th>EMail</th>
+		</tr>
+		<?php foreach($vendors as $vendor): ?>
+			<tr>
+				<td><?php echo $vendor->display_name; ?></td>
+				<td><?php echo $vendor->user_email; ?></td>
+				<td>
+				<a href="#" data-id="<?php echo $vendor->ID; ?>" class="delete-button fa fa-trash">Delete</a>
+				</td>
+			</tr>
+		<?php endforeach; ?>
+	</table>
+	<div id="add-vendor-dialog" title="Add New Vendor" style="display:none;">
+		<form method="post" id="addvendorform">
+		<label for="vendor_name">Name</label>
+		<input class="w3-input" type="text" id="vendor_name" name="vendor_name" value="" required />
+		<label for="vendor_email">EMail</label>
+		<input class="w3-input" type="email" id="vendor_email" name="vendor_email" value="" required />
+		<label for="vendor_address">Address [Billing]</label>
+		<input class="w3-input" type="text" id="vendor_address" name="vendor_address" value="" required />
+		<label for="vendor_csv">City, State, Zip [Billing]</label>
+		<input class="w3-input" type="text" id="vendor_csv" name="vendor_csv" value="" required />
+		<label for="vendor_phone">Phone</label>
+		<input class="w3-input" type="text" id="vendor_phone" name="vendor_phone" value="" required />
+		<label for="vendor_fax">FAX</label>
+		<input class="w3-input" type="text" id="vendor_fax" name="vendor_fax" value="" required />
+		<input class="w3-button w3-block w3-black" type="button" id="add_vendor_action" name="add_vendor_action" value="Add" />
+		</form>
+	</div>
+	<script>
+		jQuery(document).ready(function($){
+			$("#add-vendor-dialog").dialog({
+    			autoOpen : false, modal : true, show : "blind", hide : "blind"
+  			});
+			$('#add_vendor').bind('click', function(){
+				$('#vendor_email').val("");
+				$('#vendor_name').val("");
+				$("#add-vendor-dialog").dialog("open");
+				return false;
+			});
+			$('#add_vendor_action').bind('click', function(){
+				if ($('#vendor_email').val() == "") {
+					alert("Missing Vendor Email!");
+					return false;
+				}
+				if ($('#vendor_name').val() == "") {
+					alert("Missing Vendor name");
+					return false;
+				}
+				// submit form
+				document.getElementById("addvendorform").submit();
+			});
+			$('.delete-button').bind('click', function(){
+				if (confirm("Delete account " + $(this).data('id'))) {
+					// submit form
+				}
+			});
+		});
+	</script>
+	<?php
 }
 
 function bestbooks_dashboard_purchases_productsnservices() {
+	if (isset($_POST['prodserv_choice'])) {
+		$choice = $_POST['prodserv_choice'];
+		$name = $_POST['prodserv_name'];
+		$desc = $_POST['prodserv_desc'];
+
+		$taxonomy = 'bestbooks_purchase_' . $choice;
+		$term_id = wp_insert_term($name, $taxonomy, array('description' => $desc));
+		if (is_wp_error($term_id)) {
+			$error_string = $term_id->get_error_message();
+			echo '<div id="message" class="error"><p>' . $error_string . '</p></div>';
+		}
+	}
+
+	$products = get_terms('bestbooks_purchase_product', array('hide_empty'=>false));
+	$services = get_terms('bestbooks_purchase_service', array('hide_empty'=>false));
 	?>
+	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
-		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_purchases'); ?>">Purchases</a> - Products &amp; Services</h2>
-		<center>
-			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
-		</center>
+		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_purchases'); ?>">Purchases</a> - Products &amp; Services
+			<input type="button" class="w3-button w3-blue" id="add_product_service" value="Add a product or service" />
+		</h2>
+		<fieldset>
+			<legend>Product</legend>
+			<table class="w3-table">
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Action</th>
+				</tr>
+				<?php foreach($products as $product) : ?>
+				<tr>
+					<td><?php echo $product->name; ?></td>
+					<td><?php echo $product->description; ?></td>
+					<td></td>
+				</tr>
+				<?php endforeach; ?>
+			</table>
+		</fieldset>
+		<br/>
+		<fieldset>
+			<legend>Service</legend>
+			<table class="w3-table">
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Action</th>
+				</tr>
+				<?php foreach($services as $service) : ?>
+				<tr>
+					<td><?php echo $service->name; ?></td>
+					<td><?php echo $service->description; ?></td>
+					<td></td>
+				</tr>
+				<?php endforeach; ?>
+			</table>
+		</fieldset>
 	</div>
+	<div id="add-prodserv-dialog" title="Add New Product/Service" style="display:none;">
+		<form method="post" id="addprodservform">
+		<label for="prodserv_choice">Choose</label>
+		<select class="w3-input" name="prodserv_choice" id="prodserv_choice">
+			<option value="product">Product</option>
+			<option value="service">Service</option>
+		</select>
+		<label for="prodserv_name">Name</label>
+		<input type="text" id="prodserv_name" name="prodserv_name" class="w3-input" value="" required />
+		<label for="prodserv_desc">Description</label>
+		<input type="text" id="prodserv_desc" name="prodserv_desc" class="w3-input" value="" required />
+		<input type="button" id="add_prodserv_action" name="add_prodserv_action" value="Add" />
+		</form>
+	</div>
+	<script>
+		jQuery(document).ready(function($){
+			$("#add-prodserv-dialog").dialog({
+    			autoOpen : false, modal : true, show : "blind", hide : "blind"
+  			});
+			$('#add_product_service').bind('click', function(){
+				$('#prodserv_name').val("");
+				$('#prodserv_desc').val("");
+				$("#add-prodserv-dialog").dialog("open");
+				return false;
+			});
+			$('#add_prodserv_action').bind('click', function(){
+				// submit form
+				document.getElementById("addprodservform").submit();
+			});
+			$('.delete-button').bind('click', function(){
+				if (confirm("Delete account " + $(this).data('id'))) {
+					// submit form
+				}
+			});
+		});
+	</script>
 	<?php	
 }
 
@@ -451,7 +1025,7 @@ function bestbooks_dashboard_accounting_chartofaccounts() {
 			<?php endforeach; ?>
 		</select>
 		<input type="button" id="add_account_action" name="add_account_action" value="Add" />
-	</div>		
+	</div>
 	<script>
 		jQuery(document).ready(function($){
 			$("#add-account-dialog").dialog({
@@ -620,24 +1194,255 @@ function bestbooks_dashboard_accounting_startingbalances() {
 
 
 function bestbooks_dashboard_banking() {
+	$coa = get_coa_instance();
 	?>
+	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - Banking</h2>
-		<center>
-			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
-		</center>
+		<?php foreach($coa->account as $name => $type) : ?>
+			<?php if ($type === 'Bank') : ?>
+				<fieldset><legend><?php echo $name; ?></legend>
+					<table class="w3-table">
+						<tr>
+							<th>Number</th>
+							<th>Date</th>
+							<th>Description</th>
+							<th>C</th>
+							<th>Debit</th>
+							<th>Credit</th>
+							<th>Balance</th>
+						</tr>
+						<?php $bank = new Bank($name); ?>
+						<?php $transactions = $bank->transactions(); ?>
+						<?php foreach($transactions as $transaction) : ?>
+							<tr>
+								<td><?php echo $transaction->id; ?></td>
+								<td><?php echo $transaction->txdate; ?></td>
+								<td><?php echo $transaction->note; ?></td>
+								<td></td>
+								<td><?php echo $transaction->debit; ?></td>
+								<td><?php echo $transaction->credit; ?></td>
+								<td><?php echo $transaction->balance; ?></td>
+							</tr>
+						<?php endforeach; ?>
+					</table>
+				</fieldset>
+			<?php endif; ?>
+		<?php endforeach; ?>
 	</div>
 	<?php	
 }
 
 function bestbooks_dashboard_payroll() {
+	if (isset($_POST['pay_employee_action'])) {
+		$employee_no = $_POST['employee_no'];
+		$fullname = $_POST['fullname'];
+		$email = $_POST['email'];
+		$dept = $_POST['dept'];
+		$position = $_POST['position'];
+		$address = $_POST['address'];
+		$phoneno = $_POST['phoneno'];
+
+		$blog_id = get_current_blog_id();
+
+		if (($user_id = username_exists($email)) || email_exists($email)) {
+			$user = get_user_by('id', $user_id);
+			$user->display_name = $fullname;
+			wp_update_user($user);
+			$user->add_role("bestbooks_employee");
+			//add_user_to_blog($blog_id, $user_id, $user->role);
+			update_user_meta($user_id, 'address', $address);
+			update_user_meta($user_id, 'dept', $dept);
+			update_user_meta($user_id, 'phone', $phoneno);
+			update_user_meta($user_id, 'position', $position);
+			update_user_meta($user_id, 'employee_no', $employee_no);
+		} else {
+			$random_password = wp_generate_password(12, false);
+			$user_id = wp_create_user($vendor_email, $random_password, $vendor_email);
+			if (is_wp_error($user_id)) {
+				$error_string = $user_id->get_error_message();
+   				echo '<div id="message" class="error"><p>' . $error_string . '</p></div>';
+			} else {
+				$user = get_user_by('id', $user_id);
+				$user->display_name = $fullname;
+				wp_update_user($user);
+				add_user_to_blog($blog_id, $user_id, 'bestbooks_employee');
+				update_user_meta($user_id, 'address', $address);
+				update_user_meta($user_id, 'dept', $dept);
+				update_user_meta($user_id, 'phone', $phoneno);
+				update_user_meta($user_id, 'position', $position);
+				update_user_meta($user_id, 'employee_no', $employee_no);
+			}
+		}		
+	}
+	$employee_no = 'BBE-'.date('YmdHis');
+
+	$employees = array();
+	$_employees = get_users(
+		array(
+			'role__in' => array('bestbooks_employee'),
+			'fields' => 'all'
+		)
+	);
+	foreach($_employees as $employee) {
+		$employee->metadata = get_user_meta($employee->ID);
+		$employees[] = $employee;
+	}
 	?>
+	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
-		<h2>BestBooks - Payroll</h2>
-		<center>
-			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
-		</center>
+		<h2>BestBooks - Payroll
+		<button class="w3-button w3-blue" id="add_employee">Add New Employee</button>
+		<button class="w3-button w3-green" id="pay_employee">Pay Employee</button>
+		</h2>
+		<fieldset>
+			<legend>Employee(s)</legend>
+			<table class="w3-table w3-striped">
+				<tr>
+					<th>Employee No.</th>
+					<th>Name</th>
+					<th>Dept</th>
+					<th>Position</th>
+					<th>Address</th>
+					<th>Phone No</th>
+					<th>Hired</th>
+					<th>Action</th>
+				</tr>
+				<?php foreach($employees as $employee) : ?>
+				<tr>
+					<td><?php echo $employee->metadata['employee_no'][0]; ?></td>
+					<td><?php echo $employee->display_name; ?></td>
+					<td><?php echo $employee->metadata['dept'][0]; ?></td>
+					<td><?php echo $employee->metadata['position'][0]; ?></td>
+					<td><?php echo $employee->metadata['address'][0]; ?></td>
+					<td><?php echo $employee->metadata['phone'][0]; ?></td>
+					<td><?php echo $employee->user_registered; ?></td>
+					<td>
+					<select class="w3-input" onchange="employeeAction(this)" data-id="<?php echo $employee->ID; ?>">
+						<option value="">Select</option>
+						<option value="payrecords">View Pay Records</option>
+						<option value="delete">Delete</option>
+					</select>
+					</td>
+				</tr>
+				<?php endforeach; ?>
+			</table>
+		</fieldset>	
+		<fieldset>
+			<legend>Payment Records</legend>
+			<label class="w3-block">Employee</label>
+			<input type="text" class="w3-input w3-block w3-grey" id="payrecords-empname" name="payrecords-empname" placeholder="Employee Name" readonly>
+			<table class="w3-table w3-striped">
+				<tr>
+					<th>Worked Days</th>
+					<th>Absent Days</th>
+					<th>Allowance Fees</th>
+					<th>Overtime Fees</th>
+					<th>Tax Rate</th>
+					<th>Salary Fees</th>
+					<th>Recorded By</th>
+					<th>Date</th>
+				</tr>		
+			</table>
+		</fieldset>
 	</div>
+	<div id="add-employee-dialog" title="Add New Employee" style="display:none;">
+		<form method="post" id="insert">
+        	<label for="employee_no">Employee No</label>
+            <input type="text" name="employee_no" id="employee_no" class="w3-input w3-grey" placeholder="Employee No" value="<?php echo $employee_no; ?>" readonly>
+            <label for="fullname">Full Name</label>
+            <input type="text" name="fullname" id="fullname" class="w3-input" placeholder="Full Name" required>
+			<label for="email">Email</label>
+			<input type="email" name="email" id="email" class="w3-input" placeholder="EMail" required>
+			<label for="dept">Department</label>
+            <input type="text" name="dept" id="dept" class="w3-input" placeholder="Department" required>
+			<label for="position">Position</label>
+            <input type="text" name="position" id="position" class="w3-input" placeholder="Role" required>
+			<label for="address">Address</label>
+			<textarea name="address" id="address" class="w3-input" placeholder="Address" required></textarea>
+			<label for="phoneno">Telephone No</label>
+			<input type="text" name="phoneno" id="phoneno" class="w3-input" placeholder="Phone No" required>
+			<button type="submit" name="pay_employee_action" id="pay_employee_action" class="w3-button w3-block w3-black">Add</button>
+		</form>
+	</div>
+	<div id="pay-employee-dialog" title="Pay Employee" style="display:none;">
+		<form method="post" id="insert">
+            <table class="w3-table">
+            	<label for="employee_no">Choose Employee</label>
+                <select class="w3-input" name="employee_no" id="employee_no">
+					<option value="">Select</option>
+				<?php foreach($employees as $employee) : ?>
+					<option value="<?php echo $employee->ID; ?>"><?php echo $employee->display_name . '[' . $employee->user_email . ']'; ?></option>
+				<?php endforeach; ?>
+                </select>
+                <label for="worked_days">Worked Days</label>
+                <input type="number" name="worked_days" id="worked_days" class="w3-input" placeholder="Worked Days" required>
+                <label for="exception">Days Absent At Work</label>
+                <input type="number" name="exception" id="exception" class="w3-input" placeholder="Days Absent">
+                <label for="overtime">Over Time Fees</label>
+                <input type="number" name="overtime" id="overtime" class="w3-input" placeholder="Over Time" >
+                <label for="allowance">Allowance Fees</label>
+                <input type="number" name="allowance" id="allowance" class="w3-input" placeholder="Allowance Fees" >
+                <label for="salary">Salary</label>
+                <input type="number" name="salary" id="salary" class="w3-input" placeholder="Staff Salary" required>
+                <label for="tax">Tax Rate</label>
+                <input type="text" name="tax" id="tax" class="w3-input" placeholder="Tax Rate" required>
+                <input type="submit" class="w3-button w3-block w3-black" id="pay_employee_action" value="Record Payment" />
+			</table>
+		</form>	
+	</div>
+	<script>
+		jQuery(document).ready(function($){
+			$("#pay-employee-dialog").dialog({
+    			autoOpen : false, modal : true, show : "blind", hide : "blind"
+  			});
+			$("#add-employee-dialog").dialog({
+    			autoOpen : false, modal : true, show : "blind", hide : "blind"
+			});
+			$('#add_employee').bind('click', function(){
+				$('#account_type').val("");
+				$('#account_name').val("");
+				$("#add-employee-dialog").dialog("open");
+				return false;
+			});
+			$('#pay_employee').bind('click', function(){
+				$('#pay-employee-dialog').dialog('open');
+				return false;
+			});
+			$('#pay_employee_action').bind('click', function(){
+				if ($('#account_type').val() == "") {
+					alert("Missing Account Type!");
+					return false;
+				}
+				if ($('#account_name').val() == "") {
+					alert("Missing Account name");
+					return false;
+				}
+				// submit form
+			});
+			$('.delete-button').bind('click', function(){
+				if (confirm("Delete account " + $(this).data('id'))) {
+					// submit form
+				}
+			});
+
+			_employeeAction = function(obj) {
+				switch(obj.value) {
+					case 'payrecords':
+						console.log($(obj).data('id'));
+						break;
+					case 'delete':
+						break;
+				}
+			}
+		});
+
+		function employeeAction(obj) {
+			_employeeAction(obj);
+		}
+	</script>
 	<?php	
 }
 
@@ -681,10 +1486,52 @@ function bestbooks_dashboard_reports_balancesheet() {
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Balance Sheet</h2>
-		<center>
-			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
-		</center>
 	</div>
+	<?php
+    $coa = new ChartOfAccounts();
+    $accounts = $coa->getList();
+
+	$total_assets = 0.0;
+	$total_liabilities = 0.0;
+	$total_equity = 0.0;
+    foreach ($accounts as $name => $type) {
+		if ($type === "Asset" || $type === "Cash") {
+			$account = new Ledger($name, $type);
+			$balance = $account->getBalance();
+			$total_assets += abs($balance);
+		} elseif ($type === "Liability") {
+			$account = new Ledger($name, $type);
+			$balance = $account->getBalance();
+			$total_liabilities += abs($balance);
+		} elseif ($type === "OwnersEquity") {
+			$account = new Ledger($name, $type);
+			$balance = $account->getBalance();
+			$total_equity += abs($balance);
+		}
+	}
+	?>
+	<table>
+		<tr>
+			<th>Account</th>
+			<th>Total(s)</th>
+		</tr>
+		<tr>
+			<td>Total Assets</td>
+			<td><?php echo $total_assets; ?></td>
+		</tr>
+		<tr>
+			<td>Total Liabilities</td>
+			<td><?php echo $total_liabilities; ?></td>
+		</tr>
+		<tr>
+			<td>Total Equity</td>
+			<td><?php echo $total_equity; ?></td>
+		</tr>
+		<tr>
+			<td>Balance</td>
+			<td><?php echo ($total_assets - ($total_liabilities + $total_equity)); ?></td>
+		</tr>
+	</table>
 	<?php
 }
 
@@ -777,13 +1624,37 @@ function bestbooks_dashboard_reports_payrollwagetaxreport() {
 }
 
 function bestbooks_dashboard_reports_incomebycustomer() {
+	if (isset($_POST['formsubmit'])) {
+		$user_id = $_POST['customer'];
+		$user = get_user_by('id', $user_id);
+	}
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Income by Customer</h2>
-		<center>
-			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
-		</center>
 	</div>
+	<?php
+    $bestbooks_customer = get_option("bestbooks_customer");
+    if (isset($bestbooks_customer) === false) {
+        $bestbooks_customer = "bestbooks_customer";
+    }
+
+	$customers = get_users(array('role__in'=>array($bestbooks_customer)));
+	?>
+	<form method="post" id="changecustomerform">
+		<input type="hidden" name="formsubmit" value="1" />
+		<label for="customer">Customer</label>
+		<select id="customer" name="customer" class="w3-input" onchange="changeCustomer(this)">
+			<option value="">Select</option>
+		<?php foreach ($customers as $customer) : ?>
+			<option value="<?php echo $customer->ID; ?>"><?php echo $customer->display_name . '[' . $customer->user_email . ']'; ?></option>
+		<?php endforeach; ?>
+		</select>
+	</form>
+	<script type="text/javascript">
+	function changeCustomer(obj) {
+		document.getElementById("changecustomerform").submit();
+	}
+	</script>
 	<?php
 }
 
@@ -799,13 +1670,37 @@ function bestbooks_dashboard_reports_agedreceivables() {
 }
 
 function bestbooks_dashboard_reports_expensebyvendor() {
+	if (isset($_POST['formsubmit'])) {
+		$user_id = $_POST['vendor'];
+		$user = get_user_by('id', $user_id);
+	}
 	?>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Expense by Vendor</h2>
-		<center>
-			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
-		</center>
 	</div>
+	<?php
+    $bestbooks_vendor = get_option("bestbooks_vendor");
+    if (isset($bestbooks_vendor) === false) {
+        $bestbooks_vendor = "bestbooks_vendor";
+    }
+
+	$vendors = get_users(array('role__in'=>array($bestbooks_vendor)));
+	?>
+	<form method="post" id="changevendorform">
+		<input type="hidden" name="formsubmit" value="1" />
+		<label for="vendor">Vendor</label>
+		<select id="vendor" name="vendor" class="w3-input" onchange="changeVendor(this)">
+			<option value="">Select</option>
+		<?php foreach ($vendors as $vendor) : ?>
+			<option value="<?php echo $vendor->ID; ?>"><?php echo $vendor->display_name . '[' . $vendor->user_email . ']'; ?></option>
+		<?php endforeach; ?>
+		</select>
+	</form>
+	<script type="text/javascript">
+	function changeVendor(obj) {
+		document.getElementById("changevendorform").submit();
+	}
+	</script>
 	<?php
 }
 
@@ -916,42 +1811,43 @@ function bestbooks_dashboard_settings() {
     $bestbooks_timezone = get_option("bestbooks_timezone");
     if (isset($bestbooks_timezone) === false) {
         $bestbooks_timezone = date_default_timezone_get();
-    }
+	}
+	echo $bestbooks_timezone;
 	?>
-    <form method="post">
-        <div class="wrap">
-            <h2>BestBooks - Settings</h2>
-            <label for="customer-role">Customer Role</label>
-            <select name="customer-role" id="customer-role">
-                <option value="">Select</option>
-                <?php wp_dropdown_roles($bestbooks_customer); ?>
-            </select>
-            <br/>
-            <label for="vendor-role">Vendor Role</label>
-            <select name="vendor-role" id="vendor-role">
-                <option value="">Select</option>
-                <?php wp_dropdown_roles($bestbooks_vendor); ?>
-            </select>
-            <br/>
-            <label for="timezones">Time Zones</label>
-            <select name="timezone" id="timezone">
-                <option value="">Select</option>
-                <?php
-                $zones = timezone_identifiers_list();
-                $default_tz = $bestbooks_timezone;
-                foreach ($zones as $zone) {
-                    if ($zone === $default_tz) {
-                        echo '<option value="'.$zone.' selected">'.$zone.'</option>';
-                    } else {
-                        echo '<option value="'.$zone.'">'.$zone.'</option>';                    
-                    }
-                }
-                ?>
-            </select>
-            <br/>
-            <?php submit_button(); ?>
-        </div>
-    </form>
+	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
+	<div class="wrap">
+		<h2>BestBooks - Settings</h2>
+		<form method="post">
+			<label class="w3-block" for="customer-role">Customer Role</label>
+			<select class="w3-input w3-block" name="customer-role" id="customer-role">
+				<option value="">Select</option>
+				<?php wp_dropdown_roles($bestbooks_customer); ?>
+			</select>
+			<br/>
+			<label class="w3-block" for="vendor-role">Vendor Role</label>
+			<select class="w3-input w3-block" name="vendor-role" id="vendor-role">
+				<option value="">Select</option>
+				<?php wp_dropdown_roles($bestbooks_vendor); ?>
+			</select>
+			<br/>
+			<label class="w3-block" for="timezones">Time Zones</label>
+			<select class="w3-input w3-block" name="timezone" id="timezone">
+				<option value="">Select</option>
+				<?php
+				$zones = timezone_identifiers_list();
+				foreach ($zones as $index => $zone) {
+					if ($index == $bestbooks_timezone) {
+						echo '<option value="'.$index.'" selected>'.$zone.'</option>';
+					} else {
+						echo '<option value="'.$index.'">'.$zone.'</option>';                    
+					}
+				}
+				?>
+			</select>
+			<br/>
+			<?php submit_button(); ?>
+		</form>
+	</div>
 	<?php
 }
 ?>

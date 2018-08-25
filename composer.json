@@ -10,6 +10,7 @@
         "mpdf/mpdf": "^7.1",
         "dompdf/dompdf": "^0.8.2",
         "jpgraph/jpgraph": "^4.0",
-        "phpoffice/phpword": "^0.15.0"
+        "phpoffice/phpword": "^0.15.0",
+        "ddeboer/tesseract": "1.0"
     }
 }

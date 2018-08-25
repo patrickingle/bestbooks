@@ -1031,5 +1031,41 @@
             "word",
             "writer"
         ]
+    },
+    {
+        "name": "ddeboer/tesseract",
+        "version": "1.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/ddeboer/tesseract.git",
+            "reference": "a1c10ae25bef599472be12ae9efdd1376a3ca29e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/ddeboer/tesseract/zipball/a1c10ae25bef599472be12ae9efdd1376a3ca29e",
+            "reference": "a1c10ae25bef599472be12ae9efdd1376a3ca29e",
+            "shasum": ""
+        },
+        "time": "2013-04-11 21:14:39",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Ddeboer\\Tesseract": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "David de Boer",
+                "email": "david@ddeboer.nl",
+                "homepage": "http://ddeboer.nl"
+            }
+        ],
+        "description": "A wrapper for the Tesseract OCR engine"
     }
 ]

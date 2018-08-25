@@ -169,7 +169,9 @@ class Ledger extends TAccount {
 	}
 
 	public static function dropTable() {
-    	if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
+		global $wpdb;
+
+		if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
 			$sql = "DROP TABLE ".$wpdb->base_prefix."bestbooks_ledger";    		
     	} else {
 			$sql = "DROP TABLE ".$wpdb->prefix."bestbooks_ledger";    		
@@ -181,6 +183,23 @@ class Ledger extends TAccount {
 		}
 
 		return "Ledger table dropped successfully";
+	}
+
+	public function transactions() {
+		global $wpdb;
+
+		if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
+			$sql = "SELECT * FROM ".$wpdb->base_prefix."bestbooks_ledger WHERE name='$this->name'";    		
+    	} else {
+			$sql = "SELECT * FROM ".$wpdb->prefix."bestbooks_ledger WHERE name='$this->name'";    		
+		}
+		$result = $wpdb->query($sql);
+
+		if ($result===false) {
+			throw new BestBooksException("$this->name transactions retrieval");
+		}
+
+		return $result;
 	}
 }
 

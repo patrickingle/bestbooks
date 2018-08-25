@@ -4,9 +4,43 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e675226284ab3ac7b59959fe89591626",
-    "content-hash": "78f0644d20a8457455f57e1f84cc21dc",
+    "hash": "63ae378ddefa328494c78c782df97554",
+    "content-hash": "9986382e1a7e3818516ce9b19a0685e7",
     "packages": [
+        {
+            "name": "ddeboer/tesseract",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ddeboer/tesseract.git",
+                "reference": "a1c10ae25bef599472be12ae9efdd1376a3ca29e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ddeboer/tesseract/zipball/a1c10ae25bef599472be12ae9efdd1376a3ca29e",
+                "reference": "a1c10ae25bef599472be12ae9efdd1376a3ca29e",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Ddeboer\\Tesseract": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David de Boer",
+                    "email": "david@ddeboer.nl",
+                    "homepage": "http://ddeboer.nl"
+                }
+            ],
+            "description": "A wrapper for the Tesseract OCR engine",
+            "time": "2013-04-11 21:14:39"
+        },
         {
             "name": "dompdf/dompdf",
             "version": "v0.8.2",

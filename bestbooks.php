@@ -79,9 +79,10 @@ function addBestBooksTables ()
         Journal::alterTable();
 	} // endif of is_admin()
 
-    // Create two custom user role
+    // Create custom user roles
     add_role('bestbooks_customer', 'BestBooks Customer', array('read'=>true));
-    add_role('bestbooks_vendor', 'BestBooks Vendor', array('read'=>true));    
+    add_role('bestbooks_vendor', 'BestBooks Vendor', array('read'=>true));  
+    add_role('bestbooks_employee', 'BestBooks Employee', array('read'=>true));  
 }
 
 register_activation_hook(__FILE__,'addBestBooksTables');
@@ -278,7 +279,38 @@ add_shortcode('bestbooks-sample-2', 'bestbooks_sample_2');
 add_action('init','bestbooks_init');
 
 function bestbooks_init() {
-    register_taxonomy('bestbooks_coa','invoice',array());
+    register_post_type(
+        'bestbooks_invoice', 
+        array(
+            'label' => 'BestBooks Invoices',
+            'public' => false,
+            'exclude_from_search' => false,
+            'show_ui' => false
+        )
+    );
+    register_post_type(
+        'bestbooks_purchaseorder',
+        array(
+            'label' => 'BestBooks Purchase Orders',
+            'public' => false,
+            'exclude_from_search' => false,
+            'show_ui' => false
+        )
+    );
+    register_post_type(
+        'bestbooks_receipt',
+        array(
+            'label' => 'BestBooks Receipts',
+            'public' => false,
+            'exclude_from_search' => false,
+            'show_ui' => false
+        )
+    );
+    register_taxonomy('bestbooks_coa','bestbooks_invoice',array());
+    register_taxonomy('bestbooks_sales_product', 'bestbooks_invoice', array());
+    register_taxonomy('bestbooks_sales_service', 'bestbooks_invoice', array());
+    register_taxonomy('bestbooks_purchase_product', 'bestbooks_purchaseorder', array());
+    register_taxonomy('bestbooks_purchase_service', 'bestbooks_purchaseorder', array());
 }
 
 
