@@ -11,6 +11,8 @@
         "dompdf/dompdf": "^0.8.2",
         "jpgraph/jpgraph": "^4.0",
         "phpoffice/phpword": "^0.15.0",
-        "ddeboer/tesseract": "1.0"
+        "ddeboer/tesseract": "1.0",
+        "guzzlehttp/guzzle": "~6.0",
+        "avalara/avataxclient": "18.5.1.208"
     }
 }
