@@ -67,12 +67,32 @@ function bestbooks_import_dispatch() {
                 $fp = fopen($file['file'],'r');
                 ini_set('auto_detect_line_endings',TRUE);
                 
+                echo '<h2>Importing Results</h2><table border="1">';
+
                 while (($import_data = fgetcsv( $fp )) !== FALSE) {
                 	if (isset($_GET['type'])) {
                 		$filetype = $_GET['type'];
                 		switch ($filetype) {
                 			case 'stripe':
                 				{
+                                    /**
+                                     * [0] => id
+                                     * [1] => Type
+                                     * [2] => Source
+                                     * [3] => Amount
+                                     * [4] => Fee
+                                     * [5] => Destination Platform Fee
+                                     * [6] => Net
+                                     * [7] => Currency
+                                     * [8] => Created (UTC)
+                                     * [9] => Available On (UTC)
+                                     * [10] => Description
+                                     * [11] => Customer Facing Amount
+                                     * [12] => Customer Facing Currency
+                                     * [13] => Transfer
+                                     * [14] => Transfer Date (UTC)
+                                     * [15] => Transfer Group
+                                     */
 				                	$date = $import_data[8];
 				                	$description = $import_data[10];
 				                	$type = $import_data[1];
@@ -105,6 +125,7 @@ function bestbooks_import_dispatch() {
                 		}
                 	}
                 }
+                echo '</table>';
                 ini_set('auto_detect_line_endings',FALSE);
                 
                 fclose($fp);
