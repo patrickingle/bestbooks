@@ -947,12 +947,16 @@ function bestbooks_dashboard_accounting_transactions() {
 	}
 	$sql .= " LIMIT $paged,$limit";
 	$transactions = $wpdb->get_results($sql);
+	$coa = get_coa_instance();
 	?>
 	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_accounting'); ?>">Accounting</a> - Transactions&nbsp;
-			<!--input type="button" id="add_income" value="Add Income" />
-			<input type="button" id="add_expense" value="Add Expense"  /-->
+			<input type="button" class="w3-button w3-blue" id="add_transaction" value="Add Transaction" />
+			<!--input type="button" id="add_income" value="Add Income" /-->
+			<!--input type="button" id="add_expense" value="Add Expense"  /-->
 		</h2>
 		<table class="w3-table w3-block">
 			<tr class="w3-grey">
@@ -988,6 +992,76 @@ function bestbooks_dashboard_accounting_transactions() {
 			</tr>            
 		</table>
 	</div>
+	<div id="add-transaction-dialog" title="Add New Transaction" style="display:none;">
+		<label class="w3-block" for="transaction_date">Date</label>
+		<input class="w3-input w3-block" type="text" id="transaction_date" name="transaction_date" value="" />
+		<br/>
+		<label class="w3-block" for="transaction_description">Description</label>
+		<input class="w3-input w3-block" type="text" id="transaction_description" name="transaction_description" value="" />
+		<br/>
+		<label class="w3-block" for="transaction_amount">Amount</label>
+		<input class="w3-input w3-block" type="number" id="transaction_amount" name="transaction_amount" value="" />
+		<br/>
+		<label class="w3-block" for="transaction_account">Account</label>
+		<select class="w3-input w3-block" id="transaction_account" name="transaction_account">
+			<option value="">Select</option>
+			<?php foreach($coa->account as $name => $type) : ?>
+				<option value="<?php echo $name; ?>" data-type="<?php echo $type; ?>"><?php echo $name; ?></option>
+			<?php endforeach; ?>
+		</select>
+		<input type="hidden" id="transaction_account_type" name="transaction_account_type" value="" />
+		<br/>
+		<input class="w3-button w3-block w3-black" type="button" id="add_transaction_action" name="add_transaction_action" value="Add" />
+	</div>
+	<script>
+		jQuery(document).ready(function($){
+			$("#add-transaction-dialog").dialog({
+    			autoOpen : false, modal : true, show : "blind", hide : "blind"
+  			});
+			$('#add_transaction').bind('click', function(){
+				$("#add-transaction-dialog").dialog("open");
+				return false;
+			});
+			$('#transaction_account').change(function(){
+				$('#transaction_account_type').val($('#transaction_account').find(':selected').data('type'));
+			});
+			$('#add_transaction_action').bind('click', function(){
+				if ($('#transaction_date').val() == "") {
+					alert("Missing Transaction Date!");
+					return false;
+				}
+				if ($('#transaction_description').val() == "") {
+					alert("Missing Transaction Description");
+					return false;
+				}
+				if ($('#transaction_amount').val() == 0) {
+					alert("Missing Transaction Amount!");
+					return false;
+				}
+				if ($('#transaction_account').val() == "") {
+					alert("Missing Transaction Account!");
+					return false;
+				}
+				$.ajax({
+					url: "<?php echo admin_url('admin-ajax.php'); ?>",
+					type: "post",
+					data: {
+						action: "bestbooks_add_transaction",
+						tdate: $('#transaction_date').val(),
+						tdesc: $('#transaction_description').val(),
+						tamount: $('#transaction_amount').val(),
+						taccount: $('#transaction_account').val(),
+						ttype: $('#transaction_account_type').val(),
+					},
+					success: function(results) {
+						alert(results);
+						$("#add-transaction-dialog").dialog("close");
+						location.reload();
+					}
+				});
+			});
+		});
+	</script>
 	<?php	
 }
 
