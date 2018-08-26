@@ -317,6 +317,10 @@ function bestbooks_dashboard_sales_customers() {
 		$customer_phone = $_POST['customer_phone'];
 		$customer_fax = $_POST['customer_fax'];
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+
 		if (($user_id = username_exists($customer_email)) || email_exists($customer_email)) {
 			$user = get_user_by('id', $user_id);
 			$user->display_name = $customer_name;
@@ -437,6 +441,11 @@ function bestbooks_dashboard_sales_productsnservices() {
 		$desc = $_POST['prodserv_desc'];
 
 		$taxonomy = 'bestbooks_sales_' . $choice;
+
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+
 		$term_id = wp_insert_term($name, $taxonomy, array('description' => $desc));
 		if (is_wp_error($term_id)) {
 			$error_string = $term_id->get_error_message();
@@ -578,6 +587,10 @@ function bestbooks_dashboard_purchases_receipts() {
 		require_once( ABSPATH . 'wp-admin/includes/file.php' );
 		require_once( ABSPATH . 'wp-admin/includes/media.php' );
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+
 		$post_id = wp_insert_post(
 			array(
 				'post_type' => 'bestbooks_receipt',
@@ -681,6 +694,10 @@ function bestbooks_dashboard_purchases_vendors() {
 		$vendor_csv = $_POST['vendor_csv'];
 		$vendor_phone = $_POST['vendor_phone'];
 		$vendor_fax = $_POST['vendor_fax'];
+
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
 
 		if (($user_id = username_exists($vendor_email)) || email_exists($vendor_email)) {
 			$user = get_user_by('id', $user_id);
@@ -793,6 +810,11 @@ function bestbooks_dashboard_purchases_productsnservices() {
 		$desc = $_POST['prodserv_desc'];
 
 		$taxonomy = 'bestbooks_purchase_' . $choice;
+
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+
 		$term_id = wp_insert_term($name, $taxonomy, array('description' => $desc));
 		if (is_wp_error($term_id)) {
 			$error_string = $term_id->get_error_message();
@@ -1233,6 +1255,10 @@ function bestbooks_dashboard_banking() {
 	<?php	
 }
 
+/**
+ * Inspired from https://github.com/weezykon/payroll
+ * 
+ */
 function bestbooks_dashboard_payroll() {
 	if (isset($_POST['pay_employee_action'])) {
 		$employee_no = $_POST['employee_no'];
@@ -1244,6 +1270,10 @@ function bestbooks_dashboard_payroll() {
 		$phoneno = $_POST['phoneno'];
 
 		$blog_id = get_current_blog_id();
+
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
 
 		if (($user_id = username_exists($email)) || email_exists($email)) {
 			$user = get_user_by('id', $user_id);
@@ -1601,6 +1631,9 @@ function bestbooks_dashboard_reports_incomestatement() {
 	<?php
 }
 
+/**
+ * More info at https://www.thebalancesmb.com/how-to-collect-report-and-pay-state-sales-taxes-399043
+ */
 function bestbooks_dashboard_reports_salestaxreport() {
 	?>
 	<div class="wrap">
@@ -1608,6 +1641,13 @@ function bestbooks_dashboard_reports_salestaxreport() {
 		<center>
 			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
 		</center>
+		<a href="https://www.thebalancesmb.com/how-to-collect-report-and-pay-state-sales-taxes-399043" target="_blank">How To Collect, Report, and Pay State Sales Taxes</a>
+		<p>If your business is selling in Alaska, Delaware, Montana, New Hampshire, or Oregon, no sales tax is charged</p>
+		<a href="https://www.thebalance.com/state-tax-web-sites-3193299" target="_blank">State Tax Websites</a>
+		<br/>
+		<a href="https://developer.avalara.com/" target="_blank">Tax Rates API</a>
+		<br/>
+		<a href="https://developer.avalara.com/avatax/dev-guide" target="_blank">AvaTax Developer Guide</a>
 	</div>
 	<?php
 }
@@ -1798,7 +1838,9 @@ function bestbooks_dashboard_settings() {
     if (isset($_POST['submit'])) {
         update_option("bestbooks_customer", $_POST['customer-role']);
         update_option("bestbooks_vendor", $_POST['vendor-role']);
-        update_option("bestbooks_timezone", $_POST['timezone']);
+	update_option("bestbooks_timezone", $_POST['timezone']);
+	update_option("bestbooks_avatax_userid", $_POST['avatax-userid']);
+	update_option("bestbooks_avatax_password", $_POST['avatax-password']);
     }
     $bestbooks_customer = get_option("bestbooks_customer");
     if (isset($bestbooks_customer) === false) {
@@ -1845,6 +1887,13 @@ function bestbooks_dashboard_settings() {
 				?>
 			</select>
 			<br/>
+			<fieldset>
+				<legend>AvaTax by Avalara</legend>
+				<label class="w3-block" for="avatax-userid" >User ID</label>
+				<input type="text" class="w3-input w3-block" name="avatax-userid" id="avatax-userid" value="" />
+				<label class="w3-block" for="avatax-password" >Password</label>
+				<input type="password" class="w3-input w3-block" name="avatax-password" id="avatax-password" value="" />
+			</fieldset>
 			<?php submit_button(); ?>
 		</form>
 	</div>
