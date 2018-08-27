@@ -629,4 +629,31 @@ if (!function_exists('bestbooks_baddebt_writeoff')) {
 		$expense->increase($txdate, $description, $amount);
 	}
 }
+
+/**
+ * Deferred Revenue
+ * 
+ * Is when you have a customer who have extended credit, where
+ * typically is recorded in the Sales and Account Receivables,
+ * will then be recorded in Sales and Deferred Revenue
+ * 
+ * Sales - Debit
+ * Deferred Revenue - Credit
+ * 
+ */
+if (function_exists('bestbooks_deferredrevenue')) {
+	add_action('bestbooks_deferredrevenue', 'bestbooks_deferredrevenue', 10, 4);
+
+	function bestbooks_deferredrevenue($txdate, $description, $amount, $income_account) {
+		$coa = new ChartOfAccounts();
+		$coa->add($income_account, 'Income');
+		$coa->add('Deferred Revenue', 'Liability');
+
+		$income = new Income($income_account);
+		$dr = new Liability('Deferred Revenue');
+
+		$income->decrease($txdate, $description, $amount);
+		$dr->increase($txdate, $description, $amount);
+	}
+}
 ?>

@@ -94,7 +94,8 @@ function bestbooks_dashboard_page() {
             	<li>bestbooks_sales_card</li>
             	<li>bestbooks_accountreceivable_payment</li>
             	<li>bestbooks_distribution</li>
-		<li>bestbooks_baddebtwriteoff</li>
+				<li>bestbooks_baddebtwriteoff</li>
+				<li>bestbooks_deferredrevenue</li>
             </ul>
             <p>Example using the hook:</p>
             <p>To update the BestBooks ledger when your ecommerce platform has made a successful payment, just invoke the do_action within your eccommerce platform code as shown below. The ledger will be pdated automatically, hence eliminating the need to double post.</p>
