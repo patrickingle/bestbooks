@@ -241,7 +241,9 @@ function bestbooks_dashboard_sales_recurringinvoices() {
 function bestbooks_dashboard_sales_payments() {
 	?>
 	<div class="wrap">
-		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Payments</h2>
+		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Payments
+		<input type="button" class="w3-button w3-blue" name="add-payment" id="add-payment" value="Add a Payment" />
+		</h2>
 		<center>
 			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
 		</center>
