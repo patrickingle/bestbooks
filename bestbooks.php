@@ -313,5 +313,11 @@ function bestbooks_init() {
     register_taxonomy('bestbooks_purchase_service', 'bestbooks_purchaseorder', array());
 }
 
+function bestbooks_add_stylesheet() 
+{
+    wp_enqueue_style( 'w3CSS', plugins_url( '/lib/css/w3.css', __FILE__ ) );
+}
+
+add_action('admin_print_styles', 'bestbooks_add_stylesheet');
 
 ?>

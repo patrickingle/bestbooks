@@ -94,8 +94,10 @@ function bestbooks_dashboard_page() {
             	<li>bestbooks_sales_card</li>
             	<li>bestbooks_accountreceivable_payment</li>
             	<li>bestbooks_distribution</li>
-				<li>bestbooks_baddebtwriteoff</li>
-				<li>bestbooks_deferredrevenue</li>
+		    	<li>bestbooks_baddebtwriteoff</li>
+		    	<li>bestbooks_baddebtwriteoff_payment</li>
+            	<li>bestbooks_deferredrevenue</li>
+				<li>bestbooks_deferredrevenue_payment</li>
             </ul>
             <p>Example using the hook:</p>
             <p>To update the BestBooks ledger when your ecommerce platform has made a successful payment, just invoke the do_action within your eccommerce platform code as shown below. The ledger will be pdated automatically, hence eliminating the need to double post.</p>
@@ -135,7 +137,6 @@ function bestbooks_dashboard_page() {
 
 function bestbooks_dashboard_sales() {
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - Sales</h2>
 		<a class="primary_button button w3-button w3-block w3-blue" href="<?php echo admin_url('admin.php?page=bestbooks_sales_estimates'); ?>">Estimates</a><br/>
@@ -151,7 +152,6 @@ function bestbooks_dashboard_sales() {
 
 function bestbooks_dashboard_sales_estimates() {
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>
 			BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Estimates&nbsp;
@@ -182,7 +182,6 @@ function bestbooks_dashboard_sales_estimates() {
 
 function bestbooks_dashboard_sales_invoices() {
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Invoices&nbsp;
 			<input type="button" class="w3-button w3-blue" id="add-invoice" value="Create an Invoice" />
@@ -212,7 +211,6 @@ function bestbooks_dashboard_sales_invoices() {
 
 function bestbooks_dashboard_sales_recurringinvoices() {
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Recurring Invoices&nbsp;
 			<input type="button" class="w3-button w3-blue" id="add-recurring-invoice" value="Create an Recurring Invoice" />
@@ -242,7 +240,6 @@ function bestbooks_dashboard_sales_recurringinvoices() {
 
 function bestbooks_dashboard_sales_payments() {
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Payments</h2>
 		<center>
@@ -270,7 +267,6 @@ function bestbooks_dashboard_sales_payments() {
 
 function bestbooks_dashboard_sales_customerstatements() {
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Customer Statements</h2>
 	</div>
@@ -355,7 +351,6 @@ function bestbooks_dashboard_sales_customers() {
 		}
 	}
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
@@ -457,7 +452,6 @@ function bestbooks_dashboard_sales_productsnservices() {
 	$products = get_terms('bestbooks_sales_product', array('hide_empty'=>false));
 	$services = get_terms('bestbooks_sales_service', array('hide_empty'=>false));
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
@@ -541,7 +535,6 @@ function bestbooks_dashboard_sales_productsnservices() {
 
 function bestbooks_dashboard_purchases() {
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - Purchases</h2>
 		<a class="primary_button button w3-button w3-block w3-blue" href="<?php echo admin_url('admin.php?page=bestbooks_purchases_bills'); ?>">Bills</a><br/>
@@ -554,17 +547,35 @@ function bestbooks_dashboard_purchases() {
 
 function bestbooks_dashboard_purchases_bills() {
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_purchases'); ?>">Purchases</a> - Bills
 			<input type="button" class="w3-button w3-blue" id="add_bill" value="Add a Bill" />
 		</h2>
-		<center>
-			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
-		</center>
+		<table class="w3-table">
+			<tr>
+				<th>Date</th>
+				<th>Description</th>
+				<th>Debit Account</th>
+				<th>Credit Account</th>
+				<th>Amount</th>
+			</tr>
+			<tr>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+		</table>
 	</div>
+	<div id="add-bill-dialog" title="Add New Bill" style="display:none;">
+		<form method="post" id="addbillform">
+		<input type="button" id="add_bill_action" name="add_bill_action" value="Add" />
+		</form>
+	</div>
+
 	<?php	
 }
 
@@ -628,7 +639,6 @@ function bestbooks_dashboard_purchases_receipts() {
 		)
 	);
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
@@ -729,7 +739,6 @@ function bestbooks_dashboard_purchases_vendors() {
 		}
 	}
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
@@ -826,7 +835,6 @@ function bestbooks_dashboard_purchases_productsnservices() {
 	$products = get_terms('bestbooks_purchase_product', array('hide_empty'=>false));
 	$services = get_terms('bestbooks_purchase_service', array('hide_empty'=>false));
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
@@ -910,7 +918,6 @@ function bestbooks_dashboard_purchases_productsnservices() {
 
 function bestbooks_dashboard_accounting() {
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - Accounting</h2>
 		<a class="primary_button button w3-button w3-block w3-blue" href="<?php echo admin_url('admin.php?page=bestbooks_accounting_transactions'); ?>">Transactions</a><br>
@@ -950,7 +957,6 @@ function bestbooks_dashboard_accounting_transactions() {
 	$transactions = $wpdb->get_results($sql);
 	$coa = get_coa_instance();
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
@@ -1069,7 +1075,6 @@ function bestbooks_dashboard_accounting_transactions() {
 function bestbooks_dashboard_accounting_chartofaccounts() {
 	//require_once dirname(__FILE__).'/vendor/autoload.php';
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
@@ -1205,7 +1210,6 @@ function bestbooks_dashboard_accounting_journaltransactions() {
 	$sql .= " LIMIT $paged,$limit";
 	$transactions = $wpdb->get_results($sql);
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_accounting'); ?>">Accounting</a> - Journal Transactions&nbsp;
 			<!--input type="button" id="add_transaction" value="Add transaction" class="w3-button w3-blue" /-->
@@ -1247,7 +1251,6 @@ function bestbooks_dashboard_accounting_journaltransactions() {
 
 function bestbooks_dashboard_accounting_startingbalances() {
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_accounting'); ?>">Accounting</a> - Starting Balances</h2>
 		Description: <input type="text" size="80" id="description" value="" /><br/>
@@ -1293,7 +1296,6 @@ function bestbooks_dashboard_accounting_startingbalances() {
 function bestbooks_dashboard_banking() {
 	$coa = get_coa_instance();
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - Banking</h2>
 		<?php foreach($coa->account as $name => $type) : ?>
@@ -1394,7 +1396,6 @@ function bestbooks_dashboard_payroll() {
 		$employees[] = $employee;
 	}
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
@@ -1553,7 +1554,6 @@ function bestbooks_dashboard_payroll() {
 
 function bestbooks_dashboard_reports() {
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - Reports</h2>
 		<fieldset>
@@ -1931,7 +1931,6 @@ function bestbooks_dashboard_settings() {
 	}
 	echo $bestbooks_timezone;
 	?>
-	<link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css" />
 	<div class="wrap">
 		<h2>BestBooks - Settings</h2>
 		<form method="post">

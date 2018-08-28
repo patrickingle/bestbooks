@@ -604,7 +604,7 @@ if (!function_exists('bestbooks_woocommerce_payment_successful_result')) {
  * $method = provision (aka allowance)|direct
  */
 if (!function_exists('bestbooks_baddebt_writeoff')) {
-	add_action('bestbooks_baddebtwriteoff', 'bestbooks_baddebt_writeoff', 10, 3);
+	add_action('bestbooks_baddebtwriteoff', 'bestbooks_baddebt_writeoff', 10, 5);
 
 	function bestbooks_baddebt_writeoff($txdate, $description, $amount, $salestax_amount=0, $method='provision') {
 		$coa = new ChartOfAccounts();
@@ -626,7 +626,39 @@ if (!function_exists('bestbooks_baddebt_writeoff')) {
 		} else {
 			$baddebt = new Expense("Bad Debt");
 		}
-		$expense->increase($txdate, $description, $amount);
+		$baddebt->increase($txdate, $description, $amount);
+	}
+}
+
+/**
+ * Bad Debt Writeoff Payment
+ * 
+ * When a bad debt makes a payment
+ */
+if (!function_exists('bestbooks_baddebt_writeoff_payment')) {
+	add_action('bestbooks_baddebtwriteoff_payment', 'bestbooks_baddebt_writeoff_payment', 10, 5);
+
+	function bestbooks_baddebt_writeoff_payment($txdate, $description, $amount, $salestax_amount=0, $method='provision') {
+		$coa = new ChartOfAccounts();
+		$coa->add('Cash', 'Cash');
+		$coa->add('Allowance for Doubtful Accounts','Asset'); // by definition is a contra-asset
+		$coa->add('Sales Tax Payable', 'Expense');
+		$coa->add('Bad Debt', 'Expense');
+
+		$cash = new Cash('Cash');
+		$ar->increase($txdate, $description, $amount);
+
+		if ($salestax_amount > 0) {
+			$salestaxpayable = new Expense("Sales Tax Payable");
+			$salestaxpayable->increase($txdate, $description, $salestax_amount);
+		}
+
+		if ($method === 'provision') {
+			$baddebt = new Asset("Allowance for Doubtful Accounts");
+		} else {
+			$baddebt = new Expense("Bad Debt");
+		}
+		$baddebt->decrease($txdate, $description, $amount);
 	}
 }
 
@@ -637,8 +669,8 @@ if (!function_exists('bestbooks_baddebt_writeoff')) {
  * typically is recorded in the Sales and Account Receivables,
  * will then be recorded in Sales and Deferred Revenue
  * 
- * Sales - Debit
- * Deferred Revenue - Credit
+ * Sales/Income - Debit (increase)
+ * Deferred Revenue - Credit (decrease)
  * 
  */
 if (function_exists('bestbooks_deferredrevenue')) {
@@ -652,8 +684,30 @@ if (function_exists('bestbooks_deferredrevenue')) {
 		$income = new Income($income_account);
 		$dr = new Liability('Deferred Revenue');
 
-		$income->decrease($txdate, $description, $amount);
-		$dr->increase($txdate, $description, $amount);
+		$income->increase($txdate, $description, $amount);
+		$dr->decrease($txdate, $description, $amount);
 	}
 }
+
+/**
+ * Deferred Revenue Payment
+ * 
+ * When a customer makes a payment on deferred revenue
+ */
+if (function_exists('bestbooks_deferredrevenue_payment')) {
+	add_action('bestbooks_deferredrevenue_payment', 'bestbooks_deferredrevenue_payment', 10, 3);
+
+	function bestbooks_deferredrevenue_payment($txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add('Cash', 'Cash');
+		$coa->add('Deferred Revenue', 'Liability');
+
+		$cash = new Cash('Cash');
+		$dr = new Liability('Deferred Revenue');
+
+		$cash->increase($txdate, $description, $amount);
+		$dr->decrease($txdate, $description, $amount);
+	}
+}
+
 ?>
