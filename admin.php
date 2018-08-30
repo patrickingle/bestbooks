@@ -548,6 +548,44 @@ function bestbooks_dashboard_purchases() {
 }
 
 function bestbooks_dashboard_purchases_bills() {
+	if (isset($_POST['bill_account'])) {
+		echo '<pre>'; print_r($_POST); echo '</pre>';
+		do_action(
+			'bestbooks_addexpense', 
+			$_POST['bill_date'],
+			$_POST['bill_description'],
+			$_POST['bill_amount'],
+			$_POST['bill_account']
+		);
+	}
+    $coa = new ChartOfAccounts();
+    $accounts = $coa->getList();
+    $expense_accounts = array();
+    foreach ($accounts as $name => $type) {
+        if ($type === "Expense") {
+            $expense = new Ledger($name, $type);
+			$balance = $expense->getBalance();
+			$transactions = $expense->transactions();
+            $expense_accounts[] = array(
+                'name' => $name,
+                'type' => $type,
+				'balance' => abs($balance),
+				'transactions' => $transactions
+            );
+        }
+    }
+
+	global $wpdb;
+
+	if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
+		$sql = "SELECT * FROM ".$wpdb->base_prefix."bestbooks_ledger WHERE type='Expense' ORDER BY txdate DESC";
+		$totals = "SELECT COUNT(*) as total FROM ".$wpdb->base_prefix."bestbooks_ledger ORDER BY txdate DESC";
+	} else {
+		$sql = "SELECT * FROM ".$wpdb->prefix."bestbooks_ledger WHERE type='Expense' ORDER BY txdate DESC";
+		$totals = "SELECT COUNT(*) as total FROM ".$wpdb->prefix."bestbooks_ledger ORDER BY txdate DESC";
+	}
+	$results = $wpdb->get_results($sql);
+
 	?>
 	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -559,25 +597,55 @@ function bestbooks_dashboard_purchases_bills() {
 			<tr>
 				<th>Date</th>
 				<th>Description</th>
-				<th>Debit Account</th>
-				<th>Credit Account</th>
+				<th>Account</th>
 				<th>Amount</th>
+				<th>Status</th>
 			</tr>
+			<?php foreach ($results as $account) : ?>
 			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
+				<td><?php echo $account->txdate; ?></td>
+				<td><?php echo $account->note; ?></td>
+				<td><?php echo $account->name; ?></td>
+				<td><?php echo $account->debit; ?></td>
 				<td></td>
 			</tr>
+			<?php endforeach; ?>
 		</table>
 	</div>
 	<div id="add-bill-dialog" title="Add New Bill" style="display:none;">
 		<form method="post" id="addbillform">
-		<input type="button" id="add_bill_action" name="add_bill_action" value="Add" />
+		<label for="bill_date">Date</label>
+		<input class="w3-input" type="date" id="bill_date" name="bill_date" value="" required />
+		<label for="bill_description">Description</label>
+		<input class="w3-input" type="text" id="bill_description" name="bill_description" value="" required />
+		<label for="bill_amount">Amount</label>
+		<input class="w3-input" type="number" id="bill_amount" name="bill_amount" value="" required />
+		<label for="bill_account">Account</label>
+		<select class="w3-input" id="bill_account" name="bill_account" value="" required >
+			<option value="">Select</option>
+			<?php foreach($expense_accounts as $expense) : ?>
+			<option value="<?php echo $expense['name']; ?>"><?php echo $expense['name']; ?></option>
+			<?php endforeach; ?>
+		</select>
+		<br/>
+		<input class="w3-button w3-block w3-black" type="button" id="add_bill_action" name="add_bill_action" value="Add" />
 		</form>
 	</div>
-
+	<script>
+		jQuery(document).ready(function($){
+			$("#add-bill-dialog").dialog({
+    			autoOpen : false, modal : true, show : "blind", hide : "blind"
+  			});
+			$('#add_bill').bind('click', function(){
+				$("#add-bill-dialog").dialog("open");
+				return false;
+			});
+			$('#add_bill_action').bind('click', function(){
+				// submit form
+				document.getElementById("addbillform").submit();
+			});
+		});
+	</script>
 	<?php	
 }
 
