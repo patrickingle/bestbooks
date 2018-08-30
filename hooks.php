@@ -368,8 +368,9 @@ if (!function_exists('bestbooks_payexpensebycheck')) {
  */
 if (!function_exists('bestbooks_payexpensebycard')) {
 	add_action('bestbooks_payexpensebycard', 'bestbooks_payexpensebycard', 10, 4);
+	add_action('bestbooks_addexpense', 'bestbooks_payexpensebycard', 10, 4);
 
-	function bestbooks_($txdate, $description, $amount, $account) {
+	function bestbooks_payexpensebycard($txdate, $description, $amount, $account) {
 		$coa = new ChartOfAccounts();
 		$coa->add($account, 'Expense');
 		$coa->add('Accounts Payable', 'Liability');
