@@ -812,4 +812,29 @@ if (function_exists('bestbooks_deferredrevenue_payment')) {
 	}
 }
 
+/**
+ * Unearned Revenue
+ * 
+ * When you created an invoice but have not received payment
+ */
+if (function_exists('bestbooks_unearned_revenue')) {
+	add_action('bestbooks_unearned_revenue','bestbooks_unearned_revenue', 10, 3);
+
+	function bestbooks_unearned_revenue($txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add('Sales', 'Revenue');
+		$coa->add('Unearned Sales', 'Liability');
+
+		$sales = new Revenue('Sales');
+		$unearned = new Liability('Unearned Sales');
+
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+
+		$sales->decrease($txdate, $description, $amount);
+		$unearned->increase($txdate, $description, $amount);
+
+	}
+}
 ?>
