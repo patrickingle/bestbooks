@@ -646,14 +646,64 @@ function bestbooks_dashboard_sales_invoices() {
 }
 
 function bestbooks_dashboard_sales_recurringinvoices() {
+	if (isset($_POST['estimate-customer'])) {
+		if (!empty($_POST['estimate-customer'])) {
+			$timezone = get_option("bestbooks_timezone");
+			$zones = timezone_identifiers_list();
+			date_default_timezone_set($zones[$timezone]);
+				
+			wp_insert_post(
+				array(
+					'post_type' => 'bestbooks_invoice',
+					'post_status' => 'publish',
+					'post_title' => 'Customer #'.$_POST['estimate-customer'],
+					'post_content' => json_encode($_POST)
+				)
+			);
+		}
+	} else if (isset($_POST['action'])) {
+		switch ($_POST['action']) {
+			case 'delete':
+				wp_delete_post($_POST['post_id'], true);
+				break;
+		}
+	}
+
+	$posts = get_posts(
+		array(
+			'post_type' => 'bestbooks_invoice',
+			'post_status' => 'publish',
+			'numberposts' => -1,
+    		'orderby' => 'post_date',
+    		'order' => 'DESC',
+		)
+	);
+	$invoices = array();
+	foreach ($posts as $post) {
+		$metadata = json_decode($post->post_content, true);
+		if (isset($metadata['recurring'])) {
+			$invoices[] = $post;
+		}
+	}
+	
+	$invoice_num = count($invoices) + 1;
+
+    $bestbooks_customer = get_option("bestbooks_customer");
+    if (isset($bestbooks_customer) === false) {
+        $bestbooks_customer = "bestbooks_customer";
+    }
+
+	$customers = get_users(array('role__in'=>array($bestbooks_customer)));
+
+	$products = get_terms('bestbooks_sales_product', array('hide_empty'=>false));
+	$services = get_terms('bestbooks_sales_service', array('hide_empty'=>false));
 	?>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Recurring Invoices&nbsp;
-			<input type="button" class="w3-button w3-blue" id="add-recurring-invoice" value="Create an Recurring Invoice" />
+			<input type="button" class="w3-button w3-blue" id="add_recurring_invoice" value="Create an Recurring Invoice" />
 		</h2>
-		<center>
-			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
-		</center>
 		<table class="w3-table">
 			<tr>
 				<th>Status</th>
@@ -661,16 +711,165 @@ function bestbooks_dashboard_sales_recurringinvoices() {
 				<th>Number</th>
 				<th>Customer</th>
 				<th>Amount</th>
+				<th>Action</th>
 			</tr>
+			<?php foreach($invoices as $invoice) : ?>
+			<?php $metadata = json_decode($invoice->post_content, true); ?>
+			<?php $customer = get_user_by('id', $metadata['estimate-customer']); ?>
+			<?php
+			$items = $metadata['items'];
+			$total = 0;
+			for ($i=0; $i<$items; $i++) {
+				$total += $metadata['item_total_'.($i+1)];
+			}
+			?>
 			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
+				<td><?php echo $metadata['estimate-status']; ?></td>
+				<td><?php echo $invoice->post_date; ?></td>
+				<td><?php echo $metadata['estimate-invnum']; ?></td>
+				<td><?php echo $customer->display_name . ' ['.$customer->user_email.']'; ?></td>
+				<td><?php echo $total; ?></td>
+				<td> 
+					<select class="w3-input w3-block" data-id="<?php echo $invoice->ID; ?>" onchange="invoiceAction(this)">
+						<option value="">Select</option>
+						<option value="viewedit">View/Edit</option>
+						<option value="send">Send</option>
+						<option value="paid">Mark as Paid</option>
+						<option value="deferred">Deferred</option>
+						<option value="baddebt">Bad Debt</option>
+						<option value="delete">Delete</option>
+					</select>
+				</td>
 			</tr>
+			<?php endforeach; ?>
 		</table>
 	</div>
+	<div id="add-recurring-invoice-dialog" title="Add New Recurring Invoice" style="display:none;">
+		<form method="post" id="addrecurringinvoiceform">
+			<input type="hidden" name="estimate-status" value="created" />
+			<input type="hidden" name="recurring" value="yes" />
+			<label for="estimate-invnum">Invoice #</label>
+			<input type="text" class="w3-input w3-block w3-grey" name="estimate-invnum" id="estimate-invnum" value="<?php echo $invoice_num; ?>" readonly />
+			<label for="estimate-customer">Customer</label>
+			<select id="estimate-customer" name="estimate-customer" class="w3-input w3-block" onchange="changeCustomer(this)">
+				<option value="">Select</option>
+				<?php foreach ($customers as $customer) : ?>
+				<option value="<?php echo $customer->ID; ?>"><?php echo $customer->display_name . '[' . $customer->user_email . ']'; ?></option>
+				<?php endforeach; ?>
+			</select>
+			<label for="recurring-period">Period</label>
+			<select class="w3-input w3-block" name="recurring_period" id="recurring_period" required>
+				<option value="">Select</option>
+				<option value="daily">Daily</option>
+				<option value="weekly">Weekly</option>
+				<option value="biweekly">Bi-Weekly</option>
+				<option value="monthly">Monthly</option>
+				<option value="quarterly">Quaterly</option>
+				<option value="semiannual">Semi-Annual (every 6 month)</option>
+				<option value="annual">Annual</option>
+			</select>
+			<table class="w3-table w3-block" id="estimate-itemizations">
+				<tr>
+					<th>Qty</th>
+					<th>Item Description</th>
+					<th>Unit Price</th>
+					<th>Item Total</th>
+				</tr>
+				<tr>
+					<td><input type="text" class="w3-input" name="item_qty_1" id="item_qty_1" onchange="updateItem(1)" value="" /></td>
+					<td>
+						<select class="w3-input" id="item_desc_1" id="item_desc_1">
+							<option value="" selected>Select</option>
+							<optgroup label="Products">
+								<?php foreach($products as $product) : ?>
+								<option value="<?php echo $product->term_id; ?>"><?php echo $product->description; ?></option>
+								<?php endforeach; ?>
+							</optgroup>
+							<optgroup label="Services">
+								<?php foreach($services as $service) : ?>
+								<option value="<?php echo $service->term_id; ?>"><?php echo $service->description; ?></option>
+								<?php endforeach; ?>
+							</optgroup>
+						</select>
+						<input type="hidden" name="items" id="items" value="1" />
+					</td>
+					<td><input type="text" class="w3-input" onchange="updateItem(1)" name="item_price_1" id="item_price_1" value="" /></td>
+					<td><input type="text" class="w3-input w3-grey" name="item_total_1" id="item_total_1" value="" readonly /></td>
+				</tr>
+			</table>
+			<br/>
+			<input class="w3-button w3-block w3-black" type="button" id="add_item_row" name="add_item_row" value="Add Item" />
+			<br/>
+			<input class="w3-button w3-block w3-black" type="button" id="add_recurring_invoice_action" name="add_recurring_invoice_action" value="Add" />
+		</form>
+	</div>
+	<form id="invoicechoiceform" method="post" style="display:none;">
+		<input type="hidden" name="action" id="action" value="" />
+		<input type="hidden" name="post_id" id="post_id" value="" />
+	</form>
+	<script type="text/javascript">
+		var _item_no = 1;
+		jQuery(document).ready(function($){
+			$("#add-recurring-invoice-dialog").dialog({
+    			autoOpen : false, modal : true, show : "blind", hide : "blind"
+  			});
+			$('#add_recurring_invoice').bind('click', function(){
+				$("#add-recurring-invoice-dialog").dialog("open");
+				return false;
+			});
+			$('#add_recurring_invoice_action').bind('click', function(){
+				// submit form
+				document.getElementById("addrecurringinvoiceform").submit();
+			});
+			$('#add_item_row').bind('click', function(){
+				_item_no += 1;
+				$('#items').val(_item_no);
+				var itemlist = '<tr>';
+				itemlist += '<td><input type="text" class="w3-input" name="item_qty_'+_item_no+'" id="item_qty_'+_item_no+'" onchange="updateItem('+_item_no+')" value="" /></td>';
+				itemlist += '<td>';
+				itemlist += '<select class="w3-input" id="item_desc_'+_item_no+'" id="item_desc_'+_item_no+'">';
+				itemlist += '<option value="" selected>Select</option>';
+				itemlist += '<optgroup label="Products">';
+				<?php foreach($products as $product) : ?>
+				itemlist += '<option value="<?php echo $product->term_id; ?>"><?php echo $product->description; ?></option>';
+				<?php endforeach; ?>
+				itemlist += '</optgroup>';
+				itemlist += '<optgroup label="Services">';
+				<?php foreach($services as $service) : ?>
+				itemlist += '<option value="<?php echo $service->term_id; ?>"><?php echo $service->description; ?></option>';
+				<?php endforeach; ?>
+				itemlist += '</optgroup>';
+				itemlist += '</select>';
+				itemlist += '</td>';
+				itemlist += '<td><input type="text" class="w3-input" onchange="updateItem('+_item_no+')" name="item_price_'+_item_no+'" id="item_price_'+_item_no+'" value="" /></td>';
+				itemlist += '<td><input type="text" class="w3-input w3-grey" name="item_total_'+_item_no+'" id="item_total_'+_item_no+'" value="" readonly /></td>';
+				itemlist += '</tr>';
+				$('#estimate-itemizations tr:last').after(itemlist);
+			});
+		});
+		function updateItem(item_no) {
+			var qty = document.getElementById("item_qty_" + item_no).value;
+			var price = document.getElementById("item_price_" + item_no).value;
+			document.getElementById("item_total_" + item_no).value = price * qty;
+		}
+		function invoiceAction(invoiceAction) {
+			var choice = invoiceAction.options[invoiceAction.selectedIndex].value;
+			var post_id = invoiceAction.getAttribute("data-id");
+			if (choice == "delete") {
+				if (confirm("Delete this invoice?")) {
+					document.getElementById("action").value = choice;
+					document.getElementById("post_id").value = post_id;
+					document.getElementById("invoicechoiceform").submit();
+				}
+			} else if (choice == "viewedit") {
+
+			} else {
+				document.getElementById("action").value = choice;
+				document.getElementById("post_id").value = post_id;
+				document.getElementById("invoicechoiceform").submit();
+			}
+		}
+	</script>
 	<?php	
 }
 
