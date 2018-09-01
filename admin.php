@@ -2381,6 +2381,11 @@ function bestbooks_dashboard_reports() {
 			<a href="<?php echo admin_url('admin.php?page=bestbooks_reports_trialbalance'); ?>" class="primary_button button w3-button w3-block w3-blue">Trial Balance</a><br/>
 			<a href="<?php echo admin_url('admin.php?page=bestbooks_reports_gainlossonforeigncurrencyexchange'); ?>" class="primary_button button w3-button w3-block w3-blue">Gain/Loss on Foreign Currency Exchange</a>
 		</fieldset>
+		<fieldset>
+			<legend>SEC.GOV EDGAR</legend>
+			<a href="<?php echo admin_url('admin.php?page=bestbooks_reports_10q'); ?>" class="primary_button button w3-button w3-block w3-blue">Quarterly Report [10-Q]</a><br/>
+			<a href="<?php echo admin_url('admin.php?page=bestbooks_reports_10k'); ?>" class="primary_button button w3-button w3-block w3-blue">Annual Report [10-K]</a><br/>
+		</fieldset>
 	</div>
 	<?php	
 }
