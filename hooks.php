@@ -14,6 +14,10 @@ if (!function_exists('bestbooks_add_credit')) {
 	add_action('bestbooks_add_credit', 'bestbooks_add_credit', 10, 4);
 
 	function bestbooks_add_credit($account, $date, $description, $amount) {
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$account->addcredit($wpdb, $date, $description, $amount);
 	}
 }
@@ -22,6 +26,10 @@ if (!function_exists('bestbooks_add_debit')) {
 	add_action('bestbooks_add_debit', 'bestbooks_add_debit', 10, 4);
 
 	function bestbooks_add_debit($account, $date, $description, $amount) {
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$account->adddebit($date, $description, $amount);
 	}
 }
@@ -50,6 +58,10 @@ if (!function_exists('bestbooks_asset')) {
 
 		$asset = new Asset($account);
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		if ($amount < 0) {
 			$asset->decrease($txdate, $description, $amount);
 		} else {
@@ -67,6 +79,10 @@ if (!function_exists('bestbooks_expense')) {
 
 		$expense = new Expense($account);
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		if ($amount < 0) {
 			$expense->decrease($txdate, $description, $amount);
 		} else {
@@ -105,6 +121,10 @@ if (!function_exists('bestbooks_liability')) {
 		$coa = new ChartOfAccounts();
 		$coa->add($account, "Liability");
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$liability = new Liability($account);
 		if ($amount < 0) {
 			$liability->decrease($txdate, $description, $amount);
@@ -121,6 +141,10 @@ if (!function_exists('bestbooks_equity')) {
 		$coa = new ChartOfAccounts();
 		$coa->add($account, "Equity");
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$equity = new Equity($account);
 		if ($amount < 0) {
 			$equity->increase($txdate, $description, $amount);
@@ -137,6 +161,10 @@ if (!function_exists('bestbooks_revenue')) {
 		$coa = new ChartOfAccounts();
 		$coa->add($account, "Revenue");
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$revenue = new Revenue($account);
 		if ($amount < 0) {
 			$revenue->decrease($txdate, $description, $amount);
@@ -151,6 +179,11 @@ if (!function_exists('bestbooks_journal_add')) {
 
 	function bestbooks_journal_add($txdate,$ref,$account,$debit,$credit) {
 		$journal = new Journal();
+
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$journal->add($txdate,$ref,$account,$debit,$credit);
 	}
 }
@@ -185,6 +218,10 @@ if (!function_exists('bestbooks_investment')) {
 		$coa->add('Cash', 'Cash');
 		$coa->add($equity, 'Equity');
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$cash = new Cash('Cash');
 		$cash->increase($txdate, $description, $amount);
 
@@ -216,6 +253,10 @@ if (!function_exists('bestbooks_encumber')) {
 		$coa->add('Cash', 'Cash');
 		$coa->add('Loans Payable', 'Liability');
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$cash = new Cash('Cash');
 		$cash->increase($txdate, $description, $amount);
 
@@ -245,6 +286,10 @@ if (!function_exists('bestbooks_bankfee')) {
 		$coa->add('Cash', 'Cash');
 		$coa->add('Bank Service Charges', 'Expense');
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$cash = new Cash('Cash');
 		$cash->decrease($txdate, $description, $amount);
 
@@ -281,6 +326,10 @@ if (!function_exists('bestbooks_loanpayment')) {
 		$coa->add('Loans Payable', 'Liability');
 		$coa->add('Interest Expense', 'Expense');
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$cash = new Cash('Cash');
 		$cash->decrease($txdate, $description, ($amount + $interest));
 
@@ -318,6 +367,10 @@ if (!function_exists('bestbooks_payassetbycheck')) {
 		$coa->add('Cash', 'Cash');
 		$coa->add($account, 'Asset');
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$cash = new Cash('Cash');
 		$cash->decrease($txdate, $description, $amount);
 
@@ -345,6 +398,10 @@ if (!function_exists('bestbooks_payexpensebycheck')) {
 		$coa->add('Cash', 'Cash');
 		$coa->add($account, 'Expense');
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$cash = new Cash('Cash');
 		$cash->decrease($txdate, $description, $amount);
 
@@ -375,6 +432,10 @@ if (!function_exists('bestbooks_payexpensebycard')) {
 		$coa->add($account, 'Expense');
 		$coa->add('Accounts Payable', 'Liability');
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$liability = new Liability('Accounts Payable');
 		$liability->increase($txdate, $description, $amount);
 
@@ -405,6 +466,10 @@ if (!function_exists('bestbooks_cardpayment')) {
 		$coa->add('Cash', 'Cash');
 		$coa->add('Accounts Payable', 'Liability');
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$cash = new Cash('Cash');
 		$cash->decrease($txdate, $description, $amount);
 
@@ -434,6 +499,10 @@ if (!function_exists('bestbooks_payment_cash')) {
 		$coa->add('Cash', 'Cash');
 		$coa->add('Cost of Goods Sold', 'Expense');
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$cash = new Cash('Cash');
 		$cash->decrease($txdate, $description, $amount);
 
@@ -464,6 +533,10 @@ if (!function_exists('bestbooks_sales_cash')) {
 		$coa->add("Cash", "Cash");
 		$coa->add("Sales Tax Payable", "Expense");
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$sales = new Revenue("Sales");
 		$sales->increase($txdate, $description, $amount);
 
@@ -499,6 +572,10 @@ if (!function_exists('bestbooks_sales_card')) {
 		$coa->add("Account Receivable", "Asset");
 		$coa->add("Sales Tax Payable", "Expense");
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$sales = new Revenue("Sales");
 		$sales->increase($txdate, $description, $amount);
 
@@ -533,6 +610,10 @@ if (!function_exists('bestbooks_accountreceivable_payment')) {
 		$coa->add('Cash', 'Cash');
 		$coa->add("Account Receivable", "Asset");
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$cash = new Cash('Cash');
 		$cash->increase($txdate, $description, $amount);
 
@@ -562,6 +643,10 @@ if (!function_exists('bestbooks_distribution')) {
 		$coa->add('Cash', 'Cash');
 		$coa->add('Distribution', 'Equity');
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$cash = new Cash('Cash');
 		$cash->decrease($txdate, $description, $amount);
 
@@ -614,6 +699,10 @@ if (!function_exists('bestbooks_baddebt_writeoff')) {
 		$coa->add('Sales Tax Payable', 'Expense');
 		$coa->add('Bad Debt', 'Expense');
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$ar = new Asset("Account Receivable");
 		$ar->decrease($txdate, $description, $amount);
 
@@ -646,6 +735,10 @@ if (!function_exists('bestbooks_baddebt_writeoff_payment')) {
 		$coa->add('Sales Tax Payable', 'Expense');
 		$coa->add('Bad Debt', 'Expense');
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$cash = new Cash('Cash');
 		$ar->increase($txdate, $description, $amount);
 
@@ -685,6 +778,10 @@ if (function_exists('bestbooks_deferredrevenue')) {
 		$income = new Income($income_account);
 		$dr = new Liability('Deferred Revenue');
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$income->increase($txdate, $description, $amount);
 		$dr->decrease($txdate, $description, $amount);
 	}
@@ -706,6 +803,10 @@ if (function_exists('bestbooks_deferredrevenue_payment')) {
 		$cash = new Cash('Cash');
 		$dr = new Liability('Deferred Revenue');
 
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+		
 		$cash->increase($txdate, $description, $amount);
 		$dr->decrease($txdate, $description, $amount);
 	}
