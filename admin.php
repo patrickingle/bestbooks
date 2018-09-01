@@ -52,6 +52,8 @@ function bestbooks_dashboard() {
 	add_submenu_page( 'bestbooks_reports', 'Account Transactions', 'Account Transactions', 'manage_options', 'bestbooks_reports_account_transactions', 'bestbooks_dashboard_reports_account_transactions');
 	add_submenu_page( 'bestbooks_reports', 'Trial Balance', 'Trial Balance', 'manage_options', 'bestbooks_reports_trialbalance', 'bestbooks_dashboard_reports_trialbalance');
 	add_submenu_page( 'bestbooks_reports', 'Gain/Loss on foreign Currency Exchange', 'Gain/Loss on foreign Currency Exchange', 'manage_options', 'bestbooks_reports_gainlossonforeigncurrencyexchange', 'bestbooks_dashboard_reports_gainlossonforeigncurrencyexchange');
+	add_submenu_page( 'bestbooks_reports', 'Quarterly Report [10-Q]', 'Quarterly Report [10-Q]', 'manage_options', 'bestbooks_reports_10q', 'bestbooks_dashboard_reports_10q');
+	add_submenu_page( 'bestbooks_reports', 'Annual Report [10-K]', 'Annual Report [10-K]', 'manage_options', 'bestbooks_reports_10k', 'bestbooks_dashboard_reports_10k');
 
 	/* Settings */
 	add_submenu_page( 'bestbooks', 'Settings', 'Settings', 'manage_options', 'bestbooks_settings', 'bestbooks_dashboard_settings');
@@ -1977,6 +1979,54 @@ function bestbooks_dashboard_reports_gainlossonforeigncurrencyexchange() {
 		</center>
 	</div>
 	<?php
+}
+
+function bestbooks_dashboard_reports_10q() {
+	?>
+	<div class="wrap">
+		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Quarterly 10-Q Report</h2>
+		<form method="post">
+			<label class="w3-block" for="start-range">Starting Date</label>
+			<input type="date" class="w3-input w3-block" name="start-range" id="start-range" value="" />
+			<label class="w3-block" for="end-range">Ending Date</label>
+			<input type="date" class="w3-input w3-block" name="end-range" id="end-range" value="" />
+			<br/>
+			<input type="submit" name="show_report" value="Show Report" class="w3-button w3-block w3-black" />
+		</form>
+	</div>
+	<?php
+	if (isset($_POST['show_report'])) {
+		echo '<pre>'; print_r($_POST); echo '</pre>';
+		$start_range = $_POST['start-range'];
+		$end_range = $_POST['end-range'];
+	}
+
+}
+
+function bestbooks_dashboard_reports_10k() {
+
+	$years = range(date("Y"),1910); 
+	$datalist = '<datalist id="years">';
+	foreach ($years as $year) {
+		$datalist .= '<option value="'.$year.'">';
+	}
+	$datalist .= '</datalist>';
+	?>
+	<div class="wrap">
+		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_reports'); ?>">Reports</a> - Annual 10-K Report</h2>
+		<form method="post">
+			<label class="w3-block" for="report-year">Report Year</label>
+			<input list="years" class="w3-input w3-block" name="report-year" id="report-year" value="" />
+			<?php echo $datalist; ?>
+			<br/>
+			<input type="submit" name="show_report" value="Show Report" class="w3-button w3-block w3-black" />
+		</form>
+	</div>
+	<?php
+	if (isset($_POST['show_report'])) {
+		echo '<pre>'; print_r($_POST); echo '</pre>';
+		$report_year = $_POST['report-year'];
+	}
 }
 
 function bestbooks_dashboard_settings() {
