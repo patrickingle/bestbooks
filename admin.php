@@ -874,31 +874,122 @@ function bestbooks_dashboard_sales_recurringinvoices() {
 }
 
 function bestbooks_dashboard_sales_payments() {
+	if (isset($_POST['payment-invoice'])) {
+		$post_id = $_POST['payment-invoice'];
+		$post = get_post($post_id);
+		$metadata = json_decode($post->post_content, true);
+		$metadata['estimate-status'] = 'payment';
+		if (isset($metadata['payments'])) {
+			$payments = $metadata['payments'];
+			$payments++;
+			$metadata['payment_type_'.$payments] = $_POST['payment-type'];
+			$metadata['payment_amount_'.$payments] = $_POST['payment-amount'];
+			$metadata['payment_date_'.$payments] = date('Y-m-d');
+			$metadata['payments'] = $payments;
+		} else {
+			$payments=1;
+			$metadata['payment_type_'.$payments] = $_POST['payment-type'];
+			$metadata['payment_amount_'.$payments] = $_POST['payment-amount'];
+			$metadata['payment_date_'.$payments] = date('Y-m-d');
+			$metadata['payments'] = $payments;
+		}
+		$post->post_content = json_encode($metadata);
+		
+		$timezone = get_option("bestbooks_timezone");
+		$zones = timezone_identifiers_list();
+		date_default_timezone_set($zones[$timezone]);
+
+		wp_update_post($post);
+		// do_action to update payment made
+	}
+
+	$invoices = get_posts(
+		array(
+			'post_type' => 'bestbooks_invoice',
+			'post_status' => 'publish',
+			'numberposts' => -1,
+    		'orderby' => 'post_date',
+    		'order' => 'DESC',
+		)
+	);
+
+	$payments = array();
+
+	foreach($invoices as $invoice) {
+		$metadata = json_decode($invoice->post_content, true);
+		if (isset($metadata['payments'])) {
+			$payments[] = $invoice;
+		}
+	}
 	?>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<div class="wrap">
 		<h2>BestBooks - <a href="<?php echo admin_url('admin.php?page=bestbooks_sales'); ?>">Sales</a> - Payments
-		<input type="button" class="w3-button w3-blue" name="add-payment" id="add-payment" value="Add a Payment" />
+		<input type="button" class="w3-button w3-blue" name="add_salespayment" id="add_salespayment" value="Add a Payment" />
 		</h2>
-		<center>
-			<img src="<?php echo plugin_dir_url(__FILE__); ?>images/coming-soon.png" />
-		</center>
 		<table class="w3-table">
 			<tr>
-				<th>Status</th>
-				<th>Date</th>
-				<th>Number</th>
-				<th>Customer</th>
+				<th>Payment Date</th>
+				<th>Invoice Number</th>
+				<th>Payment Type</th>
 				<th>Amount</th>
 			</tr>
+			<?php foreach($payments as $payment) : ?>
+			<?php $metadata = json_decode($payment->post_content, true); ?>
+			<?php $total_payments = $metadata['payments']; ?>
+			<?php for($i=1; $i<=$total_payments; $i++) :?>
+			<?php $payment_type = $metadata['payment_type_'.$i]; ?>
+			<?php $payment_amount = $metadata['payment_amount_'.$i]; ?>
+			<?php $payment_date = $metadata['payment_date_'.$i]; ?>
 			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
+				<td><?php echo $payment_date; ?></td>
+				<td><?php echo $metadata['estimate-invnum']; ?></td>
+				<td><?php echo $payment_type; ?></td>
+				<td><?php echo $payment_amount; ?></td>
 			</tr>
+			<?php endfor; ?>
+			<?php endforeach; ?>
 		</table>
 	</div>
+	<div id="add-salespayment-dialog" title="Add New Sales Payment" style="display:none;">
+		<form method="post" id="addsalespaymentform">
+			<label for="payment-invoice">Invoice</label>
+			<select class="w3-input w3-block" name="payment-invoice" id="payment-invoice">
+				<option value="">Select</option>
+				<?php foreach($invoices as $invoice) : ?>
+					<?php $metadata = json_decode($invoice->post_content, true); ?>
+					<option value="<?php echo $invoice->ID; ?>"><?php echo $metadata['estimate-invnum']; ?></option>
+				<?php endforeach; ?>
+			</select>
+			<label for="payment-type">Payment Type</label>
+			<select class="w3-input w3-block" name="payment-type" id="payment-type">
+				<option value="">Select</option>
+				<option value="cash">Cash</option>
+				<option value="card">Card</option>
+				<option value="deferred">Deferred</option>
+			</select>
+			<label for="payment-amount">Amount</label>
+			<input type="number" class="w3-input w3-block" name="payment-amount" id="payment-amount" value="" />
+			<br/>
+			<input class="w3-button w3-block w3-black" type="button" id="add_salespayment_action" name="add_salespayment_action" value="Add" />
+		</form>
+	</div>
+	<script type="text/javascript">
+		jQuery(document).ready(function($){
+			$("#add-salespayment-dialog").dialog({
+    			autoOpen : false, modal : true, show : "blind", hide : "blind"
+  			});
+			$('#add_salespayment').bind('click', function(){
+				$("#add-salespayment-dialog").dialog("open");
+				return false;
+			});
+			$('#add_salespayment_action').bind('click', function(){
+				// submit form
+				document.getElementById("addsalespaymentform").submit();
+			});
+		});
+	</script>
 	<?php	
 }
 
