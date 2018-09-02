@@ -81,8 +81,29 @@ function add_bestbooks_api() {
     );
 }
 
+function bestbooks_authenticate_user() {
+    if (!isset($_SERVER['PHP_AUTH_USER'])) {
+        header('WWW-Authenticate: Basic realm="My Realm"');
+        header('HTTP/1.0 401 Unauthorized');
+        echo json_encode('Unautorized Access.');
+        exit;
+    } else {
+        $userid = $_SERVER['PHP_AUTH_USER'];
+        $userpw = $_SERVER['PHP_AUTH_PW'];
+        $result = wp_authenticate_username_password(null, $userid, $userpw);
+        if (is_wp_error($result)) {
+            header('WWW-Authenticate: Basic realm="My Realm"');
+            header('HTTP/1.0 401 Unauthorized');
+            echo json_encode($result->get_error_message());
+            exit;
+        }
+    }
+}
+
 function bestbooks_api_chartofaccounts(WP_REST_Request $request) {
     require_once dirname(__FILE__).'/vendor/autoload.php';
+
+    bestbooks_authenticate_user();
 
     $results = array();
     $coa = new ChartOfAccounts();
@@ -104,6 +125,8 @@ function bestbooks_api_chartofaccounts(WP_REST_Request $request) {
 function bestbooks_api_get_acctypes(WP_REST_Request $request) {
     require_once dirname(__FILE__).'/vendor/autoload.php';
 
+    bestbooks_authenticate_user();
+
     $results = array();
     
     $_acctypes = new AccountTypes();
@@ -115,6 +138,8 @@ function bestbooks_api_get_acctypes(WP_REST_Request $request) {
 
 function bestbooks_api_debit(WP_REST_Request $request) {
     require_once dirname(__FILE__).'/vendor/autoload.php';
+
+    bestbooks_authenticate_user();
 
     $results = array();
     
@@ -141,6 +166,9 @@ function bestbooks_api_debit(WP_REST_Request $request) {
 
 function bestbooks_api_credit(WP_REST_Request $request) {
     require dirname(__FILE__).'/vendor/autoload.php';
+
+    bestbooks_authenticate_user();
+
     $results = array();
     
     if (isset($request['name'])) {
@@ -166,6 +194,9 @@ function bestbooks_api_credit(WP_REST_Request $request) {
 
 function bestbooks_api_balance(WP_REST_Request $request) {
     require_once dirname(__FILE__).'/vendor/autoload.php';
+
+    bestbooks_authenticate_user();
+
     $results = array();
     
     if (isset($request['name'])) {
@@ -194,6 +225,9 @@ function bestbooks_api_balance(WP_REST_Request $request) {
  */
 function bestbooks_api_add(WP_REST_Request $request) {
     require_once dirname(__FILE__).'/vendor/autoload.php';
+
+    bestbooks_authenticate_user();
+
     $results = array();
     
     if (isset($request['name'])) {
@@ -219,6 +253,9 @@ function bestbooks_api_add(WP_REST_Request $request) {
  */
 function bestbooks_api_subtract(WP_REST_Request $request) {
     require_once dirname(__FILE__).'/vendor/autoload.php';
+
+    bestbooks_authenticate_user();
+
     $results = array();
     
     if (isset($request['name'])) {
@@ -239,6 +276,8 @@ function bestbooks_api_subtract(WP_REST_Request $request) {
 }
 
 function bestbooks_api_headers(WP_REST_Request $request) {
+    bestbooks_authenticate_user();
+
     $results = array(__FILE__=>__METHOD__);
     
     $results[] = apache_request_headers();
