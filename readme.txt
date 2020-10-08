@@ -1,10 +1,11 @@
 === Bestbooks ===
 Contributors: phkcorp2005
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9674139
-Tags: shari phk corporation bestbooks accounting application framework sourceforge
+Tags: PressPage Entertainment Inc, bestbooks, accounting application framework 
+Requires PHP: 7.1
 Requires at least: 2.9
-Tested up to: 4.9.4
-Stable tag: 2.2.2
+Tested up to: 5.5
+Stable tag: 2.3.4
 
 Provides an accounting application framework for wordpress.
 
@@ -155,14 +156,28 @@ Please do not be afraid of asking questions?<br>
 
 
 == Changelog ==
-= 2.4 =
-* Replaced phpreports with koolphp for report generation
-* Added bad debt write off hook while introducing an contra-asset account
-* Added sales tax collectible/payable for sales (cash/card) hook
+= 2.3.5=
+* Removal of ABS function
+
+= 2.3.4=
+* Increased version number
+
+= 2.3.3 =
+* Fixed single-site with function checking for "is_plugin_active_for_network"
+* Clean formatting on SETTINGS page
+
+= 2.3.2 =
+* Fixed for operations on a single-site as well as multi-site installation of WordPress
+* Added argument information to the REST API routes
+
+= 2.3.1 =
+* Change ownership references from PHK Corporation to PressPage Entertainment Inc
+* Added Current Time Zone field to settings
+* Added hacker-proof to prevent exposing usernames via the rest API
+* Added user authentication
 
 = 2.3 =
 * Added import of Stripe Transactions CSV
-* Added import of Google Adsense Transactions CSV
 * Added pagination for Accounting|Transactions
 * Added pagination for Accounting|Journal Transaction
 * Implemented a simple Income Statement report
@@ -211,6 +226,14 @@ Please do not be afraid of asking questions?<br>
 * Created
 
 == Upgrade Notice ==
+= 2.3.1 =
+Upgrade to the latest as the API permit non-authorized access
+
+== Screenshots ==
+
+menu.png 
+
+dashboard.png
 
 == Credits ==
 
@@ -220,4 +243,4 @@ We make honorable mention to anyone who helps make Bestbooks for Wordpress a bet
 
 Support is provided at https://github.com/patrickingle/bestbooks/issues. You will require a free account on github.com
 
-Please contact phkcorp2005@gmail.com or visit the above forum with questions, comments, or requests.
+Please contact presspage.entertainment@gmail.com or visit the above forum with questions, comments, or requests.

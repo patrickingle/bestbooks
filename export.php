@@ -1,23 +1,55 @@
 <?php
-/**
- * TODO: Export for SEC XBLR
- */
-/**
- * <!-- Field: Doc-Info; Name: Generator; Value: GoFiler Complete; Version: 4.23b -->
- * <!-- Field: Doc-Info; Name: VendorURI; Value: http://www.novaworks.co -->
- * <!-- Field: Doc-Info; Name: Source; Value: PETV %2D 20180630 10Q Q1 DFN.xfr; Date: 2018%2D08%2D24T19:46:15Z -->
- * <!-- Field: Doc-Info; Name: Status; Value: 0x00000000 -->
- */
+// File: export.php
 
- function exportHeader($symbol, $date, $form_type, $quarter, $xblr, $timestamp) {
-     global $VERSION;
+add_filter('export_filters', 'bestbooks_export_filters');
 
-     $output = <<<TEXT
-<!-- Field: Doc-Info; Name: Generator; Value: BestBooks Complete; Version: $VERSION -->
-<!-- Field: Doc-Info; Name: VendorURI; Value: https://bestbooks.phkcorp.com -->
-<!-- Field: Doc-Info; Name: Source; Value: $symbol %2D $date $form_type Q$quarter $xblr; Date: $timestamp -->
-<!-- Field: Doc-Info; Name: Status; Value: 0x00000000 -->
-TEXT;
-    return $output;
- }
+function bestbooks_export_filters() {
+	?>
+	<p><label><input type="radio" name="content" value="bestbooks" /> <?php _e( 'BestBooks' ); ?></label></p>
+	<?php
+}
+
+add_filter('export_args', 'bestbooks_export_args', 10, 1);
+function bestbooks_export_args($args) {
+	if ($args['content'] === 'bestbooks') {
+		$sitename = sanitize_key( get_bloginfo( 'name' ) );
+		if ( ! empty( $sitename ) ) {
+			$sitename .= '.';
+		}
+		$date = date( 'Y-m-d' );
+		$wp_filename = $sitename . 'bestbooks.' . $date . '.csv';
+		/**
+		 * Filters the export filename.
+		 *
+		 * @since 4.4.0
+		 *
+		 * @param string $wp_filename The name of the file for download.
+		 * @param string $sitename    The site name.
+		 * @param string $date        Today's date, formatted.
+		 */
+		$filename = apply_filters( 'export_wp_filename', $wp_filename, $sitename, $date );
+
+		header( 'Content-Description: File Transfer' );
+		header( 'Content-Disposition: attachment; filename=' . $filename );
+		header( 'Content-Type: text/xml; charset=' . get_option( 'blog_charset' ), true );
+		
+	}
+}
+
+add_action('export_add_js','bestbooks_export_add_js');
+function bestbooks_export_add_js() {
+	
+}
+
+add_action('export_wp', 'bestbooks_export_wp', 10, 1);
+function bestbooks_export_wp($args) {
+	//echo '<pre>'; print_r($args); echo '</pre>'; exit;
+}
+
+add_filter('export_wp_filename','bestbooks_export_to_filename',10,3);
+function bestbooks_export_to_filename($wp_filename, $sitename, $date) {
+	//echo '<pre>'; print_r(array($wp_filename, $sitename, $date)); echo '</pre>'; exit;
+	return $wp_filename;
+}
+
 ?>

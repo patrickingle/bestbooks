@@ -3,10 +3,11 @@ The official development branch for the wordpress plugin located at https://word
 
 Contributors: phkcorp2005
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9674139
-Tags: shari phk corporation bestbooks accounting application framework sourceforge
+Tags: shari PressPage Entertainment Inc bestbooks accounting application framework sourceforge
+Requires PHP: 7.1
 Requires at least: 2.9
-Tested up to: 4.9.4
-Stable tag: 2.3
+Tested up to: 5.5
+Stable tag: 2.3.4
 
 Provides an accounting application framework for wordpress.
 
@@ -14,7 +15,7 @@ Provides an accounting application framework for wordpress.
 
 BestBooks For Wordpress originally was developed in Java, the original framework.
 The goal behind Bestbooks is to provide an accounting application framework modelled
-after common accounting terms (t-account,ledger,journal) and the GAAP (Generally Accepted
+after common accounting terms (t-account,ledger,jornal) and the GAAP (Generally Accepted
 Accounting Principles) while providing open database connectivity. At the time,
 accounting frameworks had a proprietary, closed database structure. The original Bestbooks
 for Java has connectivity for multiple databases including MSSQL, DB2, Oracle and MySQL.
@@ -44,109 +45,109 @@ To instal this plugin, follow these steps:
 
 More information of the GAAP at http://www.accounting.com/resources/gaap/
 
-## Tables creation from SQL:
+Tables creation from SQL:
+------------------------
+
 
 These tables are created automatically within the wordpress database
 
 
-    -- 
-    -- Table structure for table `Accounts`
-    -- 
+-- 
+-- Table structure for table `Accounts`
+-- 
 
 For Network-aware configurations, aka WPMU
 
-    CREATE TABLE IF NOT EXISTS {$wpdb->base_prefix}bestbooks_accounts (
-        `id` tinyint(4) NOT NULL auto_increment,
-        `txdate` date NOT NULL default '0000-00-00',
-        `name` varchar(50) NOT NULL default '',
-        `type` varchar(20) NOT NULL default '',
-        `data` varchar(25) NOT NULL default '',
-        `class` varchar(255) NOT NULL default '',
-        PRIMARY KEY  (`id`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1
+CREATE TABLE IF NOT EXISTS {$wpdb->base_prefix}bestbooks_accounts (
+    `id` tinyint(4) NOT NULL auto_increment,
+    `txdate` date NOT NULL default '0000-00-00',
+    `name` varchar(50) NOT NULL default '',
+    `type` varchar(20) NOT NULL default '',
+    `data` varchar(25) NOT NULL default '',
+    `class` varchar(255) NOT NULL default '',
+    PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1
 
 For non-Network-aware configurations,
 
-    CREATE TABLE IF NOT EXISTS {$wpdb->prefix}bestbooks_accounts (
-        `id` tinyint(4) NOT NULL auto_increment,
-        `txdate` date NOT NULL default '0000-00-00',
-        `name` varchar(50) NOT NULL default '',
-        `type` varchar(20) NOT NULL default '',
-        `data` varchar(25) NOT NULL default '',
-        `class` varchar(255) NOT NULL default '',
-        PRIMARY KEY  (`id`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1
+CREATE TABLE IF NOT EXISTS {$wpdb->prefix}bestbooks_accounts (
+    `id` tinyint(4) NOT NULL auto_increment,
+    `txdate` date NOT NULL default '0000-00-00',
+    `name` varchar(50) NOT NULL default '',
+    `type` varchar(20) NOT NULL default '',
+    `data` varchar(25) NOT NULL default '',
+    `class` varchar(255) NOT NULL default '',
+    PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1
                           
 -- --------------------------------------------------------
 
-    -- 
-    -- Table structure for table `Journal`
-    -- 
+-- 
+-- Table structure for table `Journal`
+-- 
 
 For Network-aware configurations, aka WPMU
 
-    CREATE TABLE IF NOT EXISTS {$wpdb->base_prefix}bestbooks_journal (
-        `txdate` date NOT NULL default '0000-00-00',
-        `ref` tinyint(4) NOT NULL default '0',
-        `account` varchar(50) NOT NULL default '',
-        `debit` decimal(10,2) NOT NULL default '0.00',
-        `credit` decimal(10,2) NOT NULL default '0.00'
-    ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+CREATE TABLE IF NOT EXISTS {$wpdb->base_prefix}bestbooks_journal (
+    `txdate` date NOT NULL default '0000-00-00',
+    `ref` tinyint(4) NOT NULL default '0',
+    `account` varchar(50) NOT NULL default '',
+    `debit` decimal(10,2) NOT NULL default '0.00',
+    `credit` decimal(10,2) NOT NULL default '0.00'
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 For non-Network-aware configurations,
 
-    CREATE TABLE IF NOT EXISTS {$wpdb->prefix}bestbooks_journal (
-        `txdate` date NOT NULL default '0000-00-00',
-        `ref` tinyint(4) NOT NULL default '0',
-        `account` varchar(50) NOT NULL default '',
-        `debit` decimal(10,2) NOT NULL default '0.00',
-        `credit` decimal(10,2) NOT NULL default '0.00'
-    ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+CREATE TABLE IF NOT EXISTS {$wpdb->prefix}bestbooks_journal (
+    `txdate` date NOT NULL default '0000-00-00',
+    `ref` tinyint(4) NOT NULL default '0',
+    `account` varchar(50) NOT NULL default '',
+    `debit` decimal(10,2) NOT NULL default '0.00',
+    `credit` decimal(10,2) NOT NULL default '0.00'
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
                       
 -- --------------------------------------------------------
 
-    -- 
-    -- Table structure for table `Ledger`
-    -- 
+-- 
+-- Table structure for table `Ledger`
+-- 
  
 For Network-aware configurations, aka WPMU
 
-    CREATE TABLE IF NOT EXISTS {$wpdb->base_prefix}bestbooks_ledger (
-        `id` tinyint(4) NOT NULL auto_increment,
-        `name` varchar(255) NOT NULL default '',
-        `txdate` date NOT NULL default '0000-00-00',
-        `note` varchar(255) NOT NULL default '',
-        `ref` double NOT NULL default '0',
-        `debit` decimal(10,2) NOT NULL default '0.00',
-        `credit` decimal(10,2) NOT NULL default '0.00',
-        `balance` decimal(10,2) NOT NULL default '0.00',
-        `type` varchar(10) NOT NULL default '',
-        PRIMARY KEY  (`id`)
-    ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+CREATE TABLE IF NOT EXISTS {$wpdb->base_prefix}bestbooks_ledger (
+    `id` tinyint(4) NOT NULL auto_increment,
+    `name` varchar(255) NOT NULL default '',
+    `txdate` date NOT NULL default '0000-00-00',
+    `note` varchar(255) NOT NULL default '',
+    `ref` double NOT NULL default '0',
+    `debit` decimal(10,2) NOT NULL default '0.00',
+    `credit` decimal(10,2) NOT NULL default '0.00',
+    `balance` decimal(10,2) NOT NULL default '0.00',
+    `type` varchar(10) NOT NULL default '',
+    PRIMARY KEY  (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 For non-Network-aware configurations,
 
-    CREATE TABLE IF NOT EXISTS {$wpdb->prefix}bestbooks_ledger (
-        `id` tinyint(4) NOT NULL auto_increment,
-        `name` varchar(255) NOT NULL default '',
-        `txdate` date NOT NULL default '0000-00-00',
-        `note` varchar(255) NOT NULL default '',
-        `ref` double NOT NULL default '0',
-        `debit` decimal(10,2) NOT NULL default '0.00',
-        `credit` decimal(10,2) NOT NULL default '0.00',
-        `balance` decimal(10,2) NOT NULL default '0.00',
-        `type` varchar(10) NOT NULL default '',
-        PRIMARY KEY  (`id`)
-    ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+CREATE TABLE IF NOT EXISTS {$wpdb->prefix}bestbooks_ledger (
+    `id` tinyint(4) NOT NULL auto_increment,
+    `name` varchar(255) NOT NULL default '',
+    `txdate` date NOT NULL default '0000-00-00',
+    `note` varchar(255) NOT NULL default '',
+    `ref` double NOT NULL default '0',
+    `debit` decimal(10,2) NOT NULL default '0.00',
+    `credit` decimal(10,2) NOT NULL default '0.00',
+    `balance` decimal(10,2) NOT NULL default '0.00',
+    `type` varchar(10) NOT NULL default '',
+    PRIMARY KEY  (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
                     
 
 
-## Testing:
+Testing:
+-------
 
-Create a page with the following shortcode, 
-    
-    [bestbooks-sample-1]
-
+Create a page with the following shortcode, [bestbooks-sample-1]
 then check your database tables for the validation.
 
 If you get an error, please report it!
@@ -159,10 +160,25 @@ Please do not be afraid of asking questions?<br>
 
 
 # Changelog 
-= 2.4=
-* Replaced phpreports with koolphp for report generation
-* Added bad debt write off hook while introducing an contra-asset account
-* Added sales tax collectible/payable for sales (cash/card) hook
+= 2.3.5=
+* Removal of ABS function
+
+= 2.3.4=
+* Increased version number
+
+= 2.3.3 =
+* Fixed single-site with function checking for "is_plugin_active_for_network"
+* Clean formatting on SETTINGS page
+
+= 2.3.2 =
+* Fixed for operations on a single-site as well as multi-site installation of WordPress
+* Added argument information to the REST API routes
+
+= 2.3.1 =
+* Change ownership references from PHK Corporation to PressPage Entertainment Inc
+* Added Current Time Zone field to settings
+* Added hacker-proof to prevent exposing usernames via the rest API
+* Added user authentication
 
 = 2.3 =
 * Added import of Stripe Transactions CSV
@@ -214,6 +230,8 @@ Please do not be afraid of asking questions?<br>
 * Created
 
 == Upgrade Notice ==
+= 2.3.1 =
+Upgrade to the latest as the API permit non-authorized access
 
 == Credits ==
 
@@ -221,6 +239,6 @@ We make honorable mention to anyone who helps make Bestbooks for Wordpress a bet
 
 == Contact ==
 
-Support is provided at https://github.com/phkcorporation/bestbooks/issues. You will require a free account on github.com
+Support is provided at https://github.com/patrickingle/bestbooks/issues. You will require a free account on github.com
 
-Please contact phkcorp2005@gmail.com or visit the above forum with questions, comments, or requests.
+Please contact presspage.entertainment@gmail.com or visit the above forum with questions, comments, or requests.
