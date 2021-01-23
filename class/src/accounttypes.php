@@ -35,7 +35,7 @@ if (class_exists('SplEnum')) {
         const Credit = "Credit";
         const Investment = "Investment";
 
-        static function getConstList($include_default = false) {
+        static public function getConstList($include_default = false) {
             $oClass = new ReflectionClass(__CLASS__);
             if ($include_default) {
                 return $oClass->getConstants();

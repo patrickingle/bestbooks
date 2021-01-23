@@ -7,7 +7,7 @@ Tags: shari PressPage Entertainment Inc bestbooks accounting application framewo
 Requires PHP: 7.1
 Requires at least: 2.9
 Tested up to: 5.6
-Stable tag: 2.3.7
+Stable tag: 2.4.0
 
 Provides an accounting application framework for wordpress.
 
@@ -162,6 +162,10 @@ Please do not be afraid of asking questions?<br>
 
 
 # Changelog
+= 2.4.0=
+* Implemented Accounting pages using WP_List_Table
+* Added common transactions import
+
 = 2.3.7=
 * Fixed Ledger::alertTable not found error, to Ledger::alterTable
 

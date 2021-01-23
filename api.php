@@ -10,6 +10,15 @@
  * 
  * composer dump-autoload
  * 
+ * @api {get} /employees : This will use to define rest end points.
+ * @apiVersion : This will use to define API version.
+ * @apiName : This will use to define controller method name that will handle by endpoint.
+ * @apiGroup : This will use to define rest api group name.
+ * @apiSuccess : This will use to define response varaible name with type.
+ * @apiError : This will use to define error response varaible with type.
+ * @apiParam /employees : This will use to define parameter for rest api.
+ * @apiSampleRequest : This is use to enable tryout feature.
+ * 
  */
 
 add_action( 'rest_api_init', 'add_bestbooks_api');
@@ -19,6 +28,7 @@ function add_bestbooks_api() {
         array(
             'methods' => array('GET','POST'),
             'callback' => 'bestbooks_api_version',
+            'permission_callback' => 'bestbooks_api_version',
 			'args' => array(
 							'user' => array('required' => true),
 							'pass' => array('required' => true)
@@ -30,6 +40,7 @@ function add_bestbooks_api() {
         array(
             'methods' => array('GET','POST'),
             'callback' => 'bestbooks_api_settings',
+            'permission_callback' => 'bestbooks_api_settings',
 			'args' => array(
 							'user' => array('required' => true),
 							'pass' => array('required' => true)
@@ -41,6 +52,7 @@ function add_bestbooks_api() {
         array(
             'methods' => array('GET','POST'),
             'callback' => 'bestbooks_api_chartofaccounts',
+            'permission_callback' => 'bestbooks_api_chartofaccounts',
 			'args' => array(
 						'user' => array('required' => true),
 						'pass' => array('required' => true),
@@ -54,6 +66,7 @@ function add_bestbooks_api() {
         array(
             'methods' => array('GET','POST'),
             'callback' => 'bestbooks_api_get_acctypes',
+            'permission_callback' => 'bestbooks_api_get_acctypes',
 			'args' => array(
 							'user' => array('required' => true),
 							'pass' => array('required' => true)
@@ -65,6 +78,7 @@ function add_bestbooks_api() {
         array(
             'methods' => array('GET','POST'),
             'callback' => 'bestbooks_api_debit',
+            'permission_callback' => 'bestbooks_api_debit',
 			'args' => array(
 							'user' => array('required' => true),
 							'pass' => array('required' => true),
@@ -80,6 +94,7 @@ function add_bestbooks_api() {
         array(
             'methods' => array('GET','POST'),
             'callback' => 'bestbooks_api_credit',
+            'permission_callback' => 'bestbooks_api_credit',
 			'args' => array(
 							'user' => array('required' => true),
 							'pass' => array('required' => true),
@@ -95,6 +110,7 @@ function add_bestbooks_api() {
         array(
             'methods' => array('GET','POST'),
             'callback' => 'bestbooks_api_balance',
+            'permission_callback' => 'bestbooks_api_balance',
 			'args' => array(
 							'user' => array('required' => true),
 							'pass' => array('required' => true),
@@ -108,6 +124,7 @@ function add_bestbooks_api() {
         array(
             'methods' => array('GET','POST'),
             'callback' => 'bestbooks_api_add',
+            'permission_callback' => 'bestbooks_api_add',
 			'args' => array(
 							'user' => array('required' => true),
 							'pass' => array('required' => true),
@@ -123,6 +140,7 @@ function add_bestbooks_api() {
         array(
             'methods' => array('GET','POST'),
             'callback' => 'bestbooks_api_subtract',
+            'permission_callback' => 'bestbooks_api_subtract',
 			'args' => array(
 							'user' => array('required' => true),
 							'pass' => array('required' => true),
@@ -138,6 +156,7 @@ function add_bestbooks_api() {
         array(
             'methods' => array('GET','POST'),
             'callback' => 'bestbooks_api_headers',
+            'permission_callback' => 'bestbooks_api_headers',
 			'args' => array(
 							'user' => array('required' => true),
 							'pass' => array('required' => true)
@@ -155,15 +174,16 @@ function add_bestbooks_api() {
     );
 }
 
-function bestbooks_api_version(WP_REST_Request $request) {
-    if (($error = bestbooks_authenticate($request)) === true) {
-        $response = new WP_REST_Response( BESTBOOKS_VERSION );
-    } else {
-        $response = new WP_REST_Response($error->get_error_message());
-    }
-    return $response;
+/**
+ * @api {get} /version Get current BestBooks version
+ */
+function bestbooks_api_version() {
+    return new WP_REST_Response( BESTBOOKS_VERSION, 200 );
 }
 
+/**
+ * @api {get} /settings Get current settings
+ */
 function bestbooks_api_settings(WP_REST_Request $request) {
     if (($error = bestbooks_authenticate($request)) === true) {
         $bestbooks_customer = get_option("bestbooks_customer");
@@ -192,23 +212,16 @@ function bestbooks_api_settings(WP_REST_Request $request) {
     return $response;
 }
 
+/**
+ * @api {get} /chartofaccounts Get the current chart of accounts
+ */
 function bestbooks_api_chartofaccounts(WP_REST_Request $request) {
     if (($error = bestbooks_authenticate($request)) === true) {
         require_once dirname(__FILE__).'/vendor/autoload.php';
 
         $results = array();
         $coa = new ChartOfAccounts();
-        
-        //if (isset($request['name']) && isset($request['type'])) {
-        //    try {
-        //        $coa->add($request['name'],$request['type']);
-        //        $results = $coa->getList();
-        //    } catch (Exception $ex) {
-        //        $results = $ex;
-        //    }
-        //} else {
-            $results = $coa->getList();
-        //}
+        $results = $coa->getList();
         $response = new WP_REST_Response( $results );
     } else {
         $response = new WP_REST_Response($error->get_error_message());

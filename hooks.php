@@ -26,6 +26,82 @@ if (!function_exists('bestbooks_add_debit')) {
 	}
 }
 
+if (!function_exists('bestbooks_add_transaction')) {
+	add_action('bestbooks_add_transaction', 'bestbooks_add_transaction', 10, 6);
+
+	function bestbooks_add_transaction($type, $account, $date, $description, $debit, $credit) {
+		$coa = new ChartOfAccounts();
+		$coa->add($account, $type);
+
+		$ledger = new Ledger($account, $type);
+		if ($debit > 0) {
+			$ledger->addDebit($date, $description, $debit);
+		}
+		if ($credit > 0) {
+			$ledger->addCredit($date, $description, $credit);
+		}
+	}
+} 
+
+if (!function_exists('bestbooks_edit_transaction')) {
+	add_action('bestbooks_edit_transaction','bestbooks_edit_transaction',10,7);
+
+	function bestbooks_edit_transaction($id, $type, $account, $date, $description, $debit, $credit) {
+		$coa = new ChartOfAccounts();
+		$coa->add($account, $type);
+
+		try {
+			$ledger = new Ledger($account, $type);
+			$ledger->getByID($id);
+			return $ledger->update($id, $account, $type, $date, $description, $debit, $credit);
+		} catch(Exception $ex) {
+			echo $ex->getMessage();
+			exit;
+		}
+	}
+}
+
+if (!function_exists('bestbooks_edit_journal_transaction')) {
+	add_action('bestbooks_edit_journal_transaction','bestbooks_edit_journal_transaction',10,6);
+
+	function bestbooks_edit_journal_transaction($id, $account, $date, $reference, $debit, $credit) {
+		try {
+			$journal = new Journal($account);
+			return $journal->update($id,$date,$account,$debit,$credit,$reference);
+		} catch(Exception $ex) {
+			echo $ex->getMessage();
+			exit;
+		}
+	}
+}
+
+if (!function_exists('bestbooks_add_journal_transaction')) {
+	add_action('bestbooks_add_journal_transaction','bestbooks_add_journal_transaction',10,5);
+
+	function bestbooks_add_journal_transaction($account, $date, $reference, $debit, $credit) {
+		try {
+			$journal = new Journal($account);
+			return $journal->add($date,$reference,$account,$debit,$credit);
+		} catch(Exception $ex) {
+			echo $ex->getMessage();
+			exit;
+		}
+	}
+}
+
+/**
+ * Cost to Estimate Technological Feasability
+ * FASB ASC Topic: 985-20-25-1
+ * 
+ * All costs incurred to establish the technological feasibility of a computer software product 
+ * to be sold, leased, or otherwise marketed are research and development costs. 
+ * Those costs shall be charged to expense when incurred as required by Subtopic
+ * 
+ * For purposes of this Subtopic, the technological feasibility of a computer software product is established when the entity has completed all planning, designing, 
+ * activities that are necessary to establish that the product can be produced to meet its design specifications including functions, features, 
+ * and technical performance requirements. At a minimum, the entity shall have performed the activities in either (a) or (b) as evidence that
+ * technological feasibility has been established: 
+ */
 
 /**
  * Debit Accounts: Assets & Expenses
@@ -326,6 +402,22 @@ if (!function_exists('bestbooks_payassetbycheck')) {
 	}
 }
 
+if (!function_exists('bestbooks_payassetbycredit')) {
+	add_action('bestbooks_payassetbycredit','bestbooks_payassetbycredit', 10, 4);
+
+	function bestbooks_payassetbycredit($txdate, $description, $amount, $account) {
+		$coa = new ChartOfAccounts();
+		$coa->add($account, 'Asset');
+		$coa->add('Accounts Payable', 'Liability');
+
+		$expense = new Asset($account);
+		$expense->increase($txdate, $description, $amount);
+
+		$liability = new Liability('Accounts Payable');
+		$liability->increase($txdate, $description, $amount);
+	}
+}
+
 /**
  * Example 6: Company Writes Check to Pay for Expenses
  * From: https://www.keynotesupport.com/accounting/accounting-transactions.shtml
@@ -565,7 +657,7 @@ if (!function_exists('bestbooks_distribution')) {
  * There are the following COGS categories in accordance with the GAAP.
  * 		
  * Debit COGS is an Expense (increases it's balance)
- * Credit Purchases is a Liabillity (decrease it's balance)
+ * Credit Purchases is a Liability (decrease it's balance)
  * Credit Inventory is an Asset (increase or decrease based on the amount)
  */
  if (!function_exists('bestbooks_cogs')) {
@@ -605,14 +697,141 @@ if (!function_exists('bestbooks_woocommerce_payment_successful_result')) {
 
 	function bestbooks_woocommerce_payment_successful_result($result, $order_id) {
 		// https://docs.woocommerce.com/wc-apidocs/class-WC_Order.html
-		$order = new WC_Order( $order_id );
-		$txdate = $order->get_date_completed()->__toString();
-		$description = "WooCommerce Order #$order_id at ".$order->get_view_order_url();
-		$amount = $order->get_formatted_order_total();
-
-		bestbooks_sales_card($txdate, $description, $amount);
+		if (class_exists('WC_Order')) {
+			$order = new WC_Order( $order_id );
+			$txdate = $order->get_date_completed()->__toString();
+			$description = "WooCommerce Order #$order_id at ".$order->get_view_order_url();
+			$amount = $order->get_formatted_order_total();
+	
+			bestbooks_sales_card($txdate, $description, $amount);	
+		}
 
 		return $result;
+	}
+}
+
+/**
+ * Example 17: Unearned Revenue
+ * Is income received but not yet earned, e.g. deposits taken on a job not yet performed.
+ * Unearned income is applicable for Service Income, while Product Income is regular income
+ * 
+ * https://www.wallstreetmojo.com/unearned-revenue-journal-entries/
+ * 
+ * https://www.accountingverse.com/accounting-basics/unearned-revenue.html 
+ * 
+ * Cash asset account is debited for amount (balance is decreasing)
+ * Unearned Revenue liability account is credited for amount (balance is increasing)
+ * 
+ */
+if (!function_exists('bestbooks_unearned_revenue')) {
+	add_action('bestbooks_unearned_revenue','bestbooks_unearned_revenue',10,3);
+
+	function bestbooks_unearned_revenue($txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add('Cash','Asset');
+		$coa->add('Unearned Revenue','Revenue');
+
+		$cash = new Cash('Cash');
+		$cash->decrease($txdate, $description, $amount);
+
+		$unearned_revenue = new Revenue('Unearned Revenue');
+		$unearned_revenue->increase($txdate, $description, $amount);
+	}
+}
+
+/**
+ * Example 18: Accounting for Bad Debt
+ * If a company sells on credit, customers will occasionally be unable to pay, 
+ * in which case the seller should charge the account receivable to expense as a bad debt
+ * 
+ * https://www.accountingtools.com/articles/2017/5/17/accounts-receivable-accounting
+ * 
+ * Bad Debt expense account debited 
+ * Account Receivable is credited
+ */
+if (!function_exists('bestbooks_baddebt')) {
+	add_action('bestbooks_baddebt','bestbooks_baddebt',10,3);
+
+	function bestbooks_baddebt($txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add('Bad Debt','Expense');
+		$coa->add('Account Receivable','Asset');
+
+		$bad_debt = new Expense('Bad Debt');
+		$bad_debt->increase($txdate, $description, $amount);
+
+		$account_receivable = new Asset('Account Receivable');
+		$account_receivable->decrease($txdate, $description, $amount);
+	}
+}
+
+/**
+ * Example 19: Accrued Income
+ * When a company has earned income but has not received the monies, that are NOT from Sales
+ * 
+ * https://accounting-simplified.com/financial/accrual-accounting/accrued-income
+ * 
+ * Income Receivable is debited (increases the balance)
+ * Income account is credited (increases the balance)
+ */
+if (!function_exists('bestbooks_accruedincome')) {
+	function bestbooks_accruedincome($txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add("Income Receivable", "Asset");
+		$coa->add("Income", "Revenue");
+
+		$income = new Income("Income");
+		$income->increase($txdate, $description, $amount);
+
+		$ir = new Asset("Income Receivable");
+		$ir->increase($txdate, $description, $amount);
+	}
+}
+
+/**
+ * Example 19.1: Receipt of Payment on Accrued Income
+ * When payment is due, and the customer makes the payment, an accountant for that company would record an adjustment to accrued revenue. 
+ * The accountant would make an adjusting journal entry in which the amount of cash received by the customer 
+ * would be debited to the cash account on the balance sheet, 
+ * and the same amount of cash received would be credited to the accrued revenue account or accounts receivable account, reducing that account.
+ * 
+ * Cash Account is debited (increases the balance)
+ * Income Receivable is credited (decreases the balamce)
+ */
+if (!function_exists('bestbooks_accruedincome_payment')) {
+	function bestbooks_accruedincome_payment($txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add("Income Receivable", "Asset");
+		$coa->add("Cash","Asset");
+
+		$ir = new Asset("Income Receivable");
+		$ir->decrease($txdate, $description, $amount);
+
+		$cash = new Asset("Cash");
+		$cash->increase($txdate, $description, $amount);
+	}
+}
+
+/**
+ * Example 20: Accrued Expense
+ * When a company has an expense but has not paid, and recorded as an adjusting entry
+ * 
+ * https://www.accountingtools.com/articles/what-are-accrued-expenses.html
+ * 
+ * Expense account is debited (balance is increasing)
+ * Payable account is credited (balance is increasing)
+ */
+if (!function_exists('bestbooks_accruedexpense')) {
+	function bestbooks_accruedexpense($expense,$payable,$txdate, $description, $amount) {
+		$coa = new ChartOfAccounts();
+		$coa->add($expense, "Asset");
+		$coa->add($payable, "Liability");
+
+		$expense_account = new Asset($expense);
+		$expense_account->increase($txdate, $description, $amount);
+
+		$payable_account = new Liability($payable);
+		$payable_account->increase($txdate, $description, $amount);
 	}
 }
 

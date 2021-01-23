@@ -18,25 +18,41 @@
 
 
 class Liability extends Ledger {
-   public function __construct($name,$type="Liability") {
-       parent::__construct($name,$type);
-   }
+    public function __construct($name,$type="Liability") {
+      parent::__construct($name,$type);
+    }
    
-   function increase($date,$desc,$amount) {
-      $balance = parent::getBalance() - $amount;
+    /**
+    * A credit is an accounting entry that either increases a liability or equity account, 
+    * or decreases an asset or expense account. It is positioned to the right in an accounting entry.
+    */
+    function increase($date,$desc,$amount) {
+      $balance = parent::getBalance() + floatval($amount);
       parent::setBalance($balance);
         //$journal = new Journal();
         //$journal->add($date,0,$this->name,0.00,$amount);
       return parent::addCredit($date,$desc,$amount);
-   }
+    }
+
+    function credit($date,$desc,$amount) {
+      return $this->increase($date,$desc,$amount);
+    }
    
-   function decrease($date,$desc,$amount) {
-      $balance = parent::getBalance() + $amount;
+    /**
+    * A debit is an accounting entry that either increases an asset or expense account, 
+    * or decreases a liability or equity account. It is positioned to the left in an accounting entry.
+    */
+    function decrease($date,$desc,$amount) {
+      $balance = parent::getBalance() - $amount;
       parent::setBalance($balance);
         //$journal = new Journal();
         //$journal->add($date,0,$this->name,$amount,0.00);
       return parent::addDebit($date,$desc,$amount);
-   }
+    }
+
+    function debit($date,$desc,$amount) {
+      return $this->decrease($date,$desc,$amount);
+    }
    
    function getAccountBaseType() {
        return 'Liability';
