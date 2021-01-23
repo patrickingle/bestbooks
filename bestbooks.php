@@ -3,7 +3,7 @@
 Plugin Name: Bestbooks
 Plugin URI: http://wordpress.org/plugins/bestbooks/
 Description: The popular accounting framework
-Version: 2.3.6
+Version: 2.3.7
 Author: PressPage Entertainment Inc DBA PINGLEWARE
 Author URI: https://pingleware.work
 */
@@ -81,7 +81,7 @@ function addBestBooksTables ()
         Ledger::createTable();
         Journal::alterTable();
         ChartOfAccounts::alterTable();
-        Ledger::alertTable();
+        Ledger::alterTable();
         Journal::alterTable();
 	} // endif of is_admin()
 
