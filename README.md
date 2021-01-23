@@ -6,8 +6,8 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: shari PressPage Entertainment Inc bestbooks accounting application framework sourceforge
 Requires PHP: 7.1
 Requires at least: 2.9
-Tested up to: 5.5
-Stable tag: 2.3.4
+Tested up to: 5.6
+Stable tag: 2.3.6
 
 Provides an accounting application framework for wordpress.
 
@@ -59,7 +59,7 @@ These tables are created automatically within the wordpress database
 For Network-aware configurations, aka WPMU
 
 CREATE TABLE IF NOT EXISTS {$wpdb->base_prefix}bestbooks_accounts (
-    `id` tinyint(4) NOT NULL auto_increment,
+    `id` int(11) NOT NULL auto_increment,
     `txdate` date NOT NULL default '0000-00-00',
     `name` varchar(50) NOT NULL default '',
     `type` varchar(20) NOT NULL default '',
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS {$wpdb->base_prefix}bestbooks_accounts (
 For non-Network-aware configurations,
 
 CREATE TABLE IF NOT EXISTS {$wpdb->prefix}bestbooks_accounts (
-    `id` tinyint(4) NOT NULL auto_increment,
+    `id` int(11) NOT NULL auto_increment,
     `txdate` date NOT NULL default '0000-00-00',
     `name` varchar(50) NOT NULL default '',
     `type` varchar(20) NOT NULL default '',
@@ -89,8 +89,9 @@ CREATE TABLE IF NOT EXISTS {$wpdb->prefix}bestbooks_accounts (
 For Network-aware configurations, aka WPMU
 
 CREATE TABLE IF NOT EXISTS {$wpdb->base_prefix}bestbooks_journal (
+    `id` int(11) NOT NULL auto_increment,
     `txdate` date NOT NULL default '0000-00-00',
-    `ref` tinyint(4) NOT NULL default '0',
+    `ref` int(11) NOT NULL default '0',
     `account` varchar(50) NOT NULL default '',
     `debit` decimal(10,2) NOT NULL default '0.00',
     `credit` decimal(10,2) NOT NULL default '0.00'
@@ -99,8 +100,9 @@ CREATE TABLE IF NOT EXISTS {$wpdb->base_prefix}bestbooks_journal (
 For non-Network-aware configurations,
 
 CREATE TABLE IF NOT EXISTS {$wpdb->prefix}bestbooks_journal (
+    `id` int(11) NOT NULL auto_increment,
     `txdate` date NOT NULL default '0000-00-00',
-    `ref` tinyint(4) NOT NULL default '0',
+    `ref` int(11) NOT NULL default '0',
     `account` varchar(50) NOT NULL default '',
     `debit` decimal(10,2) NOT NULL default '0.00',
     `credit` decimal(10,2) NOT NULL default '0.00'
@@ -115,7 +117,7 @@ CREATE TABLE IF NOT EXISTS {$wpdb->prefix}bestbooks_journal (
 For Network-aware configurations, aka WPMU
 
 CREATE TABLE IF NOT EXISTS {$wpdb->base_prefix}bestbooks_ledger (
-    `id` tinyint(4) NOT NULL auto_increment,
+    `id` int(11) NOT NULL auto_increment,
     `name` varchar(255) NOT NULL default '',
     `txdate` date NOT NULL default '0000-00-00',
     `note` varchar(255) NOT NULL default '',
@@ -130,7 +132,7 @@ CREATE TABLE IF NOT EXISTS {$wpdb->base_prefix}bestbooks_ledger (
 For non-Network-aware configurations,
 
 CREATE TABLE IF NOT EXISTS {$wpdb->prefix}bestbooks_ledger (
-    `id` tinyint(4) NOT NULL auto_increment,
+    `id` int(11) NOT NULL auto_increment,
     `name` varchar(255) NOT NULL default '',
     `txdate` date NOT NULL default '0000-00-00',
     `note` varchar(255) NOT NULL default '',
@@ -159,7 +161,10 @@ Please do not be afraid of asking questions?<br>
 (There are no stupid or dumb questions!)
 
 
-# Changelog 
+# Changelog
+= 2.3.6=
+* Modify table id column from tinyint to full int
+
 = 2.3.5=
 * Removal of ABS function
 

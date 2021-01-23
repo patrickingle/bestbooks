@@ -61,8 +61,8 @@ class ChartOfAccounts {
         if (function_exists('is_plugin_active_for_network')) {
           if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
             $sql = "CREATE TABLE IF NOT EXISTS `".$wpdb->base_prefix."bestbooks_accounts` (
-                            `id` tinyint(4) NOT NULL auto_increment,
-                            `txdate` date NOT NULL default '0000-00-00',
+                            `id` int(11) NOT NULL auto_increment,
+                            `txdate` date DEFAULT NULL,
                             `name` varchar(50) NOT NULL default '',
                             `type` varchar(20) NOT NULL default '',
                             `data` varchar(25) NOT NULL default '',
@@ -71,8 +71,8 @@ class ChartOfAccounts {
                             ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1";
           } else {
             $sql = "CREATE TABLE IF NOT EXISTS `".$wpdb->prefix."bestbooks_accounts` (
-                            `id` tinyint(4) NOT NULL auto_increment,
-                            `txdate` date NOT NULL default '0000-00-00',
+                            `id` int(11) NOT NULL auto_increment,
+                            `txdate` date DEFAULT NULL,
                             `name` varchar(50) NOT NULL default '',
                             `type` varchar(20) NOT NULL default '',
                             `data` varchar(25) NOT NULL default '',
@@ -82,8 +82,8 @@ class ChartOfAccounts {
           }
         } else {
           $sql = "CREATE TABLE IF NOT EXISTS `".$wpdb->prefix."bestbooks_accounts` (
-            `id` tinyint(4) NOT NULL auto_increment,
-            `txdate` date NOT NULL default '0000-00-00',
+            `id` int(11) NOT NULL auto_increment,
+            `txdate` date DEFAULT NULL,
             `name` varchar(50) NOT NULL default '',
             `type` varchar(20) NOT NULL default '',
             `data` varchar(25) NOT NULL default '',
@@ -99,6 +99,27 @@ class ChartOfAccounts {
         }
 
         return "Accounts table created successfully";
+    }
+
+    public static function alterTable() {
+      global $wpdb;
+
+      $sql = '';
+      if (function_exists('is_plugin_active_for_network')) {
+        if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
+          $sql = "ALTER TABLE ".$wpdb->base_prefix."bestbooks_accounts MODIFY `id` int(11) NOT NULL;";
+        } else {
+          $sql = "ALTER TABLE ".$wpdb->prefix."bestbooks_accounts MODIFY `id` int(11) NOT NULL;";
+        }
+      } else {
+        $sql = "ALTER TABLE ".$wpdb->prefix."bestbooks_accounts MODIFY `id` int(11) NOT NULL;";
+      }
+      $result = $wpdb->query($sql);
+
+      if ($result===false) {
+        throw new BestBooksException("Chart of Accounts table modify failure");
+      }
+      return "Chart of Accounts table modified successfully";
     }
 
    public function add($name,$type) {

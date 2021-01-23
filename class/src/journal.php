@@ -60,6 +60,7 @@ class Journal {
     if (function_exists("is_plugin_active_for_network")) {
       if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
         $sql = "CREATE TABLE IF NOT EXISTS `".$wpdb->base_prefix."bestbooks_journal` (
+                        `id` int(11) NOT NULL,
                         `txdate` date NOT NULL default '0000-00-00',
                         `ref` tinyint(4) NOT NULL default '0',
                         `account` varchar(50) NOT NULL default '',
@@ -68,6 +69,7 @@ class Journal {
                         ) ENGINE=MyISAM DEFAULT CHARSET=latin1;";
       } else {
         $sql = "CREATE TABLE IF NOT EXISTS `".$wpdb->prefix."bestbooks_journal` (
+                        `id` int(11) NOT NULL,
                         `txdate` date NOT NULL default '0000-00-00',
                         `ref` tinyint(4) NOT NULL default '0',
                         `account` varchar(50) NOT NULL default '',
@@ -77,6 +79,7 @@ class Journal {
       }
     } else {
       $sql = "CREATE TABLE IF NOT EXISTS `".$wpdb->prefix."bestbooks_journal` (
+        `id` int(11) NOT NULL,
         `txdate` date NOT NULL default '0000-00-00',
         `ref` tinyint(4) NOT NULL default '0',
         `account` varchar(50) NOT NULL default '',
@@ -94,7 +97,25 @@ class Journal {
   }
 
   public static function alterTable() {
-  	// Function to perform any necessary table modifications
+    // Function to perform any necessary table modifications
+    global $wpdb;
+
+    if (function_exists("is_plugin_active_for_network")) {
+      if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
+        $sql = "ALTER TABLE `".$wpdb->base_prefix."bestbooks_journal` MODIFY `id` int(11) NOT NULL;";
+      } else {
+        $sql = "ALTER TABLE `".$wpdb->prefix."bestbooks_journal` MODIFY `id` int(11) NOT NULL;";
+      }
+    } else {
+      $sql = "ALTER TABLE `".$wpdb->prefix."bestbooks_journal` MODIFY `id` int(11) NOT NULL;";
+    }
+  
+    $result = $wpdb->query($sql);
+
+    if ($result===false) {
+	    throw new BestBooksException("Journal table modify failure");
+    }
+    return "Journal table modified successfully";
   }
 
   public static function dropTable() {

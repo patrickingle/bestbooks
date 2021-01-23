@@ -140,7 +140,7 @@ class Ledger extends TAccount {
 		if (function_exists("is_plugin_active_for_network")) {
 			if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
 				$sql = "CREATE TABLE IF NOT EXISTS `".$wpdb->base_prefix."bestbooks_ledger` (
-						`id` tinyint(4) NOT NULL auto_increment,
+						`id` int(11) NOT NULL auto_increment,
 						`name` varchar(255) NOT NULL default '',
 						`txdate` date NOT NULL default '0000-00-00',
 						`note` varchar(255) NOT NULL default '',
@@ -153,7 +153,7 @@ class Ledger extends TAccount {
 						) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
 			} else {
 				$sql = "CREATE TABLE IF NOT EXISTS `".$wpdb->prefix."bestbooks_ledger` (
-						`id` tinyint(4) NOT NULL auto_increment,
+						`id` int(11) NOT NULL auto_increment,
 						`name` varchar(255) NOT NULL default '',
 						`txdate` date NOT NULL default '0000-00-00',
 						`note` varchar(255) NOT NULL default '',
@@ -167,7 +167,7 @@ class Ledger extends TAccount {
 			}
 		} else {
 			$sql = "CREATE TABLE IF NOT EXISTS `".$wpdb->prefix."bestbooks_ledger` (
-				`id` tinyint(4) NOT NULL auto_increment,
+				`id` int(11) NOT NULL auto_increment,
 				`name` varchar(255) NOT NULL default '',
 				`txdate` date NOT NULL default '0000-00-00',
 				`note` varchar(255) NOT NULL default '',
@@ -178,7 +178,7 @@ class Ledger extends TAccount {
 				`type` varchar(10) NOT NULL default '',
 				PRIMARY KEY  (`id`)
 				) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";    		
-}
+		}
 	
         $result = $wpdb->query($sql);
 
@@ -187,6 +187,27 @@ class Ledger extends TAccount {
         }
 
         return "Ledger table created successfully";
+	}
+
+	public static function alterTable() {
+        global $wpdb;
+
+		if (function_exists("is_plugin_active_for_network")) {
+			if (is_plugin_active_for_network('bestbooks/bestbooks.php')) {
+				$sql = "ALTER TABLE `".$wpdb->base_prefix."bestbooks_ledger` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;";
+			} else {
+				$sql = "ALTER TABLE `".$wpdb->prefix."bestbooks_ledger` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;";
+			}
+		} else {
+			$sql = "ALTER TABLE `".$wpdb->prefix."bestbooks_ledger` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;";
+		}
+        $result = $wpdb->query($sql);
+
+        if ($result === false) {
+            throw new BestBooksException("Ledger table modify error: " . $sql);
+        }
+
+        return "Ledger table modified successfully";
 	}
 
 	public static function dropTable() {

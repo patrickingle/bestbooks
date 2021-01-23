@@ -3,9 +3,9 @@
 Plugin Name: Bestbooks
 Plugin URI: http://wordpress.org/plugins/bestbooks/
 Description: The popular accounting framework
-Version: 2.3.5
-Author: PressPage Entertainment Inc
-Author URI: https://www.presspage.info
+Version: 2.3.6
+Author: PressPage Entertainment Inc DBA PINGLEWARE
+Author URI: https://pingleware.work
 */
 
 /*
@@ -60,7 +60,7 @@ $gas->adddebit($mdb,"2007-03-31","Gas for Taxi Transportation Daily",37.00);
 
 */
 
-define('BESTBOOKS_VERSION', '2.3.5');
+define('BESTBOOKS_VERSION', '2.3.6');
 
 require_once dirname(__FILE__).'/vendor/autoload.php';
 require_once dirname(__FILE__).'/lib/phpreport/vendor/autoload.php';
@@ -79,6 +79,9 @@ function addBestBooksTables ()
         ChartOfAccounts::createTable();
         Journal::createTable();
         Ledger::createTable();
+        Journal::alterTable();
+        ChartOfAccounts::alterTable();
+        Ledger::alertTable();
         Journal::alterTable();
 	} // endif of is_admin()
 
