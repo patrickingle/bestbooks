@@ -158,6 +158,9 @@ Please do not be afraid of asking questions?<br>
 
 
 == Changelog ==
+= 2.4.1=
+* Added UNINSTALL.PHP to delete bestbooks custom data - BACKUP DATA BEFORE UNINSTALLING
+
 = 2.4.0=
 * Implemented Accounting pages using WP_List_Table
 * Added common transactions import

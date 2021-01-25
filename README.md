@@ -13,15 +13,9 @@ Provides an accounting application framework for wordpress.
 
 # Description
 
-BestBooks For Wordpress originally was developed in Java, the original framework.
-The goal behind Bestbooks is to provide an accounting application framework modelled
-after common accounting terms (t-account,ledger,jornal) and the GAAP (Generally Accepted
-Accounting Principles) while providing open database connectivity. At the time,
-accounting frameworks had a proprietary, closed database structure. The original Bestbooks
-for Java has connectivity for multiple databases including MSSQL, DB2, Oracle and MySQL.
+BestBooks For Wordpress originally was developed in Java, the original framework. The goal behind Bestbooks is to provide an accounting application framework modelled after common accounting terms (t-account,ledger,jornal) and the GAAP (Generally Accepted Accounting Principles) while providing open database connectivity. At the time, accounting frameworks had a proprietary, closed database structure. The original Bestbooks for Java has connectivity for multiple databases including MSSQL, DB2, Oracle and MySQL.
 
-BestBooks for Wordpress started as a minimal accounting framework but with inspiration (not copy)
-from waveaccounting.com, BestBooks is becoming a full fledge accounting application.
+BestBooks for Wordpress started as a minimal accounting framework but with inspiration (not copy) from waveaccounting.com, BestBooks is becoming a full fledge accounting application.
 
 BestBooks for Wordpress has enough functionality that you can create
 workable scripts that solve accounting problems. You will be able to
@@ -162,6 +156,9 @@ Please do not be afraid of asking questions?<br>
 
 
 # Changelog
+= 2.4.1=
+* Added UNINSTALL.PHP to delete bestbooks custom data - BACKUP DATA BEFORE UNINSTALLING
+
 = 2.4.0=
 * Implemented Accounting pages using WP_List_Table
 * Added common transactions import
