@@ -156,6 +156,9 @@ Please do not be afraid of asking questions?<br>
 
 
 # Changelog
+= 2.4.2=
+* Redesigned amd added third party accounting course links, codification links, and additional topics on the Help dashboard
+
 = 2.4.1=
 * Added UNINSTALL.PHP to delete bestbooks custom data - BACKUP DATA BEFORE UNINSTALLING
 

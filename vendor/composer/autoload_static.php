@@ -16,6 +16,7 @@ class ComposerStaticInit54c94ca84c443acedd8bc0f575abd635
         'Credit' => __DIR__ . '/../..' . '/class/src/credit.php',
         'Equity' => __DIR__ . '/../..' . '/class/src/equity.php',
         'Expense' => __DIR__ . '/../..' . '/class/src/expense.php',
+        'Income' => __DIR__ . '/../..' . '/class/src/income.php',
         'Investment' => __DIR__ . '/../..' . '/class/src/investment.php',
         'Journal' => __DIR__ . '/../..' . '/class/src/journal.php',
         'Ledger' => __DIR__ . '/../..' . '/class/src/ledger.php',

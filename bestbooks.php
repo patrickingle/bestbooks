@@ -3,7 +3,7 @@
 Plugin Name: Bestbooks
 Plugin URI: http://wordpress.org/plugins/bestbooks/
 Description: The popular accounting framework
-Version: 2.4.1
+Version: 2.4.2
 Author: PressPage Entertainment Inc DBA PINGLEWARE
 Author URI: https://pingleware.work
 */
@@ -60,7 +60,7 @@ $gas->adddebit($mdb,"2007-03-31","Gas for Taxi Transportation Daily",37.00);
 
 */
 
-define('BESTBOOKS_VERSION', '2.3.6');
+define('BESTBOOKS_VERSION', '2.4.2');
 
 require_once dirname(__FILE__).'/vendor/autoload.php';
 require_once dirname(__FILE__).'/lib/phpreport/vendor/autoload.php';
@@ -87,7 +87,7 @@ function addBestBooksTables ()
 
     // Create two custom user role
     add_role('bestbooks_customer', 'BestBooks Customer', array('read'=>true));
-    add_role('bestbooks_vendor', 'BestBooks Vendor', array('read'=>true));    
+    add_role('bestbooks_vendor', 'BestBooks Vendor', array('read'=>true));
 }
 
 register_activation_hook(__FILE__,'addBestBooksTables');
@@ -157,11 +157,11 @@ function displayBestBooksManagementPage()
 	<fieldset class='options'>
             <legend><h2><u>Wordpress Development</u></h2></legend>
             <p>
-                <a href="https://presspage.info" target="_blank">PressPage Entertainment Inc.</a>
+                <a href="https://presspage.info" rel="noopener noreferrer" target="_blank">PressPage Entertainment Inc.</a>
                 is available for custom Wordpress development which includes development of new plugins, modification of existing plugins, migration of HTML/PSD/Smarty themes to wordpress-compliant <b>seamless</b> themes.
             </p>
-            <p>You may see our samples at <a href="https://github.com/pingleware/bestbooks" target="_blank">www.phkcorp.com?do=wordpress</a></p>
-            <p>Please email at <a href="mailto:presspage.entertainment@gmail.com">presspage.entertainment@gmail.com</a> or <a href="https://presspage.info?do=contact" target="_blank">www.phkcorp.com?do=contact</a> with your programming requirements.</p>
+            <p>You may see our samples at <a href="https://github.com/pingleware/bestbooks" rel="noopener noreferrer" target="_blank">www.phkcorp.com?do=wordpress</a></p>
+            <p>Please email at <a href="mailto:presspage.entertainment@gmail.com">presspage.entertainment@gmail.com</a> or <a href="https://presspage.info?do=contact" rel="noopener noreferrer" target="_blank">www.phkcorp.com?do=contact</a> with your programming requirements.</p>
 	</fieldset>
                         
         <fieldset class="options">
